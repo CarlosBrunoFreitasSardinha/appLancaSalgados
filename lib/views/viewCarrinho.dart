@@ -8,7 +8,10 @@ class Carrinho extends StatefulWidget {
 class _CarrinhoState extends State<Carrinho> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(
+      child: Text("Carrinho",
+          style: TextStyle(fontSize: 20, color: Colors.green)),
+    );
   }
 }
 

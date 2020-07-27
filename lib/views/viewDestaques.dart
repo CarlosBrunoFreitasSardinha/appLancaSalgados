@@ -8,6 +8,11 @@ class Destaques extends StatefulWidget {
 class _DestaquesState extends State<Destaques> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(
+      child: Text(
+        "this is a Home",
+        style: TextStyle(fontSize: 20, color: Colors.red),
+      ),
+    );
   }
 }

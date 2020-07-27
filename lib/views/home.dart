@@ -70,7 +70,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           headerSliverBuilder: (context, value) {
             return [
               SliverAppBar(
-                expandedHeight: 140.0,
+                expandedHeight: 150.0,
                 flexibleSpace: FlexibleSpaceBar(
                   stretchModes: <StretchMode>[
                     StretchMode.zoomBackground,
@@ -78,12 +78,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     StretchMode.fadeTitle,
                   ],
                   centerTitle: false,
-//              title: const Text('Lança Salgados'),
                   background: Stack(
                     fit: StackFit.expand,
                     children: [
                       Image.asset(
-                        'imagens/banner.png',
+                        'imagens/tentativa.jpg',
                         fit: BoxFit.cover,
                       ),
                       const DecoratedBox(
@@ -126,13 +125,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           },
           body: TabBarView(
             children: [
-              Text(
-                "this is a Home",
-                style: TextStyle(fontSize: 20, color: Colors.red),
-              ),
-              Text("Call", style: TextStyle(fontSize: 20, color: Colors.blue)),
-              Text("Message",
-                  style: TextStyle(fontSize: 20, color: Colors.green)),
+              Destaques(),
+              Cardapio(),
+              Carrinho(),
             ],
           ),
         ),
