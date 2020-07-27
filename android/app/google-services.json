@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "917627258974",
+    "firebase_url": "https://lancasalgados.firebaseio.com",
+    "project_id": "lancasalgados",
+    "storage_bucket": "lancasalgados.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:917627258974:android:b978d8ce4a24ae457dcccf",
+        "android_client_info": {
+          "package_name": "com.example.applancasalgados"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "917627258974-6p6ooct9jalevp4q1cvnhis2i4h5okti.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnxZXpJObfb8mLCYK46gK-aVloAg2R7k4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "917627258974-6p6ooct9jalevp4q1cvnhis2i4h5okti.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
