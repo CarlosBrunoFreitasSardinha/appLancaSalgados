@@ -12,7 +12,6 @@ class Cardapio extends StatefulWidget {
 
 class _CardapioState extends State<Cardapio>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
   Firestore bd = Firestore.instance;
   final _controller = StreamController<QuerySnapshot>.broadcast();
   ScrollController _scrollControllerMensagens = ScrollController();
@@ -34,7 +33,6 @@ class _CardapioState extends State<Cardapio>
     // TODO: implement initState
     super.initState();
     _adicionarListenerProdutos();
-    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -134,7 +132,7 @@ class _CardapioState extends State<Cardapio>
                                                     color: Colors.grey))),
                                         Padding(
                                             padding: EdgeInsets.all(4),
-                                            child: Text("R\$ " + produto.preco,
+                                            child: Text(produto.preco,
                                                 style: TextStyle(
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
