@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:applancasalgados/models/Produto.dart';
-import 'package:applancasalgados/models/usuarioFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
+import '../RouteGenerator.dart';
 
 class Cardapio extends StatefulWidget {
   @override
@@ -33,6 +34,7 @@ class _CardapioState extends State<Cardapio>
     // TODO: implement initState
     super.initState();
     _adicionarListenerProdutos();
+    print("Comecando!!!");
   }
 
   @override
@@ -66,16 +68,13 @@ class _CardapioState extends State<Cardapio>
                     itemBuilder: (context, indice) {
                       //recupera mensagem
                       List<DocumentSnapshot> produtos =
-                      querySnapshot.documents.toList();
+                          querySnapshot.documents.toList();
                       DocumentSnapshot json = produtos[indice];
 
                       Produto produto = Produto.fromJson(json.data);
 
                       double larguraContainer =
-                          MediaQuery
-                              .of(context)
-                              .size
-                              .width;
+                          MediaQuery.of(context).size.width;
 
                       //Define cores e alinhamentos
                       Alignment alinhamento = Alignment.centerLeft;
@@ -94,54 +93,77 @@ class _CardapioState extends State<Cardapio>
                             decoration: BoxDecoration(
                                 color: cor,
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(8))),
-                            child: Row(
-                              children: <Widget>[
-                                Flexible(
-                                    flex: 1,
-                                    child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(15),
-                                        child: Image.network(
-                                          produto.urlImg,
-                                          height: 100,
-                                          width: 100,
-                                          fit: BoxFit.cover,
-                                        ))
-                                ),
-                                Flexible(
-                                  flex: 3,
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(10, 2, 8, 2),
-                                    child:
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                                      children: <Widget>[
-                                        Padding(
-                                            padding: EdgeInsets.all(4),
-                                            child: Text(produto.titulo,
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color(0xffd19c3c)))),
-                                        Padding(
-                                            padding: EdgeInsets.fromLTRB(8, 2, 4, 4),
-                                            child: Text(produto.descricao,
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.grey))),
-                                        Padding(
-                                            padding: EdgeInsets.all(4),
-                                            child: Text(produto.preco,
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black87))),//Color(0xff5c3838)
-                                      ],
+                                    BorderRadius.all(Radius.circular(8))),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, RouteGenerator.PRODUTO,
+                                    arguments: produto);
+                              },
+                              child: Row(
+                                children: <Widget>[
+                                  Flexible(
+                                      flex: 1,
+                                      child: GestureDetector(
+                                        child: Hero(
+                                          tag: produto.idProduto,
+                                          child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                              child: Image.network(
+                                                produto.urlImg,
+                                                height: 100,
+                                                width: 100,
+                                                fit: BoxFit.cover,
+                                              )),
+                                        ),
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                              context, RouteGenerator.PRODUTO,
+                                              arguments: produto);
+                                        },
+                                      )),
+                                  Flexible(
+                                    flex: 3,
+                                    child: Padding(
+                                      padding: EdgeInsets.fromLTRB(10, 2, 8, 2),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: <Widget>[
+                                          Padding(
+                                              padding: EdgeInsets.all(4),
+                                              child: Text(produto.titulo,
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          Color(0xffd19c3c)))),
+                                          Padding(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  8, 2, 4, 4),
+                                              child: Text(produto.descricao,
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey))),
+                                          Padding(
+                                              padding: EdgeInsets.all(4),
+                                              child: Text(produto.preco,
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black87))),
+                                          //Color(0xff5c3838)
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                )
-                              ],
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -156,23 +178,20 @@ class _CardapioState extends State<Cardapio>
 
     return Scaffold(
       body: Container(
-        width: MediaQuery
-            .of(context)
-            .size
-            .width,
+        width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
             image: DecorationImage(
                 image: AssetImage("imagens/background.jpg"),
                 fit: BoxFit.cover)),
         child: SafeArea(
             child: Container(
-              padding: EdgeInsets.all(8),
-              child: Column(
-                children: <Widget>[
-                  stream,
-                ],
-              ),
-            )),
+          padding: EdgeInsets.all(8),
+          child: Column(
+            children: <Widget>[
+              stream,
+            ],
+          ),
+        )),
       ),
     );
   }

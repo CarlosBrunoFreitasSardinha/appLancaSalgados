@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:applancasalgados/models/Produto.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
+import '../RouteGenerator.dart';
 
 class Destaques extends StatefulWidget {
   @override
@@ -70,52 +73,72 @@ class _DestaquesState extends State<Destaques>
                   itemCount: querySnapshot.documents.length,
                   // ignore: missing_return
                   itemBuilder: (context, indice) {
-                    List<DocumentSnapshot> produtos =
-                        querySnapshot.documents.toList();
-                    DocumentSnapshot json = produtos[indice];
+
+                    List<DocumentSnapshot> produtos = querySnapshot.documents.toList();
                     bool active = indice == currentPage;
-                    // Animated Properties
+
+                    Produto produto = Produto.fromJson(produtos[indice].data);
+
                     final double blur = active ? 30 : 0;
                     final double offset = active ? 20 : 0;
-                    final double top = active ? 100 : 200;
+                    final double top = active ? 50 : 150;
 
-                    return AnimatedContainer(
-                        duration: Duration(milliseconds: 500),
-                        curve: Curves.easeOutQuint,
-                        margin:
-                            EdgeInsets.only(top: top, bottom: 50, right: 30),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(json['urlImg']),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.black87,
-                                  blurRadius: blur,
-                                  offset: Offset(offset, offset))
-                            ]),
-                        child: Column(
-                          children: <Widget>[
-                            Align(
-                                alignment: Alignment.center,
-                                child: Text(json['titulo'],
-                                    style: TextStyle(
-                                        fontSize: 40,
-                                        color: Colors.white,
-                                        backgroundColor: Colors.black38
-                                    ))),
-                            Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Text(json['preco'],
-                                    style: TextStyle(
-                                        fontSize: 40,
-                                        color: Color(0xffd19c3c),
-                                        backgroundColor: Colors.black38
-                                    )))
-                          ],
-                        )
+                    return
+                    GestureDetector(
+                      child: Hero(
+                        tag: produto.idProduto,
+                        child: AnimatedContainer(
+                            duration: Duration(milliseconds: 500),
+                            curve: Curves.easeOutQuint,
+                            margin:
+                            EdgeInsets.only(top: top, bottom: 25, right: 30),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(produto.urlImg),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black87,
+                                      blurRadius: blur,
+                                      offset: Offset(offset, offset)
+                                  )
+                                ]),
+                            child: Container(
+                              child: Column(
+                                children: <Widget>[
+                                  Flexible(child:
+                                  Align(
+                                      alignment: Alignment.topCenter,
+                                      child:
+                                      Padding(
+                                        padding: EdgeInsets.all(8),
+                                        child: Text(produto.titulo,
+                                            style: TextStyle(
+                                                fontSize: 38,
+                                                color: Colors.white,
+                                                backgroundColor: Colors.black38)),
+                                      )
+                                  )
+                                  ),
+
+                                  Flexible(child: Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Text(produto.preco,
+                                          style: TextStyle(
+                                              fontSize: 40,
+                                              color: Color(0xffd19c3c),
+                                              backgroundColor: Colors.black54))))
+                                ],
+                              ),
+                            )),
+                      ),
+                      onTap: () {
+                        Navigator.pushNamed(
+                            context, RouteGenerator.PRODUTO,
+                            arguments: produto);
+                      },
                     );
                   });
             }
@@ -130,7 +153,8 @@ class _DestaquesState extends State<Destaques>
         decoration: BoxDecoration(
             image: DecorationImage(
                 image: AssetImage("imagens/background.jpg"),
-                fit: BoxFit.cover)),
+                fit: BoxFit.cover)
+        ),
         child: stream,
       ),
     );
