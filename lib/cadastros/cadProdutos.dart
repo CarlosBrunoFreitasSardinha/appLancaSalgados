@@ -112,8 +112,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
   _salvar() {
     _cadastrarProduto();
-    Navigator.pushNamedAndRemoveUntil(
-        context, RouteGenerator.HOME, (_) => false);
+    Navigator.pop(context);
   }
 
   _cadastrarProduto() async {
