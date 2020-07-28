@@ -12,6 +12,8 @@ class viewProduto extends StatefulWidget {
 }
 
 class _viewProdutoState extends State<viewProduto> {
+  int contagem = 0;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -24,6 +26,20 @@ class _viewProdutoState extends State<viewProduto> {
     // TODO: implement dispose
     super.dispose();
     timeDilation = 1;
+  }
+
+  _acrescenta() {
+    setState(() {
+      contagem += 1;
+    });
+  }
+
+  _reduzir() {
+    if (contagem > 0){
+      setState(() {
+        contagem -= 1;
+      });
+    }
   }
 
   @override
@@ -67,41 +83,75 @@ class _viewProdutoState extends State<viewProduto> {
                   ),
                 ),
                 Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Card(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
+                    child: Padding(
+                  padding: EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
+                  child: Card(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Padding(
+                          padding:
+                              EdgeInsets.only(left: 16, top: 16, right: 16),
+                          child: Text(
+                            widget.produto.titulo,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 30.0,
+                                color: Color(0xfff49c3c)),
+                          ),
+                        ),
+                        Padding(
+                          padding:
+                              EdgeInsets.only(left: 16, top: 16, right: 16),
+                          child: Text(widget.produto.descricao,
+                              style: TextStyle(
+                                  fontSize: 20.0, color: Colors.grey)),
+                        ),
+                        Padding(
+                            padding:
+                                EdgeInsets.all( 16),
+                            child: Text(
+                              widget.produto.preco,
+                              style: TextStyle(
+                                  fontSize: 24.0,
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold),
+                            )),
+                        Row(
                           children: <Widget>[
-                            ListTile(
-                              leading: Icon(Icons.restaurant),
-                              title: Text(widget.produto.titulo,
-                                  style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xfff49c3c))),
-                              subtitle: Text(widget.produto.descricao,
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              trailing: Text(widget.produto.preco,
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.green)),
+                            FlatButton(
+                              child: Icon(Icons.remove),
+                              color: Colors.white,
+                              splashColor: Colors.black12,
+                              onPressed: () =>_reduzir(),
+                            ),
+                            Text(
+                              "$contagem",
+                              style: TextStyle(color: Colors.blueAccent,fontWeight: FontWeight.bold, fontSize: 20),
+                            ),
+                            FlatButton(
+                              child: Icon(Icons.add),
+                              color: Colors.white,
+                              splashColor: Colors.black12,
+                              onPressed: () =>_acrescenta(),
                             ),
                             ButtonBar(
                               children: <Widget>[
                                 FlatButton(
-                                  child: const Text('Adicionar ao Carrinho'),
-                                  onPressed: () {
-                                    /* ... */
-                                  },
-                                ),
-                                FlatButton(
-                                  child: const Text('LISTEN'),
+                                  child: Row(
+                                    children: <Widget>[
+                                      IconButton(
+                                        icon: Icon(Icons.shopping_cart),
+                                        color: Color(0xfff49c3c),
+                                        onPressed: () {},
+                                      ),
+                                      Text('Adicionar',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 20.0,
+                                              color: Color(0xfff49c3c)))
+                                    ],
+                                  ),
                                   onPressed: () {
                                     /* ... */
                                   },
@@ -109,11 +159,11 @@ class _viewProdutoState extends State<viewProduto> {
                               ],
                             ),
                           ],
-                        ),
-                      ),
-                    ],
+                        )
+                      ],
+                    ),
                   ),
-                )
+                )),
               ],
             ),
           ),
