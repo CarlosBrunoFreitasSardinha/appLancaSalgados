@@ -63,7 +63,7 @@ class RouteGenerator{
       case CONFIG: return MaterialPageRoute(builder: (_) => Configuracoes());
 
       case MSGS: return MaterialPageRoute(builder: (_) => Mensagens(args));
-      case TESTE: return MaterialPageRoute(builder: (_) => HeroAnimation());
+      case TESTE: return MaterialPageRoute(builder: (_) => MyApp());
 
       default: _erroRota();
     }

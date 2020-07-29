@@ -1,75 +1,144 @@
+// Flutter code sample for ListTile
+
+// Here is an example of a custom list item that resembles a Youtube related
+// video list item created with [Expanded] and [Container] widgets.
+//
+// ![Custom list item a](https://flutter.github.io/assets-for-api-docs/assets/widgets/custom_list_item_a.png)
+
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart' show timeDilation;
 
-class PhotoHero extends StatelessWidget {
-  const PhotoHero({ Key key, this.photo, this.onTap, this.width }) : super(key: key);
+void main() => runApp(MyApp());
 
-  final String photo;
-  final VoidCallback onTap;
-  final double width;
+/// This Widget is the main application widget.
+class MyApp extends StatelessWidget {
+  static const String _title = 'Flutter Code Sample';
 
+  @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: width,
-      child: Hero(
-        tag: photo,
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            child: Image.asset(
-              photo,
-              fit: BoxFit.contain,
+    return MaterialApp(
+      title: _title,
+      home: Scaffold(
+        appBar: AppBar(title: const Text(_title)),
+        body: MyStatelessWidget(),
+      ),
+    );
+  }
+}
+
+class CustomListItem extends StatelessWidget {
+  const CustomListItem({
+    this.thumbnail,
+    this.title,
+    this.user,
+    this.viewCount,
+  });
+
+  final Widget thumbnail;
+  final String title;
+  final String user;
+  final int viewCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            flex: 2,
+            child: thumbnail,
+          ),
+          Expanded(
+            flex: 3,
+            child: _VideoDescription(
+              title: title,
+              user: user,
+              viewCount: viewCount,
             ),
           ),
-        ),
+          const Icon(
+            Icons.more_vert,
+            size: 16.0,
+          ),
+        ],
       ),
     );
   }
 }
 
-class HeroAnimation extends StatelessWidget {
+class _VideoDescription extends StatelessWidget {
+  const _VideoDescription({
+    Key key,
+    this.title,
+    this.user,
+    this.viewCount,
+  }) : super(key: key);
+
+  final String title;
+  final String user;
+  final int viewCount;
+
+  @override
   Widget build(BuildContext context) {
-    timeDilation = 2.0; // 1.0 means normal animation speed.
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Basic Hero Animation'),
-      ),
-      body: Center(
-        child: PhotoHero(
-          photo: 'imagens/logo.png',
-          width: 100.0,
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute<void>(
-                builder: (BuildContext context) {
-                  return Scaffold(
-                    appBar: AppBar(
-                      title: const Text('Flippers Page'),
-                    ),
-                    body: Container(
-                      // Set background to blue to emphasize that it's a new route.
-                      color: Colors.lightBlueAccent,
-                      padding: const EdgeInsets.all(16.0),
-                      alignment: Alignment.topLeft,
-                      child: PhotoHero(
-                        photo: 'imagens/logo.png',
-                        width: 300.0,
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-                  );
-                }
-            ));
-          },
-        ),
+          Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 14.0,
+            ),
+          ),
+
+          const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
+          Text(
+            user,
+            style: const TextStyle(fontSize: 10.0),
+          ),
+
+          const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
+          Text(
+            '$viewCount views',
+            style: const TextStyle(fontSize: 10.0),
+          ),
+        ],
       ),
     );
   }
 }
 
-void main() {
-  runApp(MaterialApp(home: HeroAnimation()));
+/// This is the stateless widget that the main application instantiates.
+class MyStatelessWidget extends StatelessWidget {
+  MyStatelessWidget({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(8.0),
+      itemExtent: 106.0,
+      children: <CustomListItem>[
+        CustomListItem(
+          user: 'Flutter',
+          viewCount: 999000,
+          thumbnail: Container(
+            decoration: const BoxDecoration(color: Colors.blue),
+          ),
+          title: 'The Flutter YouTube Channel',
+        ),
+        CustomListItem(
+          user: 'Dash',
+          viewCount: 884000,
+          thumbnail: Container(
+            decoration: const BoxDecoration(color: Colors.yellow),
+          ),
+          title: 'Announcing Flutter 1.0',
+        ),
+      ],
+    );
+  }
 }
