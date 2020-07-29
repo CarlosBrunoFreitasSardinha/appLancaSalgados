@@ -4,13 +4,12 @@ import 'dart:io';
 import 'package:applancasalgados/models/CategoriaProduto.dart';
 import 'package:applancasalgados/models/Produto.dart';
 import 'package:applancasalgados/util/FireBase.dart';
+import 'package:applancasalgados/util/Util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../RouteGenerator.dart';
 
 class CadastroProdutos extends StatefulWidget {
   @override
@@ -129,7 +128,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   validarCampos() {
     String titulo = _controllerTitulo.text;
     String descricao = _controllerDescricao.text;
-    String preco = _controllerPreco.text;
+    double preco = double.parse(Util.moeda(_controllerPreco.text));
     String temp = _controllerTempPreparo.text;
 
 
@@ -137,13 +136,13 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
       if (_urlImagemRecuperada.isNotEmpty) {
 
-        if (double.parse(preco) >= 0) {
+        if (preco >= 0) {
 
           if (selectedItem != null) {
 
             produto.titulo = titulo;
             produto.descricao = descricao;
-            produto.preco = preco;
+            produto.preco = preco.toStringAsFixed(2);
             produto.tempoPreparo = temp;
             produto.idCategoria = selectedItem;
             produto.urlImg = _urlImagemRecuperada;

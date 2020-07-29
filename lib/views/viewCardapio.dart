@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:applancasalgados/models/Produto.dart';
+import 'package:applancasalgados/util/Util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -34,7 +35,6 @@ class _CardapioState extends State<Cardapio>
     // TODO: implement initState
     super.initState();
     _adicionarListenerProdutos();
-    print("Comecando!!!");
   }
 
   @override
@@ -151,7 +151,7 @@ class _CardapioState extends State<Cardapio>
                                                       color: Colors.grey))),
                                           Padding(
                                               padding: EdgeInsets.all(4),
-                                              child: Text(produto.preco,
+                                              child: Text(Util.moeda(produto.preco),
                                                   style: TextStyle(
                                                       fontSize: 20,
                                                       fontWeight:

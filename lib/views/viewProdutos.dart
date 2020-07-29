@@ -1,4 +1,6 @@
 import 'package:applancasalgados/models/Produto.dart';
+import 'package:applancasalgados/util/Util.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -12,13 +14,22 @@ class viewProduto extends StatefulWidget {
 }
 
 class _viewProdutoState extends State<viewProduto> {
-  int contagem = 0;
+  int contagem;
+  double resultado;
+  double preco;
+
+  _initilizer() {
+    contagem = 1;
+    preco = double.parse(widget.produto.preco);
+    resultado = preco * contagem;
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    timeDilation = 4;
+    _initilizer();
+    timeDilation = 3;
   }
 
   @override
@@ -31,13 +42,15 @@ class _viewProdutoState extends State<viewProduto> {
   _acrescenta() {
     setState(() {
       contagem += 1;
+      resultado += preco;
     });
   }
 
   _reduzir() {
-    if (contagem > 0){
+    if (contagem > 1) {
       setState(() {
         contagem -= 1;
+        resultado -= preco;
       });
     }
   }
@@ -82,87 +95,128 @@ class _viewProdutoState extends State<viewProduto> {
                         )),
                   ),
                 ),
+
                 Container(
                     child: Padding(
-                  padding: EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
-                  child: Card(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Padding(
-                          padding:
-                              EdgeInsets.only(left: 16, top: 16, right: 16),
-                          child: Text(
-                            widget.produto.titulo,
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 30.0,
-                                color: Color(0xfff49c3c)),
-                          ),
-                        ),
-                        Padding(
-                          padding:
-                              EdgeInsets.only(left: 16, top: 16, right: 16),
-                          child: Text(widget.produto.descricao,
-                              style: TextStyle(
-                                  fontSize: 20.0, color: Colors.grey)),
-                        ),
-                        Padding(
-                            padding:
-                                EdgeInsets.all( 16),
-                            child: Text(
-                              widget.produto.preco,
-                              style: TextStyle(
-                                  fontSize: 24.0,
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold),
-                            )),
-                        Row(
+                      padding: EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
+                      child: Card(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
-                            FlatButton(
-                              child: Icon(Icons.remove),
-                              color: Colors.white,
-                              splashColor: Colors.black12,
-                              onPressed: () =>_reduzir(),
+
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(left: 16, top: 16, right: 16),
+                              child: Text(
+                                widget.produto.titulo,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 30.0,
+                                    color: Color(0xfff49c3c)),
+                              ),
                             ),
-                            Text(
-                              "$contagem",
-                              style: TextStyle(color: Colors.blueAccent,fontWeight: FontWeight.bold, fontSize: 20),
+
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(left: 16, top: 16, right: 16),
+                              child: Text(widget.produto.descricao,
+                                  style: TextStyle(
+                                      fontSize: 20.0, color: Colors.grey)),
                             ),
-                            FlatButton(
-                              child: Icon(Icons.add),
-                              color: Colors.white,
-                              splashColor: Colors.black12,
-                              onPressed: () =>_acrescenta(),
-                            ),
-                            ButtonBar(
+
+                            Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Text(
+                                  Util.moeda(widget.produto.preco),
+                                  style: TextStyle(
+                                      fontSize: 24.0,
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold),
+                                )),
+
+
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                FlatButton(
-                                  child: Row(
-                                    children: <Widget>[
-                                      IconButton(
-                                        icon: Icon(Icons.shopping_cart),
-                                        color: Color(0xfff49c3c),
-                                        onPressed: () {},
-                                      ),
-                                      Text('Adicionar',
+                                Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.all(Radius.circular(10.0)),
+                                        border: Border.all(
+                                            width: 1, color: Colors.grey)
+                                    ),
+                                    child: Row(
+                                      children: <Widget>[
+                                        IconButton(
+                                          icon: Icon(Icons.remove_circle),
+                                          color: contagem == 1
+                                              ? Colors.grey
+                                              : Colors.green,
+                                          onPressed: () => _reduzir(),
+                                        ),
+                                        Text(
+                                          "$contagem",
                                           style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 20.0,
-                                              color: Color(0xfff49c3c)))
-                                    ],
+                                              color: Colors.blueAccent,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20),
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.add_circle),
+                                          color: Colors.green,
+                                          onPressed: () => _acrescenta(),
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                  onPressed: () {
-                                    /* ... */
-                                  },
                                 ),
+
+
+                                ButtonBar(
+                                  children: <Widget>[
+                                    FlatButton(
+                                      child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10.0)),
+                                              border: Border.all(
+                                                  width: 1, color: Colors.grey),
+                                              color: Color(0xff5c3838)),
+                                          child: Padding(
+                                            padding: EdgeInsets.only(right: 8),
+                                            child: Row(
+                                              children: <Widget>[
+                                                IconButton(
+                                                  icon: Icon(Icons.add_shopping_cart),
+                                                  color: Colors.white,
+                                                  onPressed: () {},
+                                                ),
+                                                Text(
+                                                    'Adicionar ${Util.moeda(resultado.toStringAsFixed(2))}',
+                                                    style: TextStyle(
+                                                        fontWeight: FontWeight.w500,
+                                                        fontSize: 20.0,
+                                                        color: Colors.white)),
+                                              ],
+                                            ),
+                                          )),
+                                      onPressed: () {
+                                        /* ... */
+                                      },
+                                    ),
+                                  ],
+                                ),
+
+
                               ],
-                            ),
+                            )
+
                           ],
-                        )
-                      ],
-                    ),
-                  ),
+                        ),
+                      ),
                 )),
               ],
             ),
