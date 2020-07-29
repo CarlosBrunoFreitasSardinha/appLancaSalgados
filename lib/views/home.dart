@@ -1,10 +1,13 @@
-import 'dart:io';
+import 'dart:async';
 
+import 'package:applancasalgados/models/Carrinho.dart';
 import 'package:applancasalgados/views/viewCardapio.dart';
 import 'package:applancasalgados/views/viewCarrinho.dart';
 import 'package:applancasalgados/views/viewDestaques.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
 import '../RouteGenerator.dart';
 import '../models/usuarioFireBase.dart';
 
@@ -15,6 +18,9 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   TabController _tabController;
+  List<Carrinho> _listaConversas = List();
+  final _controller = StreamController<QuerySnapshot>.broadcast();
+  Carrinho carrinho = Carrinho();
   List<String> _itensMenu = [
     "Configurações",
     "Perfil",
@@ -53,16 +59,101 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
   }
 
+  Stream<QuerySnapshot> _adicionarListenerCarrinho() {
+    Firestore bd = Firestore.instance;
+    final stream = bd
+        .collection("carrinho")
+        .document("cJ8II0UZcFSk18kIgRZXzIybXLg2")
+        .collection("carrinhoAtivo")
+        .snapshots();
+
+    stream.listen((dados) {
+      _controller.add(dados);
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _verificarUsuarioLogado();
+    _adicionarListenerCarrinho();
   }
 
   @override
   Widget build(BuildContext context) {
+    var streamCarrinho = StreamBuilder(
+      stream: _controller.stream,
+      // ignore: missing_return
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+            return Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.shopping_cart,
+                    color: Colors.white,
+                  )
+                ],
+              ),
+            );
+            break;
+          case ConnectionState.active:
+          case ConnectionState.done:
+            if (snapshot.hasError) {
+              return Text("Erro ao carregar os dados!");
+            } else {
+              QuerySnapshot querySnapshot = snapshot.data;
+
+              if (querySnapshot.documents.length == 0) {
+                return Center(
+                  child: Icon(
+                    Icons.shopping_cart,
+                    color: Colors.white,
+                  ),
+                );
+              }
+
+              String count = "0";
+              List<DocumentSnapshot> conversas =
+                  querySnapshot.documents.toList();
+              DocumentSnapshot item = conversas[0];
+              carrinho = Carrinho.fromJson(item.data);
+              count = carrinho.produtos.length.toString();
+
+              return Stack(
+                alignment: Alignment.topLeft,
+                children: <Widget>[
+                  Icon(
+                    Icons.shopping_cart,
+                    color: Colors.white,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 24 ),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Text(
+                          count.toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            backgroundColor: Colors.blueAccent,
+                          ),
+                        )),
+                  )
+                ],
+              );
+            }
+            break;
+        }
+      },
+    );
+
     return Scaffold(
       body: DefaultTabController(
         length: 3,
@@ -101,10 +192,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   ),
                 ),
                 bottom: TabBar(
+                  indicatorWeight: 4,
                   tabs: [
                     Tab(icon: Icon(Icons.home)),
                     Tab(icon: Icon(Icons.restaurant_menu)),
-                    Tab(icon: Icon(Icons.shopping_cart)),
+                    Tab(child: streamCarrinho,),
                   ],
                 ),
                 actions: <Widget>[
@@ -127,7 +219,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             children: [
               Destaques(),
               Cardapio(),
-              Carrinho(),
+              viewCarrinho(),
             ],
           ),
         ),

@@ -52,7 +52,7 @@ class RouteGenerator{
 
       case DESTAQUES: return MaterialPageRoute(builder: (_) => Destaques());
       case CARDAPIO: return MaterialPageRoute(builder: (_) => Cardapio());
-      case CARRINHO: return MaterialPageRoute(builder: (_) => Carrinho());
+      case CARRINHO: return MaterialPageRoute(builder: (_) => viewCarrinho());
       case PERFIL: return MaterialPageRoute(builder: (_) => viewPerfil());
       case PRODUTO: return MaterialPageRoute(builder: (_) => viewProduto(args));
 
@@ -63,7 +63,7 @@ class RouteGenerator{
       case CONFIG: return MaterialPageRoute(builder: (_) => Configuracoes());
 
       case MSGS: return MaterialPageRoute(builder: (_) => Mensagens(args));
-      case TESTE: return MaterialPageRoute(builder: (_) => MyApp());
+      case TESTE: return MaterialPageRoute(builder: (_) => ListaDeTarefas());
 
       default: _erroRota();
     }

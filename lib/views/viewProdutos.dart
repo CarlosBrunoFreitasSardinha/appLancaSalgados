@@ -1,5 +1,7 @@
+import 'package:applancasalgados/models/Carrinho.dart';
 import 'package:applancasalgados/models/Produto.dart';
 import 'package:applancasalgados/util/Util.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -22,6 +24,27 @@ class _viewProdutoState extends State<viewProduto> {
     contagem = 1;
     preco = double.parse(widget.produto.preco);
     resultado = preco * contagem;
+
+
+  }
+  _criarCarrinho() async {
+    Carrinho carrinho = Carrinho();
+    carrinho.addProdutos(widget.produto);
+    Firestore bd = Firestore.instance;
+    await bd  .collection("carrinho")
+        .document("cJ8II0UZcFSk18kIgRZXzIybXLg2")
+        .collection("carrinhoAtivo")
+        .add(carrinho.toJson());
+  }
+  _adicionarAoCarrinho() async {
+    Carrinho carrinho = Carrinho();
+    carrinho.addProdutos(widget.produto);
+    Firestore bd = Firestore.instance;
+    await bd  .collection("carrinho")
+        .document("cJ8II0UZcFSk18kIgRZXzIybXLg2")
+        .collection("carrinhoAtivo")
+        .document("7MmkdZrp4rhrOGig4VAq")
+        .setData(carrinho.toJson());
   }
 
   @override
@@ -29,6 +52,7 @@ class _viewProdutoState extends State<viewProduto> {
     // TODO: implement initState
     super.initState();
     _initilizer();
+    _adicionarAoCarrinho();
     timeDilation = 3;
   }
 

@@ -76,22 +76,15 @@ class _CardapioState extends State<Cardapio>
                       double larguraContainer =
                           MediaQuery.of(context).size.width;
 
-                      //Define cores e alinhamentos
-                      Alignment alinhamento = Alignment.centerLeft;
-                      Color cor = Colors.grey[100]; //Color(0xfffff9f4)
-                      if (indice % 2 == 0) {
-                        cor = Colors.brown[50];
-                      }
-
                       return Align(
-                        alignment: alinhamento,
+                        alignment: Alignment.centerLeft,
                         child: Padding(
                           padding: EdgeInsets.all(6),
                           child: Container(
                             width: larguraContainer,
                             padding: EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                                color: cor,
+                                color: Colors.grey[100],
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8))),
                             child: GestureDetector(

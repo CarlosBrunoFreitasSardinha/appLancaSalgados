@@ -1,144 +1,120 @@
-// Flutter code sample for ListTile
+import 'dart:async';
 
-// Here is an example of a custom list item that resembles a Youtube related
-// video list item created with [Expanded] and [Container] widgets.
-//
-// ![Custom list item a](https://flutter.github.io/assets-for-api-docs/assets/widgets/custom_list_item_a.png)
-
+import 'package:applancasalgados/models/Carrinho.dart';
+import 'package:applancasalgados/models/Produto.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
-
-/// This Widget is the main application widget.
-class MyApp extends StatelessWidget {
-  static const String _title = 'Flutter Code Sample';
-
+class ListaDeTarefas extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: _title,
-      home: Scaffold(
-        appBar: AppBar(title: const Text(_title)),
-        body: MyStatelessWidget(),
-      ),
-    );
-  }
+  _ListaDeTarefasState createState() => _ListaDeTarefasState();
 }
 
-class CustomListItem extends StatelessWidget {
-  const CustomListItem({
-    this.thumbnail,
-    this.title,
-    this.user,
-    this.viewCount,
-  });
+class _ListaDeTarefasState extends State<ListaDeTarefas>  with SingleTickerProviderStateMixin {
+  Firestore bd = Firestore.instance;
+  final _controller = StreamController<QuerySnapshot>.broadcast();
+  ScrollController _scrollControllerMensagens = ScrollController();
+  Carrinho carrinho = Carrinho();
+  Produto _ultimaTarefaRemovida = Produto();
 
-  final Widget thumbnail;
-  final String title;
-  final String user;
-  final int viewCount;
+  _adicionarListenerProdutos() async{
+    Firestore bd = Firestore.instance;
+    DocumentSnapshot snapshot = await bd
+        .collection("carrinho")
+        .document("cJ8II0UZcFSk18kIgRZXzIybXLg2")
+        .collection("carrinhoAtivo")
+        .document("7MmkdZrp4rhrOGig4VAq").get();
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            flex: 2,
-            child: thumbnail,
-          ),
-          Expanded(
-            flex: 3,
-            child: _VideoDescription(
-              title: title,
-              user: user,
-              viewCount: viewCount,
-            ),
-          ),
-          const Icon(
-            Icons.more_vert,
-            size: 16.0,
-          ),
-        ],
-      ),
-    );
+    if (snapshot.data != null) {
+      Map<String, dynamic> dados = snapshot.data;
+      this.carrinho = Carrinho.fromJson(dados);
+      print("Carrinho"+this.carrinho.toString());
+    }
   }
-}
 
-class _VideoDescription extends StatelessWidget {
-  const _VideoDescription({
-    Key key,
-    this.title,
-    this.user,
-    this.viewCount,
-  }) : super(key: key);
 
-  final String title;
-  final String user;
-  final int viewCount;
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-
-          Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 14.0,
-            ),
-          ),
-
-          const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
-          Text(
-            user,
-            style: const TextStyle(fontSize: 10.0),
-          ),
-
-          const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
-          Text(
-            '$viewCount views',
-            style: const TextStyle(fontSize: 10.0),
-          ),
-        ],
-      ),
-    );
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _adicionarListenerProdutos();
   }
-}
 
-/// This is the stateless widget that the main application instantiates.
-class MyStatelessWidget extends StatelessWidget {
-  MyStatelessWidget({Key key}) : super(key: key);
+  Widget _CriarItemLista(context, index) {
 
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(8.0),
-      itemExtent: 106.0,
-      children: <CustomListItem>[
-        CustomListItem(
-          user: 'Flutter',
-          viewCount: 999000,
-          thumbnail: Container(
-            decoration: const BoxDecoration(color: Colors.blue),
+    return Dismissible(
+      key: Key(DateTime.now().millisecondsSinceEpoch.toString()),
+      direction: DismissDirection.endToStart,
+      onDismissed: (direction) {
+
+        _ultimaTarefaRemovida = carrinho.produtos[index];
+        carrinho.produtos.removeAt(index);
+
+        //snackbar
+        final snackbar = SnackBar(
+          content: Text("Produto Removida"),
+          duration: Duration(seconds: 5),
+//          backgroundColor: Colors.green,
+          action:
+          SnackBarAction(
+              label: "Desfazer",
+              onPressed: (){
+                setState(() {
+                  carrinho.produtos.insert(index, _ultimaTarefaRemovida);
+                });
+              }
           ),
-          title: 'The Flutter YouTube Channel',
+        );
+        Scaffold.of(context).showSnackBar(snackbar);
+      },
+      background: Container(
+        color: Color(0xFFe10000),
+        padding: EdgeInsets.all(16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Icon(
+              Icons.delete,
+              color: Colors.white,
+            )
+          ],
         ),
-        CustomListItem(
-          user: 'Dash',
-          viewCount: 884000,
-          thumbnail: Container(
-            decoration: const BoxDecoration(color: Colors.yellow),
-          ),
-          title: 'Announcing Flutter 1.0',
+      ),
+
+      child: ListTile(
+        leading: ClipRRect(
+            borderRadius:
+            BorderRadius.circular(15),
+            child: Image.network(
+              carrinho.produtos[index].urlImg,
+              height: 100,
+              width: 100,
+              fit: BoxFit.cover,
+            )),
+        title: Text(carrinho.produtos[index].titulo),
+        subtitle: Text(carrinho.produtos[index].descricao),
+        trailing: Text(carrinho.produtos[index].preco),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: ListView.builder(
+                  itemCount: carrinho.produtos.length,
+                  itemBuilder: (context, index) {
+                    return _CriarItemLista(context, index);
+                  }),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
