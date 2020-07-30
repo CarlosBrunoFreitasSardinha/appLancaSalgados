@@ -1,5 +1,6 @@
 import 'package:applancasalgados/models/Carrinho.dart';
 import 'package:applancasalgados/models/Produto.dart';
+import 'package:applancasalgados/models/ProdutoCarrinho.dart';
 import 'package:applancasalgados/util/Util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,28 +20,47 @@ class _viewProdutoState extends State<viewProduto> {
   int contagem;
   double resultado;
   double preco;
+  Carrinho carrinho = Carrinho();
+  ProdutoCarrinho _ultimaTarefaRemovida = ProdutoCarrinho();
+
+  _ListenerCarrinho() async {
+    Firestore bd = Firestore.instance;
+    DocumentSnapshot snapshot = await bd
+        .collection("carrinho")
+        .document("cJ8II0UZcFSk18kIgRZXzIybXLg2")
+        .collection("carrinhoAtivo")
+        .document("7MmkdZrp4rhrOGig4VAq")
+        .get();
+
+    if (snapshot.data != null) {
+      Map<String, dynamic> dados = snapshot.data;
+      carrinho = Carrinho.fromJson(dados);
+    }
+  }
 
   _initilizer() {
     contagem = 1;
     preco = double.parse(widget.produto.preco);
     resultado = preco * contagem;
-
-
   }
+
   _criarCarrinho() async {
     Carrinho carrinho = Carrinho();
-    carrinho.addProdutos(widget.produto);
+    carrinho.addProdutos(ProdutoCarrinho.fromJson(widget.produto.toJson()));
     Firestore bd = Firestore.instance;
     await bd  .collection("carrinho")
         .document("cJ8II0UZcFSk18kIgRZXzIybXLg2")
         .collection("carrinhoAtivo")
         .add(carrinho.toJson());
   }
+
   _adicionarAoCarrinho() async {
-    Carrinho carrinho = Carrinho();
-    carrinho.addProdutos(widget.produto);
+    ProdutoCarrinho produtoCarrinho = ProdutoCarrinho.fromJson(widget.produto.toJson());
+    produtoCarrinho.quantidade = contagem.toString();
+    produtoCarrinho.subtotal = resultado.toStringAsFixed(2);
+    carrinho.addProdutos(produtoCarrinho);
     Firestore bd = Firestore.instance;
-    await bd  .collection("carrinho")
+    await bd.collection("carrinho")
         .document("cJ8II0UZcFSk18kIgRZXzIybXLg2")
         .collection("carrinhoAtivo")
         .document("7MmkdZrp4rhrOGig4VAq")
@@ -52,7 +72,7 @@ class _viewProdutoState extends State<viewProduto> {
     // TODO: implement initState
     super.initState();
     _initilizer();
-    _adicionarAoCarrinho();
+    _ListenerCarrinho();
     timeDilation = 3;
   }
 
@@ -228,7 +248,8 @@ class _viewProdutoState extends State<viewProduto> {
                                             ),
                                           )),
                                       onPressed: () {
-                                        /* ... */
+                                        _adicionarAoCarrinho();
+                                        Navigator.pop(context);
                                       },
                                     ),
                                   ],

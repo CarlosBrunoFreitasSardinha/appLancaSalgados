@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:applancasalgados/models/Carrinho.dart';
 import 'package:applancasalgados/models/CustomListTile.dart';
-import 'package:applancasalgados/models/Produto.dart';
+import 'package:applancasalgados/models/ProdutoCarrinho.dart';
 import 'package:applancasalgados/util/Util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,7 @@ class _viewCarrinhoState extends State<viewCarrinho>
   final _controller = StreamController<QuerySnapshot>.broadcast();
   ScrollController _scrollControllerMensagens = ScrollController();
   Carrinho carrinho = Carrinho();
-  Produto _ultimaTarefaRemovida = Produto();
+  ProdutoCarrinho _ultimaTarefaRemovida = ProdutoCarrinho();
 
   Future<Carrinho> _ListenerCarrinho() async {
     Firestore bd = Firestore.instance;
@@ -28,16 +28,18 @@ class _viewCarrinhoState extends State<viewCarrinho>
         .collection("carrinhoAtivo")
         .document("7MmkdZrp4rhrOGig4VAq")
         .get();
-    print("Estou aqui !");
+
     if (snapshot.data != null) {
-      print("Cheguei aqui tbm!");
       Map<String, dynamic> dados = snapshot.data;
       return Carrinho.fromJson(dados);
     }
   }
-  _deleteItem(int index){
+
+  _deleteItem(int index) {
     _ultimaTarefaRemovida = carrinho.produtos[index];
-    carrinho.produtos.removeAt(index);
+    setState(() {
+      carrinho.produtos.removeAt(index);
+    });
 
     //snackbar
     final snackbar = SnackBar(
@@ -61,39 +63,26 @@ class _viewCarrinhoState extends State<viewCarrinho>
   }
 
   Widget _CriarItemLista(context, index) {
-    return Dismissible(
-        key: Key(DateTime.now().millisecondsSinceEpoch.toString()),
-        direction: DismissDirection.endToStart,
-        onDismissed: (direction) {
-          _deleteItem(index);
-        },
-        background: Container(
-          padding: EdgeInsets.all(16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Text("Remover", style: TextStyle(color: Colors.white, fontSize: 20),),
-              Icon( Icons.delete, color: Colors.white,)
-            ],
-          ),
-        ),
-        child: CustomListItemTwo(
-          thumbnail: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Image.network(
-                carrinho.produtos[index].urlImg,
-                fit: BoxFit.cover,
-              )),
-          title: carrinho.produtos[index].titulo,
-          subtitle: carrinho.produtos[index].descricao,
-          author: Util.moeda(carrinho.produtos[index].preco),
-          color: Colors.white,
-          radius: 5,
-          icone: IconButton(icon: Icon(Icons.delete_sweep),
-              onPressed: (){
+    return CustomListItemTwo(
+      thumbnail: ClipRRect(
+          borderRadius: BorderRadius.circular(15),
+          child: Image.network(
+            carrinho.produtos[index].urlImg,
+            fit: BoxFit.cover,
+          )),
+      title: carrinho.produtos[index].titulo,
+      subtitle: carrinho.produtos[index].descricao,
+      preco: Util.moeda(carrinho.produtos[index].preco),
+      quantidade: carrinho.produtos[index].quantidade,
+      subTotal: Util.moeda(carrinho.produtos[index].subtotal),
+      color: Colors.white,
+      radius: 5,
+      icone: IconButton(
+          icon: Icon(Icons.delete_sweep),
+          onPressed: () {
             _deleteItem(index);
           }),
-        ));
+    );
   }
 
   @override
@@ -112,6 +101,63 @@ class _viewCarrinhoState extends State<viewCarrinho>
                       return _CriarItemLista(context, index);
                     }),
               ),
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    border: Border.all(width: 1, color: Colors.grey),
+                    color: Color(0xff5c3838)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    FlatButton(
+                      padding: EdgeInsets.all(0),
+                      child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              border: Border.all(width: 1, color: Colors.grey),
+                              color: Color(0xff006400)),
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 8),
+                            child: Row(
+                              children: <Widget>[
+                                IconButton(
+                                  icon: Icon(Icons.restaurant),
+                                  color: Colors.white,
+                                  onPressed: () {},
+                                ),
+                                Text('Finalizar Compra',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 19.0,
+                                        color: Colors.white)),
+                              ],
+                            ),
+                          )),
+                      onPressed: () {
+//                    Navigator.pop(context);
+                      },
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(0),
+                        decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            border: Border.all(width: 1, color: Colors.grey),
+                            color: Colors.blueAccent),
+                        child: Padding(
+                          padding: EdgeInsets.all(12),
+                          child: Text("Total: "+
+                              Util.moeda(carrinho.total.toStringAsFixed(2)),
+                              style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 19.0,
+                              color: Colors.white)
+                          ),
+                        ))
+                  ],
+                ),
+              )
             ];
           } else if (snapshot.hasError) {
             children = <Widget>[
@@ -134,7 +180,13 @@ class _viewCarrinhoState extends State<viewCarrinho>
               ),
               const Padding(
                 padding: EdgeInsets.only(top: 16),
-                child: Text('Carrendo os Dados...', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xffd19c3c)),),
+                child: Text(
+                  'Carrendo os Dados...',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Color(0xffd19c3c)),
+                ),
               )
             ];
           }

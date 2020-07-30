@@ -1,16 +1,17 @@
-import 'package:applancasalgados/models/Produto.dart';
+import 'package:applancasalgados/models/ProdutoCarrinho.dart';
 
 class Carrinho {
-  List<Produto> produtos = [];
+  List<ProdutoCarrinho> produtos = [];
   double total = 0;
+  bool fechado = false;
 
   Carrinho();
 
-  void addProdutos(Produto p) {
+  void addProdutos(ProdutoCarrinho p) {
     produtos.add(p);
     calcular();
   }
-  void remProdutos(Produto p) {
+  void remProdutos(ProdutoCarrinho p) {
     produtos.remove(p);
     calcular();
   }
@@ -19,7 +20,7 @@ class Carrinho {
   void calcular() {
     total = 0;
     produtos.forEach((p) {
-      total += double.parse(p.preco);
+      total += (double.parse(p.preco) * int.parse(p.quantidade));
     });
   }
 
@@ -44,7 +45,7 @@ class Carrinho {
     total = double.parse(json["total"]);
 
     json["produtos"].forEach((key, value) {
-      Produto item = Produto.fromJson(value);
+      ProdutoCarrinho item = ProdutoCarrinho.fromJson(value);
       produtos.add(item);
     });
   }

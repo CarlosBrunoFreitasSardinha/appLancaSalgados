@@ -120,8 +120,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               }
 
               String count = "0";
-              List<DocumentSnapshot> conversas =
-                  querySnapshot.documents.toList();
+              List<DocumentSnapshot> conversas = querySnapshot.documents.toList();
               DocumentSnapshot item = conversas[0];
               carrinho = Carrinho.fromJson(item.data);
               count = carrinho.produtos.length.toString();

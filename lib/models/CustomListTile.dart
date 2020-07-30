@@ -5,12 +5,16 @@ class _ArticleDescription extends StatelessWidget {
     Key key,
     this.title,
     this.subtitle,
-    this.author,
+    this.preco,
+    this.quantidade,
+    this.subTotal
   }) : super(key: key);
 
   final String title;
   final String subtitle;
-  final String author;
+  final String preco;
+  final String quantidade;
+  final String subTotal;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,7 @@ class _ArticleDescription extends StatelessWidget {
             children: <Widget>[
               Text(
                 '$title',
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 19, color: Color(0xffd19c3c)),
@@ -44,16 +48,29 @@ class _ArticleDescription extends StatelessWidget {
         ),
         Expanded(
           flex: 1,
-          child: Column(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              Text(
-                '$author',
+              Text( '$preco',
                 style: const TextStyle(
-                  fontSize: 18.0,
-                  color: Color(0xff006400),
-                  fontWeight: FontWeight.bold
+                    fontSize: 18.0,
+                    color: Color(0xff006400),
+                    fontWeight: FontWeight.bold
+                ),
+              ),
+              Text( 'x $quantidade',
+                style: const TextStyle(
+                    fontSize: 18.0,
+                    color: Color(0xff006400),
+                    fontWeight: FontWeight.bold
+                ),
+              ),
+              Text( ' = $subTotal',
+                style: const TextStyle(
+                    fontSize: 18.0,
+                    color: Color(0xff006400),
+                    fontWeight: FontWeight.bold
                 ),
               ),
             ],
@@ -70,19 +87,23 @@ class CustomListItemTwo extends StatelessWidget {
       this.thumbnail,
       this.title,
       this.subtitle,
-      this.author,
+      this.preco,
+      this.quantidade,
       this.icone,
       this.radius,
-      this.color})
+      this.color,
+      this.subTotal})
       : super(key: key);
 
   final Widget thumbnail;
   final Widget icone;
   final String title;
   final String subtitle;
-  final String author;
+  final String preco;
   final double radius;
   final Color color;
+  final String quantidade;
+  final String subTotal;
 
   @override
   Widget build(BuildContext context) {
@@ -109,12 +130,14 @@ class CustomListItemTwo extends StatelessWidget {
                   child: _ArticleDescription(
                     title: title,
                     subtitle: subtitle,
-                    author: author,
+                    preco: preco,
+                    quantidade: quantidade,
+                    subTotal: subTotal,
                   ),
                 ),
               ),
               AspectRatio(
-                aspectRatio: 0.4,
+                aspectRatio: 0.35,
                 child: Align(alignment: Alignment.topCenter,
                   child: icone,),
               ),

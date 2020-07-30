@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:applancasalgados/models/Carrinho.dart';
-import 'package:applancasalgados/models/Produto.dart';
+import 'package:applancasalgados/models/ProdutoCarrinho.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +15,7 @@ class _ListaDeTarefasState extends State<ListaDeTarefas>  with SingleTickerProvi
   final _controller = StreamController<QuerySnapshot>.broadcast();
   ScrollController _scrollControllerMensagens = ScrollController();
   Carrinho carrinho = Carrinho();
-  Produto _ultimaTarefaRemovida = Produto();
+  ProdutoCarrinho _ultimaTarefaRemovida = ProdutoCarrinho();
 
   _adicionarListenerProdutos() async{
     Firestore bd = Firestore.instance;
