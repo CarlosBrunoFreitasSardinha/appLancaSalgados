@@ -15,8 +15,6 @@ class viewCarrinho extends StatefulWidget {
 class _viewCarrinhoState extends State<viewCarrinho>
     with SingleTickerProviderStateMixin {
   Firestore bd = Firestore.instance;
-  final _controller = StreamController<QuerySnapshot>.broadcast();
-  ScrollController _scrollControllerMensagens = ScrollController();
   Carrinho carrinho = Carrinho();
   ProdutoCarrinho _ultimaTarefaRemovida = ProdutoCarrinho();
 

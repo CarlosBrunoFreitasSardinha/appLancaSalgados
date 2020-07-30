@@ -40,6 +40,7 @@ class RouteGenerator{
   static const String TESTE = "/testes";
 
 
+  // ignore: missing_return
   static Route<dynamic> generateRoute(RouteSettings settings){
 
     final args = settings.arguments;

@@ -1,8 +1,9 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 
@@ -21,7 +22,6 @@ class _viewPerfilState extends State<viewPerfil> {
   final picker = ImagePicker();
 
   Future getImage(bool i) async {
-    PickedFile _imageFile;
     final pickedFile = await picker.getImage(source: i ? ImageSource.camera: ImageSource.gallery);
 
     setState(() {

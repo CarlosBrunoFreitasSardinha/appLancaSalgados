@@ -31,11 +31,6 @@ class Usuario {
     _isAdm = json['isAdm'];
   }
 
-  @override
-  String toString() {
-    return 'Usuario{_uidUser: $_uidUser, _nome: $_nome, _email: $_email, _senha: $_senha, _urlPerfil: $_urlPerfil, _foneContato1: $_foneContato1, _isAdm: $_isAdm}';
-  }
-
   String get urlPerfil => _urlPerfil;
 
   set urlPerfil(String value) {

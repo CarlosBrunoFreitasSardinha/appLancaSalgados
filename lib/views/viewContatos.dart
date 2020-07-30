@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/models/usuario.dart';
 import 'package:applancasalgados/models/usuarioFireBase.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class abaContatos extends StatefulWidget {
   @override

@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:applancasalgados/models/Conversa.dart';
 import 'package:applancasalgados/models/usuario.dart';
 import 'package:applancasalgados/models/usuarioFireBase.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 import '../RouteGenerator.dart';
 
@@ -73,8 +73,6 @@ class _abaConversasState extends State<abaConversas> {
             break;
           case ConnectionState.active:
           case ConnectionState.done:
-            QuerySnapshot querySnapshot = snapshot.data;
-
             if (snapshot.hasError) {
               return Text("Erro ao carregar os dados!");
             } else {

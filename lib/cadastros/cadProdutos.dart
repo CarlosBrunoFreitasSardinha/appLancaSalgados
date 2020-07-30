@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:applancasalgados/models/CategoriaProduto.dart';
 import 'package:applancasalgados/models/Produto.dart';
-import 'package:applancasalgados/util/FireBase.dart';
 import 'package:applancasalgados/util/Util.dart';
+import 'package:applancasalgados/util/utilFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -28,13 +28,12 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   String _mensagemErro = "";
   String _categoria, _urlImagemRecuperada;
   var selectedItem;
-  bool _upload = false;
   File _image;
   final picker = ImagePicker();
   Produto produto = Produto();
   List<CategoriaProduto> options = [];
   int idCategoria;
-  StorageReference _imagemInFirebase;
+  bool isCad = true;
 
   Future _recuperarImagem(String urlImg) async {
     switch (urlImg) {
@@ -48,13 +47,11 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   }
 
   Future getImage(bool i) async {
-    PickedFile _imageFile;
     final pickedFile = await picker.getImage(
         source: i ? ImageSource.camera : ImageSource.gallery);
 
     setState(() {
       _image = File(pickedFile.path);
-      _upload = true;
       if (_image != null) _uploadImagem();
     });
   }
@@ -73,12 +70,10 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
       if (task.isInProgress) {
         print("progresso");
         setState(() {
-          _upload = true;
         });
       } else if (task.isSuccessful) {
         print("Sucesso");
         setState(() {
-          _upload = false;
         });
       }
     });
@@ -95,7 +90,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
     });
   }
 
-  Future _atualizarUrlImagemFirestore(String url) {
+  _atualizarUrlImagemFirestore(String url) {
     bd.collection("produtos").document(_categoria).updateData({"urlImg": url});
   }
 
@@ -116,13 +111,14 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
   _cadastrarProduto() async {
     int indice = int.parse(produto.idProduto)+1;
-    UtilFirebase.cadastrarDados("produtos", produto.idProduto, produto.toJson());
-    UtilFirebase.alterarDados("indices", "produtos", {"id": indice.toString()});
-  }
-
-  _alterarProduto() {
-    UtilFirebase.alterarDados(
-        "produtos", produto.idCategoria, produto.toJson());
+    if(isCad){
+      UtilFirebase.cadastrarDados("produtos", produto.idProduto, produto.toJson());
+      UtilFirebase.alterarDados("indices", "produtos", {"id": indice.toString()});
+      isCad = false;
+    }
+    else {
+      UtilFirebase.alterarDados("produtos", produto.idCategoria, produto.toJson());
+    }
   }
 
   validarCampos() {

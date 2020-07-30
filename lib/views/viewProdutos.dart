@@ -2,6 +2,7 @@ import 'package:applancasalgados/models/Carrinho.dart';
 import 'package:applancasalgados/models/Produto.dart';
 import 'package:applancasalgados/models/ProdutoCarrinho.dart';
 import 'package:applancasalgados/util/Util.dart';
+import 'package:applancasalgados/util/utilFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,51 +21,41 @@ class _viewProdutoState extends State<viewProduto> {
   int contagem;
   double resultado;
   double preco;
+  String coletionPai, documentPai, subColection, subDocument;
   Carrinho carrinho = Carrinho();
-  ProdutoCarrinho _ultimaTarefaRemovida = ProdutoCarrinho();
+
+
+  _initilizer() {
+    contagem = 1;
+    preco = double.parse(widget.produto.preco);
+    resultado = preco * contagem;
+    coletionPai = "carrinho";
+    documentPai = "cJ8II0UZcFSk18kIgRZXzIybXLg2";
+    subDocument = "carrinhoAtivo";
+    subColection = "7MmkdZrp4rhrOGig4VAq";
+  }
 
   _ListenerCarrinho() async {
-    Firestore bd = Firestore.instance;
-    DocumentSnapshot snapshot = await bd
-        .collection("carrinho")
-        .document("cJ8II0UZcFSk18kIgRZXzIybXLg2")
-        .collection("carrinhoAtivo")
-        .document("7MmkdZrp4rhrOGig4VAq")
-        .get();
+    DocumentSnapshot snapshot =
+        await UtilFirebase.recuperarItemsColecaoGenerica(
+            coletionPai, documentPai, subColection, subDocument);
 
     if (snapshot.data != null) {
       Map<String, dynamic> dados = snapshot.data;
       carrinho = Carrinho.fromJson(dados);
     }
   }
+  _adicionarAoCarrinho() {
 
-  _initilizer() {
-    contagem = 1;
-    preco = double.parse(widget.produto.preco);
-    resultado = preco * contagem;
-  }
-
-  _criarCarrinho() async {
-    Carrinho carrinho = Carrinho();
-    carrinho.addProdutos(ProdutoCarrinho.fromJson(widget.produto.toJson()));
-    Firestore bd = Firestore.instance;
-    await bd  .collection("carrinho")
-        .document("cJ8II0UZcFSk18kIgRZXzIybXLg2")
-        .collection("carrinhoAtivo")
-        .add(carrinho.toJson());
-  }
-
-  _adicionarAoCarrinho() async {
     ProdutoCarrinho produtoCarrinho = ProdutoCarrinho.fromJson(widget.produto.toJson());
     produtoCarrinho.quantidade = contagem.toString();
     produtoCarrinho.subtotal = resultado.toStringAsFixed(2);
+
     carrinho.addProdutos(produtoCarrinho);
-    Firestore bd = Firestore.instance;
-    await bd.collection("carrinho")
-        .document("cJ8II0UZcFSk18kIgRZXzIybXLg2")
-        .collection("carrinhoAtivo")
-        .document("7MmkdZrp4rhrOGig4VAq")
-        .setData(carrinho.toJson());
+
+//    UtilFirebase.criarItemComIdColecaoGenerica(coletionPai, documentPai, subColection, subDocument, carrinho.toJson());
+    print("carinho in produts"+carrinho.toJson().toString());
+    UtilFirebase.alterarItemColecaoGenerica(coletionPai, documentPai, subColection, subDocument, carrinho.toJson());
   }
 
   @override
@@ -139,7 +130,6 @@ class _viewProdutoState extends State<viewProduto> {
                         )),
                   ),
                 ),
-
                 Container(
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
@@ -147,7 +137,6 @@ class _viewProdutoState extends State<viewProduto> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
-
                             Padding(
                               padding:
                                   EdgeInsets.only(left: 16, top: 16, right: 16),
@@ -159,7 +148,6 @@ class _viewProdutoState extends State<viewProduto> {
                                     color: Color(0xfff49c3c)),
                               ),
                             ),
-
                             Padding(
                               padding:
                                   EdgeInsets.only(left: 16, top: 16, right: 16),
@@ -167,7 +155,6 @@ class _viewProdutoState extends State<viewProduto> {
                                   style: TextStyle(
                                       fontSize: 20.0, color: Colors.grey)),
                             ),
-
                             Padding(
                                 padding: EdgeInsets.all(16),
                                 child: Text(
@@ -177,8 +164,6 @@ class _viewProdutoState extends State<viewProduto> {
                                       color: Colors.green,
                                       fontWeight: FontWeight.bold),
                                 )),
-
-
                             Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -190,8 +175,7 @@ class _viewProdutoState extends State<viewProduto> {
                                         borderRadius:
                                             BorderRadius.all(Radius.circular(10.0)),
                                         border: Border.all(
-                                            width: 1, color: Colors.grey)
-                                    ),
+                                            width: 1, color: Colors.grey)),
                                     child: Row(
                                       children: <Widget>[
                                         IconButton(
@@ -217,8 +201,6 @@ class _viewProdutoState extends State<viewProduto> {
                                     ),
                                   ),
                                 ),
-
-
                                 ButtonBar(
                                   children: <Widget>[
                                     FlatButton(
@@ -234,7 +216,8 @@ class _viewProdutoState extends State<viewProduto> {
                                             child: Row(
                                               children: <Widget>[
                                                 IconButton(
-                                                  icon: Icon(Icons.add_shopping_cart),
+                                                  icon:
+                                                      Icon(Icons.add_shopping_cart),
                                                   color: Colors.white,
                                                   onPressed: () {},
                                                 ),
@@ -254,14 +237,11 @@ class _viewProdutoState extends State<viewProduto> {
                                     ),
                                   ],
                                 ),
-
-
                               ],
                             )
-
                           ],
                         ),
-                      ),
+                  ),
                 )),
               ],
             ),

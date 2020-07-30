@@ -33,6 +33,14 @@ dependencies:
   firebase_storage: ^3.1.6
   cloud_firestore: ^0.13.7
   image_picker: ^0.6.7+4
+  flutter_launcher_icons: ^0.7.5
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "dev_assets/logo.png"
+  adaptive_icon_background: "#5c3838"
+  adaptive_icon_foreground: "dev_assets/logo.png"
 
 dev_dependencies:
   flutter_test:

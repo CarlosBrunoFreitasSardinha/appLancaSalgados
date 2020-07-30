@@ -18,7 +18,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   TabController _tabController;
-  List<Carrinho> _listaConversas = List();
   final _controller = StreamController<QuerySnapshot>.broadcast();
   Carrinho carrinho = Carrinho();
   List<String> _itensMenu = [
@@ -193,6 +192,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   ),
                 ),
                 bottom: TabBar(
+                  controller: _tabController,
                   indicatorWeight: 4,
                   tabs: [
                     Tab(icon: Icon(Icons.home)),
