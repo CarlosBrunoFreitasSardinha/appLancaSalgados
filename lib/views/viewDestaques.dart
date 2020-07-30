@@ -14,10 +14,11 @@ class Destaques extends StatefulWidget {
 
 class _DestaquesState extends State<Destaques>
     with SingleTickerProviderStateMixin {
-  final PageController ctrl = PageController(viewportFraction: 0.9);
+  final PageController ctrl = PageController(viewportFraction: 0.9, initialPage: 0);
   final Firestore bd = Firestore.instance;
   final _controller = StreamController<QuerySnapshot>.broadcast();
   int currentPage = 0;
+  int totalPage = 0;
 
   Stream<QuerySnapshot> _listarListenerProdutos({String tag = 'promo'}) {
     final stream = bd
@@ -45,6 +46,20 @@ class _DestaquesState extends State<Destaques>
           currentPage = next;
         });
       }
+    });
+
+    Timer.periodic(Duration(seconds: 5), (Timer timer) {
+      if (currentPage < totalPage) {
+        currentPage++;
+      } else {
+        currentPage = 0;
+      }
+
+      ctrl.animateToPage(
+        currentPage,
+        duration: Duration(seconds: 1),
+        curve: Curves.easeIn,
+      );
     });
   }
 
@@ -77,6 +92,7 @@ class _DestaquesState extends State<Destaques>
                   itemCount: querySnapshot.documents.length,
                   // ignore: missing_return
                   itemBuilder: (context, indice) {
+                  totalPage = querySnapshot.documents.length;
 
                     List<DocumentSnapshot> produtos = querySnapshot.documents.toList();
                     bool active = indice == currentPage;
