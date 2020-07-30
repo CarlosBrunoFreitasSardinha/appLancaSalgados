@@ -21,18 +21,20 @@ class _ViewProdutoState extends State<ViewProduto> {
   int contagem;
   double resultado;
   double preco;
-  String coletionPai, documentPai, subColection, subDocument;
   Carrinho carrinho = Carrinho();
+  ProdutoCarrinho produtoCarrinho = ProdutoCarrinho();
+  bool isInitial = true;
+  String coletionPai, documentPai, subColection, subDocument;
 
 
   _initilizer() {
     contagem = 1;
-    preco = double.parse(widget.produto.preco);
+    preco = widget.produto.preco;
     resultado = preco * contagem;
     coletionPai = "carrinho";
     documentPai = "cJ8II0UZcFSk18kIgRZXzIybXLg2";
-    subDocument = "carrinhoAtivo";
-    subColection = "7MmkdZrp4rhrOGig4VAq";
+    subDocument = "ativo";
+    subColection = "carrinho";
   }
 
   _listenerCarrinho() async {
@@ -45,17 +47,33 @@ class _ViewProdutoState extends State<ViewProduto> {
       carrinho = Carrinho.fromJson(dados);
     }
   }
-  _adicionarAoCarrinho() {
-
-    ProdutoCarrinho produtoCarrinho = ProdutoCarrinho.fromJson(widget.produto.toJson());
-    produtoCarrinho.quantidade = contagem.toString();
-    produtoCarrinho.subtotal = resultado.toStringAsFixed(2);
-
+  verificaItem(){
+  produtoCarrinho = ProdutoCarrinho.fromJson(widget.produto.toJson());
+  int posicao = -1;
+  for(int i=0; i<carrinho.produtos.length;i++){
+    if(carrinho.produtos[i].idProduto == produtoCarrinho.idProduto){
+      posicao = i;
+      break;
+    }
+  }
+  if(posicao != -1){
+    carrinho.produtos[posicao].quantidade = carrinho.produtos[posicao].quantidade + contagem;
+    carrinho.produtos[posicao].subtotal = carrinho.produtos[posicao].subtotal + resultado;
+    carrinho.total = carrinho.total + resultado;
+  }
+  else{
+    produtoCarrinho.quantidade = contagem;
+    produtoCarrinho.subtotal = resultado;
     carrinho.addProdutos(produtoCarrinho);
+  }
+  }
+  Future _adicionarAoCarrinho() {
 
-//    UtilFirebase.criarItemComIdColecaoGenerica(coletionPai, documentPai, subColection, subDocument, carrinho.toJson());
-    print("carinho in produts"+carrinho.toJson().toString());
-    UtilFirebase.alterarItemColecaoGenerica(coletionPai, documentPai, subColection, subDocument, carrinho.toJson());
+    verificaItem();
+
+    isInitial
+      ? UtilFirebase.criarItemComIdColecaoGenerica(coletionPai, documentPai, subColection, subDocument, carrinho.toJson())
+      : UtilFirebase.alterarItemColecaoGenerica(coletionPai, documentPai, subColection, subDocument, carrinho.toJson());
   }
 
   @override
@@ -222,7 +240,7 @@ class _ViewProdutoState extends State<ViewProduto> {
                                                   onPressed: () {},
                                                 ),
                                                 Text(
-                                                    'Adicionar ${Util.moeda(resultado.toStringAsFixed(2))}',
+                                                    'Adicionar ${Util.moeda(resultado)}',
                                                     style: TextStyle(
                                                         fontWeight: FontWeight.w500,
                                                         fontSize: 20.0,

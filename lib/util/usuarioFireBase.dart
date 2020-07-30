@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:applancasalgados/models/usuario.dart';
+import 'package:applancasalgados/util/utilFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -11,13 +12,14 @@ class UserFirebase {
   static Usuario fireLogged = Usuario();
   static FirebaseAuth auth = FirebaseAuth.instance;
   static bool logado = false;
+  static String colection = "usuarios";
 
   static recuperaDadosUsuario() async {
     FirebaseUser usuarioLogado = await auth.currentUser();
 
     Firestore bd = Firestore.instance;
     DocumentSnapshot snapshot =
-        await bd.collection("usuarios").document(usuarioLogado.uid).get();
+        await bd.collection(colection).document(usuarioLogado.uid).get();
     if (snapshot.data != null) {
       Map<String, dynamic> dados = snapshot.data;
       UserFirebase.fireLogged = Usuario.fromJson(dados);
@@ -61,11 +63,7 @@ class UserFirebase {
     });
   }
 
-  Future _atualizarUsuarioFirebase() {
-    Firestore bd = Firestore.instance;
-    bd
-        .collection("usuarios")
-        .document(UserFirebase.fireLogged.uidUser)
-        .updateData(UserFirebase.fireLogged.toJson());
+  static _atualizarUsuarioFirebase() {
+    UtilFirebase.alterarDados(colection, UserFirebase.fireLogged.uidUser, UserFirebase.fireLogged.toJson());
   }
 }

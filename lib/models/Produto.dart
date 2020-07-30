@@ -2,7 +2,7 @@ class Produto {
   String _idProduto;
   String _titulo;
   String _urlImg;
-  String _preco;
+  double _preco;
   String _descricao;
 
   String _idCategoria;
@@ -32,7 +32,7 @@ class Produto {
     idProduto = json['idProduto'];
     titulo = json['titulo'];
     urlImg = json['urlImg'];
-    preco = json['preco'];
+    preco = json['preco'] + 0.0;
     descricao = json['descricao'];
 
     idCategoria = json['idCategoria'];
@@ -64,10 +64,10 @@ class Produto {
   }
 
   // ignore: unnecessary_getters_setters
-  String get preco => _preco;
+  double get preco => _preco;
 
   // ignore: unnecessary_getters_setters
-  set preco(String value) {
+  set preco(double value) {
     _preco = value;
   }
 

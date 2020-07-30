@@ -62,7 +62,7 @@ class RouteGenerator{
 
       case CONFIG: return MaterialPageRoute(builder: (_) => Configuracoes());
 
-      case TESTE: return MaterialPageRoute(builder: (_) => ListaDeTarefas());
+      case TESTE: return MaterialPageRoute(builder: (_) => AnimatedIconExample());
 
       default: _erroRota();
     }

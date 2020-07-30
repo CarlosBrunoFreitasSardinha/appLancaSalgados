@@ -124,7 +124,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   validarCampos() {
     String titulo = _controllerTitulo.text;
     String descricao = _controllerDescricao.text;
-    double preco = double.parse(Util.moeda(_controllerPreco.text));
+    double preco = double.parse(Util.moeda(double.parse(_controllerPreco.text)));
     String temp = _controllerTempPreparo.text;
 
 
@@ -138,7 +138,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
             produto.titulo = titulo;
             produto.descricao = descricao;
-            produto.preco = preco.toStringAsFixed(2);
+            produto.preco = preco;
             produto.tempoPreparo = temp;
             produto.idCategoria = selectedItem;
             produto.urlImg = _urlImagemRecuperada;

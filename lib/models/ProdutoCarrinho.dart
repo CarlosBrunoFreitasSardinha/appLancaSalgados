@@ -2,10 +2,10 @@ class ProdutoCarrinho {
   String _idProduto;
   String _titulo;
   String _urlImg;
-  String _preco;
+  double _preco;
   String _descricao;
-  String _quantidade;
-  String _subtotal;
+  int _quantidade;
+  double _subtotal;
 
 
   ProdutoCarrinho();
@@ -29,10 +29,10 @@ class ProdutoCarrinho {
     idProduto = json['idProduto'];
     titulo = json['titulo'];
     urlImg = json['urlImg'];
-    preco = json['preco'];
+    preco = json['preco']+0.0;
     descricao = json['descricao'];
-    quantidade = json['quantidade'] != null ? json['quantidade'] : "1";
-    subtotal = json['subtotal'] != null ? json['subtotal'] : json['preco'];
+    quantidade = json['quantidade'] != null ? json['quantidade'] : 1;
+    subtotal = json['subtotal'] != null ? json['subtotal']+0.0 : preco;
   }
 
   // ignore: unnecessary_getters_setters
@@ -60,10 +60,10 @@ class ProdutoCarrinho {
   }
 
   // ignore: unnecessary_getters_setters
-  String get preco => _preco;
+  double get preco => _preco;
 
   // ignore: unnecessary_getters_setters
-  set preco(String value) {
+  set preco(double value) {
     _preco = value;
   }
 
@@ -76,18 +76,18 @@ class ProdutoCarrinho {
   }
 
   // ignore: unnecessary_getters_setters
-  String get quantidade => _quantidade;
+  int get quantidade => _quantidade;
 
   // ignore: unnecessary_getters_setters
-  set quantidade(String value) {
+  set quantidade(int value) {
     _quantidade = value;
   }
 
   // ignore: unnecessary_getters_setters
-  String get subtotal => _subtotal;
+  double get subtotal => _subtotal;
 
   // ignore: unnecessary_getters_setters
-  set subtotal(String value) {
+  set subtotal(double value) {
     _subtotal = value;
   }
 }

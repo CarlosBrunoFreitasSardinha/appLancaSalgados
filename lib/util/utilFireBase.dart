@@ -48,9 +48,9 @@ class UtilFirebase {
           .updateData(json);
   }
 
-  static criarItemComIdColecaoGenerica(String coletionPai, String documentPai,
-      String subColection, String subDocument, Map<String, dynamic> json){
-    UtilFirebase.bd
+  static Future<void> criarItemComIdColecaoGenerica(String coletionPai, String documentPai,
+      String subColection, String subDocument, Map<String, dynamic> json) async {
+    await UtilFirebase.bd
         .collection(coletionPai)
         .document(documentPai)
         .collection(subColection)

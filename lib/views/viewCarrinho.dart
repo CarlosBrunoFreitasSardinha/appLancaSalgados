@@ -4,6 +4,7 @@ import 'package:applancasalgados/models/Carrinho.dart';
 import 'package:applancasalgados/models/CustomListTile.dart';
 import 'package:applancasalgados/models/ProdutoCarrinho.dart';
 import 'package:applancasalgados/util/Util.dart';
+import 'package:applancasalgados/util/utilFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -17,15 +18,21 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
   Firestore bd = Firestore.instance;
   Carrinho carrinho = Carrinho();
   ProdutoCarrinho _ultimaTarefaRemovida = ProdutoCarrinho();
+  bool isInitial = true;
+  String coletionPai, documentPai, subColection, subDocument;
+
+
+  _initilizer() {
+    coletionPai = "carrinho";
+    documentPai = "cJ8II0UZcFSk18kIgRZXzIybXLg2";
+    subDocument = "ativo";
+    subColection = "carrinho";
+  }
 
   Future<Carrinho> _listenerCarrinho() async {
-    Firestore bd = Firestore.instance;
-    DocumentSnapshot snapshot = await bd
-        .collection("carrinho")
-        .document("cJ8II0UZcFSk18kIgRZXzIybXLg2")
-        .collection("carrinhoAtivo")
-        .document("7MmkdZrp4rhrOGig4VAq")
-        .get();
+    DocumentSnapshot snapshot =
+    await UtilFirebase.recuperarItemsColecaoGenerica(
+        coletionPai, documentPai, subColection, subDocument);
 
     if (snapshot.data != null) {
       Map<String, dynamic> dados = snapshot.data;
@@ -58,6 +65,7 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
   void initState() {
     // TODO: implement initState
     super.initState();
+    _initilizer();
   }
 
   Widget _criarItemLista(context, index) {
@@ -71,7 +79,7 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
       title: carrinho.produtos[index].titulo,
       subtitle: carrinho.produtos[index].descricao,
       preco: Util.moeda(carrinho.produtos[index].preco),
-      quantidade: carrinho.produtos[index].quantidade,
+      quantidade: carrinho.produtos[index].quantidade.toString(),
       subTotal: Util.moeda(carrinho.produtos[index].subtotal),
       color: Colors.white,
       radius: 5,
@@ -146,7 +154,7 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
                         child: Padding(
                           padding: EdgeInsets.all(12),
                           child: Text("Total: "+
-                              Util.moeda(carrinho.total.toStringAsFixed(2)),
+                              Util.moeda(carrinho.total),
                               style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 19.0,
@@ -161,12 +169,14 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
             children = <Widget>[
               Icon(
                 Icons.error_outline,
-                color: Colors.red,
+                color: Colors.white,
                 size: 60,
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 16),
-                child: Text('Nenhum Produto adicionado :('),
+                child: Text('Nenhum Produto adicionado :(', style: TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white
+                ),),
               )
             ];
           } else {
@@ -183,7 +193,7 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
-                      color: Color(0xffd19c3c)),
+                      color: Colors.white),
                 ),
               )
             ];

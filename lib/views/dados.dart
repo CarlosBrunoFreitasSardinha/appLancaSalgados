@@ -1,115 +1,82 @@
-import 'package:applancasalgados/models/Carrinho.dart';
-import 'package:applancasalgados/models/ProdutoCarrinho.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class ListaDeTarefas extends StatefulWidget {
+class AnimatedIconExample extends StatefulWidget {
   @override
-  _ListaDeTarefasState createState() => _ListaDeTarefasState();
+  _AnimatedIconExampleState createState() => _AnimatedIconExampleState();
 }
 
-class _ListaDeTarefasState extends State<ListaDeTarefas>  with SingleTickerProviderStateMixin {
-  Firestore bd = Firestore.instance;
-  Carrinho carrinho = Carrinho();
-  ProdutoCarrinho _ultimaTarefaRemovida = ProdutoCarrinho();
-
-  _adicionarListenerProdutos() async{
-    Firestore bd = Firestore.instance;
-    DocumentSnapshot snapshot = await bd
-        .collection("carrinho")
-        .document("cJ8II0UZcFSk18kIgRZXzIybXLg2")
-        .collection("carrinhoAtivo")
-        .document("7MmkdZrp4rhrOGig4VAq").get();
-
-    if (snapshot.data != null) {
-      Map<String, dynamic> dados = snapshot.data;
-      this.carrinho = Carrinho.fromJson(dados);
-      print("Carrinho"+this.carrinho.toString());
-    }
-  }
-
-
+class _AnimatedIconExampleState extends State<AnimatedIconExample>
+    with SingleTickerProviderStateMixin {
+  PageController pageController = PageController();
+  AnimationController controller;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    _adicionarListenerProdutos();
+    controller =
+        AnimationController(vsync: this, duration: Duration(seconds: 1));
   }
 
-  Widget _criarItemLista(context, index) {
-
-    return Dismissible(
-      key: Key(DateTime.now().millisecondsSinceEpoch.toString()),
-      direction: DismissDirection.endToStart,
-      onDismissed: (direction) {
-
-        _ultimaTarefaRemovida = carrinho.produtos[index];
-        carrinho.produtos.removeAt(index);
-
-        //snackbar
-        final snackbar = SnackBar(
-          content: Text("Produto Removida"),
-          duration: Duration(seconds: 5),
-//          backgroundColor: Colors.green,
-          action:
-          SnackBarAction(
-              label: "Desfazer",
-              onPressed: (){
-                setState(() {
-                  carrinho.produtos.insert(index, _ultimaTarefaRemovida);
-                });
-              }
-          ),
-        );
-        Scaffold.of(context).showSnackBar(snackbar);
-      },
-      background: Container(
-        color: Color(0xFFe10000),
-        padding: EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Icon(
-              Icons.delete,
-              color: Colors.white,
-            )
-          ],
-        ),
-      ),
-
-      child: ListTile(
-        leading: ClipRRect(
-            borderRadius:
-            BorderRadius.circular(15),
-            child: Image.network(
-              carrinho.produtos[index].urlImg,
-              height: 100,
-              width: 100,
-              fit: BoxFit.cover,
-            )),
-        title: Text(carrinho.produtos[index].titulo),
-        subtitle: Text(carrinho.produtos[index].descricao),
-        trailing: Text(carrinho.produtos[index].preco),
-      ),
-    );
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: ListView.builder(
-                  itemCount: carrinho.produtos.length,
-                  itemBuilder: (context, index) {
-                    return _criarItemLista(context, index);
-                  }),
+      appBar: AppBar(
+          leading: GestureDetector(
+            child: Center(
+              child: AnimatedIcon(
+                  icon: AnimatedIcons.menu_close, progress: controller),
             ),
-          ],
-        ),
+            onTap: () {
+              controller.reverse();
+              pageController.animateToPage(0,
+                  duration: Duration(seconds: 1), curve: Curves.linear);
+            },
+          ),
+          title: Text("Animated PageView Controller")),
+      body: PageView(
+        controller: pageController,
+        scrollDirection: Axis.vertical,
+        children: <Widget>[
+          buildPage0(),
+          Container(color: Colors.green),
+          Container(color: Colors.blue),
+          Container(color: Colors.yellow),
+          Container(color: Colors.pink),
+        ],
+      ),
+    );
+  }
+
+  show(int page) {
+    controller.forward();
+    pageController.animateToPage(page, duration: Duration(seconds: 1), curve: Curves.linear);
+  }
+
+  temporario(){
+    int i =1;
+    while(true){
+      show(i);
+      Duration(seconds: 2);
+      i!=4 ? i++ : i = 1;
+    }
+  }
+  Container buildPage0() {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          ListTile(onTap: () => show(1), title: Center(child: Text("Green"))),
+          ListTile(onTap: () => show(2), title: Center(child: Text("Blue"))),
+          ListTile(onTap: () => show(3), title: Center(child: Text("Yellow"))),
+          ListTile(onTap: () => show(4), title: Center(child: Text("Pink"))),
+        ],
       ),
     );
   }

@@ -2,8 +2,8 @@
 
 class Util {
 
-  static String moeda(String valor) {
+  static String moeda(double valor) {
 
-    return "R\$ "+valor.replaceAll(".", ",");
+    return "R\$ "+valor.toStringAsFixed(2).replaceAll(".", ",");
   }
 }
