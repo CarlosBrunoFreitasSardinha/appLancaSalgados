@@ -135,16 +135,18 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 24 ),
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Text(
-                          count.toString(),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                            backgroundColor: Colors.blueAccent,
-                          ),
-                        )),
+                    child: CircleAvatar(
+                      radius: 10,
+                      backgroundColor: Colors.blueAccent,
+                      child: Text(
+                        count.toString(),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
+                    ),
                   )
                 ],
               );
