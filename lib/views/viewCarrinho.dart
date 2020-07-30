@@ -7,18 +7,18 @@ import 'package:applancasalgados/util/Util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class viewCarrinho extends StatefulWidget {
+class ViewCarrinho extends StatefulWidget {
   @override
-  _viewCarrinhoState createState() => _viewCarrinhoState();
+  _ViewCarrinhoState createState() => _ViewCarrinhoState();
 }
 
-class _viewCarrinhoState extends State<viewCarrinho>
+class _ViewCarrinhoState extends State<ViewCarrinho>
     with SingleTickerProviderStateMixin {
   Firestore bd = Firestore.instance;
   Carrinho carrinho = Carrinho();
   ProdutoCarrinho _ultimaTarefaRemovida = ProdutoCarrinho();
 
-  Future<Carrinho> _ListenerCarrinho() async {
+  Future<Carrinho> _listenerCarrinho() async {
     Firestore bd = Firestore.instance;
     DocumentSnapshot snapshot = await bd
         .collection("carrinho")
@@ -60,7 +60,7 @@ class _viewCarrinhoState extends State<viewCarrinho>
     super.initState();
   }
 
-  Widget _CriarItemLista(context, index) {
+  Widget _criarItemLista(context, index) {
     return CustomListItemTwo(
       thumbnail: ClipRRect(
           borderRadius: BorderRadius.circular(15),
@@ -86,7 +86,7 @@ class _viewCarrinhoState extends State<viewCarrinho>
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _ListenerCarrinho(),
+        future: _listenerCarrinho(),
         builder: (BuildContext context, AsyncSnapshot<Carrinho> snapshot) {
           List<Widget> children;
           if (snapshot.hasData) {
@@ -96,7 +96,7 @@ class _viewCarrinhoState extends State<viewCarrinho>
                 child: ListView.builder(
                     itemCount: carrinho.produtos.length,
                     itemBuilder: (context, index) {
-                      return _CriarItemLista(context, index);
+                      return _criarItemLista(context, index);
                     }),
               ),
               Container(

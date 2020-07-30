@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 
-class viewPerfil extends StatefulWidget {
+class ViewPerfil extends StatefulWidget {
   @override
-  _viewPerfilState createState() => _viewPerfilState();
+  _ViewPerfilState createState() => _ViewPerfilState();
 }
 
-class _viewPerfilState extends State<viewPerfil> {
+class _ViewPerfilState extends State<ViewPerfil> {
   TextEditingController _controllerNome = TextEditingController();
   TextEditingController _controllerNumber = TextEditingController();
   String _idUsuarioLogado, _urlImagemRecuperada;

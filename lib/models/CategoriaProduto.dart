@@ -5,14 +5,18 @@ class CategoriaProduto {
   CategoriaProduto();
 
 
+  // ignore: unnecessary_getters_setters
   String get idCategoria => _idCategoria;
 
+  // ignore: unnecessary_getters_setters
   set idCategoria(String value) {
     _idCategoria = value;
   }
 
+  // ignore: unnecessary_getters_setters
   String get descricao => _descricao;
 
+  // ignore: unnecessary_getters_setters
   set descricao(String value) {
     _descricao = value;
   }

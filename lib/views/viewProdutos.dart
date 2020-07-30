@@ -8,16 +8,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
-class viewProduto extends StatefulWidget {
-  Produto produto;
+class ViewProduto extends StatefulWidget {
+  final Produto produto;
 
-  viewProduto(this.produto);
+  ViewProduto(this.produto);
 
   @override
-  _viewProdutoState createState() => _viewProdutoState();
+  _ViewProdutoState createState() => _ViewProdutoState();
 }
 
-class _viewProdutoState extends State<viewProduto> {
+class _ViewProdutoState extends State<ViewProduto> {
   int contagem;
   double resultado;
   double preco;
@@ -35,7 +35,7 @@ class _viewProdutoState extends State<viewProduto> {
     subColection = "7MmkdZrp4rhrOGig4VAq";
   }
 
-  _ListenerCarrinho() async {
+  _listenerCarrinho() async {
     DocumentSnapshot snapshot =
         await UtilFirebase.recuperarItemsColecaoGenerica(
             coletionPai, documentPai, subColection, subDocument);
@@ -63,7 +63,7 @@ class _viewProdutoState extends State<viewProduto> {
     // TODO: implement initState
     super.initState();
     _initilizer();
-    _ListenerCarrinho();
+    _listenerCarrinho();
     timeDilation = 3;
   }
 

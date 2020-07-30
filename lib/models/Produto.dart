@@ -39,37 +39,58 @@ class Produto {
     tempoPreparo = json['tempoPreparo'];
   }
 
+  // ignore: unnecessary_getters_setters
   String get idProduto => _idProduto;
+
+  // ignore: unnecessary_getters_setters
   set idProduto(String value) {
     _idProduto = value;
   }
 
+  // ignore: unnecessary_getters_setters
   String get titulo => _titulo;
+
+  // ignore: unnecessary_getters_setters
   set titulo(String value) {
     _titulo = value;
   }
 
+  // ignore: unnecessary_getters_setters
   String get urlImg => _urlImg;
+
+  // ignore: unnecessary_getters_setters
   set urlImg(String value) {
     _urlImg = value;
   }
 
+  // ignore: unnecessary_getters_setters
   String get preco => _preco;
+
+  // ignore: unnecessary_getters_setters
   set preco(String value) {
     _preco = value;
   }
 
+  // ignore: unnecessary_getters_setters
   String get descricao => _descricao;
+
+  // ignore: unnecessary_getters_setters
   set descricao(String value) {
     _descricao = value;
   }
 
+  // ignore: unnecessary_getters_setters
   String get tempoPreparo => _tempoPreparo;
+
+  // ignore: unnecessary_getters_setters
   set tempoPreparo(String value) {
     _tempoPreparo = value;
   }
 
+  // ignore: unnecessary_getters_setters
   String get idCategoria => _idCategoria;
+
+  // ignore: unnecessary_getters_setters
   set idCategoria(String value) {
     _idCategoria = value;
   }

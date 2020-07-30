@@ -32,6 +32,9 @@ class _DestaquesState extends State<Destaques>
 
   @override
   void initState() {
+    // TODO: implement initState
+    super.initState();
+
     _listarListenerProdutos();
 
     ctrl.addListener(() {

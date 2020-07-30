@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:applancasalgados/models/usuario.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:applancasalgados/models/usuario.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 class UserFirebase {
   static Usuario fireLogged = Usuario();
@@ -57,11 +57,11 @@ class UserFirebase {
     });
     task.onComplete.then((StorageTaskSnapshot snapshot) async {
       UserFirebase.fireLogged.urlPerfil = await snapshot.ref.getDownloadURL();
-      _AtualizarUsuarioFirebase();
+      _atualizarUsuarioFirebase();
     });
   }
 
-  Future _AtualizarUsuarioFirebase() {
+  Future _atualizarUsuarioFirebase() {
     Firestore bd = Firestore.instance;
     bd
         .collection("usuarios")

@@ -31,45 +31,59 @@ class Usuario {
     _isAdm = json['isAdm'];
   }
 
-  String get urlPerfil => _urlPerfil;
+  // ignore: unnecessary_getters_setters
+  bool get isAdm => _isAdm;
 
-  set urlPerfil(String value) {
-    _urlPerfil = value;
+  // ignore: unnecessary_getters_setters
+  set isAdm(bool value) {
+    _isAdm = value;
   }
 
-  String get senha => _senha;
-
-  set senha(String value) {
-    _senha = value;
-  }
-
-  String get email => _email;
-
-  set email(String value) {
-    _email = value;
-  }
-
-  String get nome => _nome;
-
-  set nome(String value) {
-    _nome = value;
-  }
-
-  String get uidUser => _uidUser;
-
-  set uidUser(String value) {
-    _uidUser = value;
-  }
-
+  // ignore: unnecessary_getters_setters
   String get foneContato1 => _foneContato1;
 
+  // ignore: unnecessary_getters_setters
   set foneContato1(String value) {
     _foneContato1 = value;
   }
 
-  bool get isAdm => _isAdm;
+  // ignore: unnecessary_getters_setters
+  String get urlPerfil => _urlPerfil;
 
-  set isAdm(bool value) {
-    _isAdm = value;
+  // ignore: unnecessary_getters_setters
+  set urlPerfil(String value) {
+    _urlPerfil = value;
+  }
+
+  // ignore: unnecessary_getters_setters
+  String get senha => _senha;
+
+  // ignore: unnecessary_getters_setters
+  set senha(String value) {
+    _senha = value;
+  }
+
+  // ignore: unnecessary_getters_setters
+  String get email => _email;
+
+  // ignore: unnecessary_getters_setters
+  set email(String value) {
+    _email = value;
+  }
+
+  // ignore: unnecessary_getters_setters
+  String get nome => _nome;
+
+  // ignore: unnecessary_getters_setters
+  set nome(String value) {
+    _nome = value;
+  }
+
+  // ignore: unnecessary_getters_setters
+  String get uidUser => _uidUser;
+
+  // ignore: unnecessary_getters_setters
+  set uidUser(String value) {
+    _uidUser = value;
   }
 }

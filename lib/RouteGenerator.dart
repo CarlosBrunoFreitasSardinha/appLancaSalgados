@@ -10,7 +10,6 @@ import 'package:applancasalgados/views/home.dart';
 import 'package:applancasalgados/views/viewCardapio.dart';
 import 'package:applancasalgados/views/viewCarrinho.dart';
 import 'package:applancasalgados/views/viewDestaques.dart';
-import 'package:applancasalgados/views/viewMensagens.dart';
 import 'package:applancasalgados/views/viewPerfil.dart';
 import 'package:applancasalgados/views/viewProdutos.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +35,7 @@ class RouteGenerator{
 
 
   static const String CONFIG = "/configuracoes";
-  static const String MSGS = "/mensagens";
+//  static const String MSGS = "/mensagens";
   static const String TESTE = "/testes";
 
 
@@ -53,9 +52,9 @@ class RouteGenerator{
 
       case DESTAQUES: return MaterialPageRoute(builder: (_) => Destaques());
       case CARDAPIO: return MaterialPageRoute(builder: (_) => Cardapio());
-      case CARRINHO: return MaterialPageRoute(builder: (_) => viewCarrinho());
-      case PERFIL: return MaterialPageRoute(builder: (_) => viewPerfil());
-      case PRODUTO: return MaterialPageRoute(builder: (_) => viewProduto(args));
+      case CARRINHO: return MaterialPageRoute(builder: (_) => ViewCarrinho());
+      case PERFIL: return MaterialPageRoute(builder: (_) => ViewPerfil());
+      case PRODUTO: return MaterialPageRoute(builder: (_) => ViewProduto(args));
 
       case CAD_USER: return MaterialPageRoute(builder: (_) => CadastroUsuario());
       case CAD_CATEGORIA: return MaterialPageRoute(builder: (_) => CadastroCategoriaProdutos());
@@ -63,7 +62,6 @@ class RouteGenerator{
 
       case CONFIG: return MaterialPageRoute(builder: (_) => Configuracoes());
 
-      case MSGS: return MaterialPageRoute(builder: (_) => Mensagens(args));
       case TESTE: return MaterialPageRoute(builder: (_) => ListaDeTarefas());
 
       default: _erroRota();

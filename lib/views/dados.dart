@@ -37,7 +37,7 @@ class _ListaDeTarefasState extends State<ListaDeTarefas>  with SingleTickerProvi
     _adicionarListenerProdutos();
   }
 
-  Widget _CriarItemLista(context, index) {
+  Widget _criarItemLista(context, index) {
 
     return Dismissible(
       key: Key(DateTime.now().millisecondsSinceEpoch.toString()),
@@ -105,7 +105,7 @@ class _ListaDeTarefasState extends State<ListaDeTarefas>  with SingleTickerProvi
               child: ListView.builder(
                   itemCount: carrinho.produtos.length,
                   itemBuilder: (context, index) {
-                    return _CriarItemLista(context, index);
+                    return _criarItemLista(context, index);
                   }),
             ),
           ],
