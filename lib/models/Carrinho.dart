@@ -3,34 +3,41 @@ import 'package:applancasalgados/models/ProdutoCarrinho.dart';
 class Carrinho {
   List<ProdutoCarrinho> produtos = [];
   double total = 0;
-  bool fechado = false;
+  bool _fechado = false;
 
   Carrinho();
 
   void addProdutos(ProdutoCarrinho p) {
-    produtos.add(p);
+    int posicao = verificaitem(p);
+    if (posicao != -1) {
+      produtos[posicao].quantidade = produtos[posicao].quantidade +p.quantidade;
+      produtos[posicao].subtotal = produtos[posicao].subtotal + p.subtotal;
+    } else {
+      produtos.add(p);
+    }
     calcular();
   }
 
   void remProdutos(ProdutoCarrinho p) {
-    produtos.remove(p);
+
+    if (p.quantidade <= 0) {
+      produtos.remove(p);
+    }
+    else{
+      int i = verificaitem(p);
+      produtos[i].quantidade = p.quantidade;
+      produtos[i].subtotal = p.subtotal;
+    }
     calcular();
   }
 
-  verificaItem(ProdutoCarrinho p) {
-    int posicao = -1;
-    for (int i = 0; i < this.produtos.length; i++) {
-      if (this.produtos[i].idProduto == p.idProduto) {
-        posicao = i;
-        break;
+  int verificaitem(ProdutoCarrinho p){
+    for (int i = 0; i < produtos.length; i++) {
+      if (produtos[i].idProduto == p.idProduto) {
+        return i;
       }
     }
-    if (posicao != -1) {
-      this.produtos[posicao].quantidade = this.produtos[posicao].quantidade +p.quantidade;
-      this.produtos[posicao].subtotal = this.produtos[posicao].subtotal + p.subtotal;
-    } else {
-      this.addProdutos(p);
-    }
+    return -1;
   }
 
   void calcular() {
@@ -43,6 +50,16 @@ class Carrinho {
   void limpar() {
     produtos = [];
     total = 0;
+  }
+  void fecharPedido(){
+    fechado = true;
+  }
+
+
+  bool get fechado => _fechado;
+
+  set fechado(bool value) {
+    _fechado = value;
   }
 
   Map<String, dynamic> toJson() {
@@ -63,4 +80,5 @@ class Carrinho {
       produtos.add(item);
     });
   }
+
 }

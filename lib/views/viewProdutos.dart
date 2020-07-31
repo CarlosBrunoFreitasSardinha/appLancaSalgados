@@ -18,9 +18,6 @@ class ViewProduto extends StatefulWidget {
 }
 
 class _ViewProdutoState extends State<ViewProduto> {
-  int contagem;
-  double resultado;
-  double preco;
   Carrinho carrinho = Carrinho();
   ProdutoCarrinho produtoCarrinho = ProdutoCarrinho();
   bool isInitial = true;
@@ -28,9 +25,7 @@ class _ViewProdutoState extends State<ViewProduto> {
 
 
   _initilizer() {
-    contagem = 1;
-    preco = widget.produto.preco;
-    resultado = preco * contagem;
+    produtoCarrinho = ProdutoCarrinho.fromJson(widget.produto.toJson());
     coletionPai = "carrinho";
     documentPai = "cJ8II0UZcFSk18kIgRZXzIybXLg2";
     subDocument = "ativo";
@@ -39,41 +34,23 @@ class _ViewProdutoState extends State<ViewProduto> {
 
   _listenerCarrinho() async {
     DocumentSnapshot snapshot =
-        await UtilFirebase.recuperarItemsColecaoGenerica(
-            coletionPai, documentPai, subColection, subDocument);
+    await UtilFirebase.recuperarItemsColecaoGenerica(
+        coletionPai, documentPai, subColection, subDocument);
 
     if (snapshot.data != null) {
       Map<String, dynamic> dados = snapshot.data;
       carrinho = Carrinho.fromJson(dados);
     }
   }
-  verificaItem(){
-  produtoCarrinho = ProdutoCarrinho.fromJson(widget.produto.toJson());
-  int posicao = -1;
-  for(int i=0; i<carrinho.produtos.length;i++){
-    if(carrinho.produtos[i].idProduto == produtoCarrinho.idProduto){
-      posicao = i;
-      break;
-    }
-  }
-  if(posicao != -1){
-    carrinho.produtos[posicao].quantidade = carrinho.produtos[posicao].quantidade + contagem;
-    carrinho.produtos[posicao].subtotal = carrinho.produtos[posicao].subtotal + resultado;
-    carrinho.total = carrinho.total + resultado;
-  }
-  else{
-    produtoCarrinho.quantidade = contagem;
-    produtoCarrinho.subtotal = resultado;
-    carrinho.addProdutos(produtoCarrinho);
-  }
-  }
-  Future _adicionarAoCarrinho() {
 
-    verificaItem();
+  Future _adicionarAoCarrinho() {
+    carrinho.addProdutos(produtoCarrinho);
 
     isInitial
-      ? UtilFirebase.criarItemComIdColecaoGenerica(coletionPai, documentPai, subColection, subDocument, carrinho.toJson())
-      : UtilFirebase.alterarItemColecaoGenerica(coletionPai, documentPai, subColection, subDocument, carrinho.toJson());
+        ? UtilFirebase.criarItemComIdColecaoGenerica(
+        coletionPai, documentPai, subColection, subDocument, carrinho.toJson())
+        : UtilFirebase.alterarItemColecaoGenerica(
+        coletionPai, documentPai, subColection, subDocument, carrinho.toJson());
   }
 
   @override
@@ -94,16 +71,16 @@ class _ViewProdutoState extends State<ViewProduto> {
 
   _acrescenta() {
     setState(() {
-      contagem += 1;
-      resultado += preco;
+      produtoCarrinho.quantidade += 1;
+      produtoCarrinho.subtotal += produtoCarrinho.preco;
     });
   }
 
   _reduzir() {
-    if (contagem > 1) {
+    if (produtoCarrinho.quantidade > 1) {
       setState(() {
-        contagem -= 1;
-        resultado -= preco;
+        produtoCarrinho.quantidade -= 1;
+        produtoCarrinho.subtotal -= produtoCarrinho.preco;
       });
     }
   }
@@ -157,7 +134,7 @@ class _ViewProdutoState extends State<ViewProduto> {
                           children: <Widget>[
                             Padding(
                               padding:
-                                  EdgeInsets.only(left: 16, top: 16, right: 16),
+                              EdgeInsets.only(left: 16, top: 16, right: 16),
                               child: Text(
                                 widget.produto.titulo,
                                 style: TextStyle(
@@ -168,7 +145,7 @@ class _ViewProdutoState extends State<ViewProduto> {
                             ),
                             Padding(
                               padding:
-                                  EdgeInsets.only(left: 16, top: 16, right: 16),
+                              EdgeInsets.only(left: 16, top: 16, right: 16),
                               child: Text(widget.produto.descricao,
                                   style: TextStyle(
                                       fontSize: 20.0, color: Colors.grey)),
@@ -191,20 +168,20 @@ class _ViewProdutoState extends State<ViewProduto> {
                                   child: Container(
                                     decoration: BoxDecoration(
                                         borderRadius:
-                                            BorderRadius.all(Radius.circular(10.0)),
+                                        BorderRadius.all(Radius.circular(10.0)),
                                         border: Border.all(
                                             width: 1, color: Colors.grey)),
                                     child: Row(
                                       children: <Widget>[
                                         IconButton(
                                           icon: Icon(Icons.remove_circle),
-                                          color: contagem == 1
+                                          color: produtoCarrinho.quantidade == 1
                                               ? Colors.grey
                                               : Colors.green,
                                           onPressed: () => _reduzir(),
                                         ),
                                         Text(
-                                          "$contagem",
+                                          "${produtoCarrinho.quantidade.toString()}",
                                           style: TextStyle(
                                               color: Colors.blueAccent,
                                               fontWeight: FontWeight.bold,
@@ -235,14 +212,16 @@ class _ViewProdutoState extends State<ViewProduto> {
                                               children: <Widget>[
                                                 IconButton(
                                                   icon:
-                                                      Icon(Icons.add_shopping_cart),
+                                                  Icon(Icons.add_shopping_cart),
                                                   color: Colors.white,
                                                   onPressed: () {},
                                                 ),
                                                 Text(
-                                                    'Adicionar ${Util.moeda(resultado)}',
+                                                    'Adicionar ${Util.moeda(
+                                                        produtoCarrinho.subtotal)}',
                                                     style: TextStyle(
-                                                        fontWeight: FontWeight.w500,
+                                                        fontWeight: FontWeight
+                                                            .w500,
                                                         fontSize: 20.0,
                                                         color: Colors.white)),
                                               ],
@@ -259,8 +238,8 @@ class _ViewProdutoState extends State<ViewProduto> {
                             )
                           ],
                         ),
-                  ),
-                )),
+                      ),
+                    )),
               ],
             ),
           ),

@@ -48,19 +48,19 @@ class _DestaquesState extends State<Destaques>
       }
     });
 
-    Timer.periodic(Duration(seconds: 5), (Timer timer) {
-      if (currentPage < totalPage) {
-        currentPage++;
-      } else {
-        currentPage = 0;
-      }
-
-      ctrl.animateToPage(
-        currentPage,
-        duration: Duration(seconds: 1),
-        curve: Curves.easeIn,
-      );
-    });
+//    Timer.periodic(Duration(seconds: 4), (Timer timer) {
+//      if (currentPage < totalPage) {
+//        currentPage++;
+//      } else {
+//        currentPage = 0;
+//      }
+//
+//      ctrl.animateToPage(
+//        currentPage,
+//        duration: Duration(seconds: 1),
+//        curve: Curves.easeIn,
+//      );
+//    });
   }
 
   @override

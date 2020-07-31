@@ -18,7 +18,6 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
   Firestore bd = Firestore.instance;
   Carrinho carrinho = Carrinho();
   ProdutoCarrinho _ultimaTarefaRemovida = ProdutoCarrinho();
-  bool isInitial = true;
   String coletionPai, documentPai, subColection, subDocument;
 
 
@@ -45,6 +44,7 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
     setState(() {
       carrinho.produtos.removeAt(index);
     });
+    _alterarCarrinho();
 
     //snackbar
     final snackbar = SnackBar(
@@ -56,9 +56,17 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
             setState(() {
               carrinho.produtos.insert(index, _ultimaTarefaRemovida);
             });
+            _alterarCarrinho();
           }),
     );
     Scaffold.of(context).showSnackBar(snackbar);
+
+  }
+
+
+  Future _alterarCarrinho() {
+    UtilFirebase.alterarItemColecaoGenerica(
+        coletionPai, documentPai, subColection, subDocument, carrinho.toJson());
   }
 
   @override
@@ -84,7 +92,7 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
       color: Colors.white,
       radius: 5,
       icone: IconButton(
-          icon: Icon(Icons.delete_sweep),
+          icon: Icon(Icons.delete_forever),
           onPressed: () {
             _deleteItem(index);
           }),
