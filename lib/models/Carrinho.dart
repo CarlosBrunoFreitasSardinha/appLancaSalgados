@@ -10,8 +10,8 @@ class Carrinho {
   void addProdutos(ProdutoCarrinho p) {
     int posicao = verificaitem(p);
     if (posicao != -1) {
-      produtos[posicao].quantidade = produtos[posicao].quantidade +p.quantidade;
-      produtos[posicao].subtotal = produtos[posicao].subtotal + p.subtotal;
+      produtos[posicao].quantidade = p.quantidade;
+      produtos[posicao].subtotal = p.subtotal;
     } else {
       produtos.add(p);
     }
@@ -20,14 +20,7 @@ class Carrinho {
 
   void remProdutos(ProdutoCarrinho p) {
 
-    if (p.quantidade <= 0) {
-      produtos.remove(p);
-    }
-    else{
-      int i = verificaitem(p);
-      produtos[i].quantidade = p.quantidade;
-      produtos[i].subtotal = p.subtotal;
-    }
+    produtos.remove(p);
     calcular();
   }
 
@@ -51,13 +44,12 @@ class Carrinho {
     produtos = [];
     total = 0;
   }
+
   void fecharPedido(){
     fechado = true;
   }
 
-
   bool get fechado => _fechado;
-
   set fechado(bool value) {
     _fechado = value;
   }

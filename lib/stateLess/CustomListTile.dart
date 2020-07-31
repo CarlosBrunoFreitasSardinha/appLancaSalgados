@@ -31,7 +31,7 @@ class _ArticleDescription extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 19, color: Color(0xffd19c3c)),
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xffd19c3c)),
               ),
               Padding(padding: EdgeInsets.only(top: 3.0, left: 4), child: Text(
                 '$subtitle',
