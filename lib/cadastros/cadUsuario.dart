@@ -84,9 +84,8 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
           UtilFirebase.cadastrarDados(
               "usuarios", usuario.uidUser, usuario.toJson());
           UserFirebase.fireLogged = usuario;
-          Navigator.pushNamedAndRemoveUntil(
-              context, RouteGenerator.HOME, (_) => false);
-
+      Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
+          arguments: 0);
     }).catchError((onError) {
       print("Erro: " + onError.toString());
 
@@ -99,8 +98,10 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   }
 
   Future _verificarUsuarioLogado() async {
+    UserFirebase.recuperaDadosUsuario();
     if (UserFirebase.logado) {
-      Navigator.pushReplacementNamed(context, RouteGenerator.HOME);
+      Navigator.pushReplacementNamed(
+          context, RouteGenerator.HOME, arguments: 0);
     }
   }
 

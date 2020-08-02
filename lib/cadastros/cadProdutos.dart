@@ -179,8 +179,10 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   }
 
   _verificarUsuarioLogado() {
+    UserFirebase.recuperaDadosUsuario();
     if (UserFirebase.fireLogged.isAdm) {
-      Navigator.pushReplacementNamed(context, RouteGenerator.HOME);
+      Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
+          arguments: 0);
     }
   }
 

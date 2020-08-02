@@ -13,6 +13,10 @@ import '../RouteGenerator.dart';
 import '../util/usuarioFireBase.dart';
 
 class Home extends StatefulWidget {
+  final int opcao;
+
+  Home(this.opcao);
+
   @override
   _HomeState createState() => _HomeState();
 }
@@ -91,7 +95,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   Future<int> _listenerCarrinho() async {
     coletionPai = "carrinho";
-    documentPai = "cJ8II0UZcFSk18kIgRZXzIybXLg2";
+    documentPai = UserFirebase.fireLogged.uidUser;
     subDocument = "ativo";
     subColection = "carrinho";
     DocumentSnapshot snapshot =
@@ -110,6 +114,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     super.initState();
     inicializacao();
     _tabController = TabController(length: 4, vsync: this);
+    _tabController.index = widget.opcao != null ? widget.opcao : 0;
   }
 
   @override
@@ -158,9 +163,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             children: children,
           );
         })
-        : Stack(alignment: Alignment.topLeft,
-      children: carrinhoZerado(),)
-    ;
+        : Stack(
+            alignment: Alignment.topLeft,
+            children: carrinhoZerado(),
+          );
 
     return Scaffold(
       body: DefaultTabController(

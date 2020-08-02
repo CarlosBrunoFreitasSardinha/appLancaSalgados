@@ -15,11 +15,13 @@ class UserFirebase {
 
   static Future<Usuario> recuperaDadosUsuario() async {
     FirebaseUser usuarioLogado = await auth.currentUser();
-    Map<String, dynamic> json =
-        await UtilFirebase.recuperarUmObjeto(colection, usuarioLogado.uid);
-    UserFirebase.fireLogged = Usuario.fromJson(json);
-    UserFirebase.logado = true;
-    print("Dados Usuario initial: " + UserFirebase.fireLogged.toString());
+    if (usuarioLogado.uid != null) {
+      Map<String, dynamic> json =
+          await UtilFirebase.recuperarUmObjeto(colection, usuarioLogado.uid);
+      UserFirebase.fireLogged = Usuario.fromJson(json);
+      UserFirebase.logado = true;
+    }
+//    print("Dados Usuario initial: " + UserFirebase.fireLogged.toString());
     return UserFirebase.fireLogged;
   }
 

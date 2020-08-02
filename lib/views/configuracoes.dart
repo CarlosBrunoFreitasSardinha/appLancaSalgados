@@ -10,6 +10,7 @@ class Configuracoes extends StatefulWidget {
 
 class _ConfiguracoesState extends State<Configuracoes> {
   _verificarUsuarioLogado() {
+    UserFirebase.recuperaDadosUsuario();
     if (UserFirebase.logado) {
       Navigator.pushReplacementNamed(context, RouteGenerator.LOGIN);
     }

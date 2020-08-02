@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:flutter/material.dart';
 
-import '../RouteGenerator.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -13,8 +13,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    Timer(Duration(seconds: 2), () {
-      Navigator.pushReplacementNamed(context, RouteGenerator.HOME);
+    Timer(Duration(seconds: 4), () {
+      Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
+          arguments: 0);
     });
   }
 

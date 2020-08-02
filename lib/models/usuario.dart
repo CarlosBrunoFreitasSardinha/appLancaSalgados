@@ -28,6 +28,7 @@ class Usuario {
     _uidUser = json['uidUser'] != null ? json['uidUser'] : "";
     _nome = json['nome'] != null ? json['nome'] : "";
     _senha = json['senha'] != null ? json['senha'] : "";
+    _email = json['email'] != null ? json['email'] : "";
     _foneContato1 = json['foneContato1'] != null ? json['foneContato1'] : "";
     _endereco = json['endereco'] != null ? json['endereco'] : "";
     _urlPerfil = json['urlPerfil'] != null ? json['urlPerfil'] : "";

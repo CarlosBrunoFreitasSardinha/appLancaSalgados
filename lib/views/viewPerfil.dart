@@ -95,6 +95,7 @@ class _ViewPerfilState extends State<ViewPerfil> {
 
   _recuperaDadosUsuario() async{
     UserFirebase.recuperaDadosUsuario();
+    _verificarUsuarioLogado();
 
     setState(() {
       _controllerNome.text = UserFirebase.fireLogged.nome;
@@ -113,7 +114,6 @@ class _ViewPerfilState extends State<ViewPerfil> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _verificarUsuarioLogado();
     _recuperaDadosUsuario();
   }
 

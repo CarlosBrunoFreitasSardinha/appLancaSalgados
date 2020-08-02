@@ -48,7 +48,7 @@ class _LoginState extends State<Login> {
       var usuario = await UserFirebase.recuperaDadosUsuario();
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (BuildContext context) => Home()),
+        MaterialPageRoute(builder: (BuildContext context) => Home(0)),
         ModalRoute.withName('/'),
       );
     }).catchError((onError) {

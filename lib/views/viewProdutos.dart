@@ -1,7 +1,9 @@
+import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/models/Carrinho.dart';
 import 'package:applancasalgados/models/Produto.dart';
 import 'package:applancasalgados/models/ProdutoCarrinho.dart';
 import 'package:applancasalgados/util/Util.dart';
+import 'package:applancasalgados/util/usuarioFireBase.dart';
 import 'package:applancasalgados/util/utilFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,9 +29,11 @@ class _ViewProdutoState extends State<ViewProduto> {
   _initilizer() {
     produtoCarrinho = ProdutoCarrinho.fromJson(widget.produto.toJson());
     coletionPai = "carrinho";
-    documentPai = "cJ8II0UZcFSk18kIgRZXzIybXLg2";
-    subDocument = "ativo";
+    documentPai = UserFirebase.fireLogged.uidUser != null
+        ? UserFirebase.fireLogged.uidUser
+        : "";
     subColection = "carrinho";
+    subDocument = "ativo";
   }
 
   _listenerCarrinho() async {
@@ -44,13 +48,34 @@ class _ViewProdutoState extends State<ViewProduto> {
   }
 
   Future _adicionarAoCarrinho() {
-    carrinho.addProdutos(produtoCarrinho);
+    if (UserFirebase.logado) {
+      carrinho.addProdutos(produtoCarrinho);
+      isInitial
+          ? UtilFirebase.criarItemComIdColecaoGenerica(coletionPai, documentPai,
+              subColection, subDocument, carrinho.toJson())
+          : UtilFirebase.alterarItemColecaoGenerica(coletionPai, documentPai,
+              subColection, subDocument, carrinho.toJson());
 
-    isInitial
-        ? UtilFirebase.criarItemComIdColecaoGenerica(
-        coletionPai, documentPai, subColection, subDocument, carrinho.toJson())
-        : UtilFirebase.alterarItemColecaoGenerica(
-        coletionPai, documentPai, subColection, subDocument, carrinho.toJson());
+      Navigator.pop(context);
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title:
+                  Text("Para adicionar ao Carrinho é necessário efetuar Login"),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text("Cancelar")),
+                FlatButton(
+                    onPressed: () =>
+                        Navigator.pushNamed(context, RouteGenerator.LOGIN),
+                    child: Text("Efetuar login")),
+              ],
+            );
+          });
+    }
   }
 
   @override
@@ -169,11 +194,11 @@ class _ViewProdutoState extends State<ViewProduto> {
                                 padding: EdgeInsets.all(10),
                                 child: Container(
                                   decoration:
-                                    BoxDecoration(
+                                  BoxDecoration(
                                       borderRadius:
                                       BorderRadius.all(Radius.circular(10.0)),
                                       border: Border.all(width: 1, color: Colors.grey)
-                                    ),
+                                  ),
                                   child: Row(
                                     children: <Widget>[
                                       IconButton(
@@ -233,7 +258,6 @@ class _ViewProdutoState extends State<ViewProduto> {
                                         )),
                                     onPressed: () {
                                       _adicionarAoCarrinho();
-                                      Navigator.pop(context);
                                     },
                                   ),
                                 ],

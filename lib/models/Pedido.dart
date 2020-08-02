@@ -16,8 +16,8 @@ class Pedido {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data["usuario"] = usuario;
-    data["carrinho"] = carrinho;
+    data["usuario"] = usuario.toJson();
+    data["carrinho"] = carrinho.toJson();
     data["status"] = status;
     data["atendido"] = atendido;
     data["formaPagamento"] = formaPagamento;

@@ -38,6 +38,13 @@ class _CardapioState extends State<Cardapio>
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _controller.close();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var stream = StreamBuilder(
       stream: _controller.stream,
@@ -66,7 +73,6 @@ class _CardapioState extends State<Cardapio>
                     controller: _scrollControllerMensagens,
                     itemCount: querySnapshot.documents.length,
                     itemBuilder: (context, indice) {
-                      //recupera mensagem
                       List<DocumentSnapshot> produtos =
                           querySnapshot.documents.toList();
                       DocumentSnapshot json = produtos[indice];

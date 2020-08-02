@@ -1,8 +1,8 @@
-
 import 'package:applancasalgados/cadastros/cadCategoria.dart';
 import 'package:applancasalgados/cadastros/cadProdutos.dart';
 import 'package:applancasalgados/cadastros/cadUsuario.dart';
 import 'package:applancasalgados/login/login.dart';
+import 'package:applancasalgados/login/recuperarSenha.dart';
 import 'package:applancasalgados/views/SplashScreen.dart';
 import 'package:applancasalgados/views/configuracoes.dart';
 import 'package:applancasalgados/views/dados.dart';
@@ -15,7 +15,6 @@ import 'package:applancasalgados/views/viewPerfil.dart';
 import 'package:applancasalgados/views/viewProdutos.dart';
 import 'package:flutter/material.dart';
 
-import 'login/recuperarSenha.dart';
 
 class RouteGenerator{
   static const String BASE = "/";
@@ -48,7 +47,8 @@ class RouteGenerator{
 
     switch(settings.name){
       case BASE: return MaterialPageRoute(builder: (_) => SplashScreen());
-      case HOME: return MaterialPageRoute(builder: (_) => Home());
+      case HOME:
+        return MaterialPageRoute(builder: (_) => Home(args));
       case LOGIN: return MaterialPageRoute(builder: (_) => Login());
       case RECP: return MaterialPageRoute(builder: (_) => ResetPasswordView());
 
