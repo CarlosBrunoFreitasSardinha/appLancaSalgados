@@ -5,6 +5,7 @@ class Usuario {
   String _senha;
   String _urlPerfil;
   String _foneContato1;
+  String _endereco;
   bool _isAdm = false;
 
   Usuario();
@@ -16,6 +17,7 @@ class Usuario {
     data['nome'] = this.nome;
     data['email'] = this.email;
     data['foneContato1'] = this.foneContato1;
+    data['endereco'] = this.endereco;
     data['urlPerfil'] = this.urlPerfil;
     data['isAdm'] = this.isAdm;
 
@@ -27,6 +29,7 @@ class Usuario {
     _nome = json['nome'] != null ? json['nome'] : "";
     _senha = json['senha'] != null ? json['senha'] : "";
     _foneContato1 = json['foneContato1'] != null ? json['foneContato1'] : "";
+    _endereco = json['endereco'] != null ? json['endereco'] : "";
     _urlPerfil = json['urlPerfil'] != null ? json['urlPerfil'] : "";
     _isAdm = json['isAdm'];
   }
@@ -85,5 +88,18 @@ class Usuario {
   // ignore: unnecessary_getters_setters
   set uidUser(String value) {
     _uidUser = value;
+  }
+
+  // ignore: unnecessary_getters_setters
+  String get endereco => _endereco;
+
+  // ignore: unnecessary_getters_setters
+  set endereco(String value) {
+    _endereco = value;
+  }
+
+  @override
+  String toString() {
+    return 'Usuario{_uidUser: $_uidUser, _nome: $_nome, _email: $_email, _senha: $_senha, _urlPerfil: $_urlPerfil, _foneContato1: $_foneContato1, _endereco: $_endereco, _isAdm: $_isAdm}';
   }
 }

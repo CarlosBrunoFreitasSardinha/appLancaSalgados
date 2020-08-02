@@ -1,6 +1,8 @@
 import 'dart:async';
-import '../RouteGenerator.dart';
+
 import 'package:flutter/material.dart';
+
+import '../RouteGenerator.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -12,7 +14,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     Timer(Duration(seconds: 2), () {
-      Navigator.pushReplacementNamed(context, RouteGenerator.LOGIN);
+      Navigator.pushReplacementNamed(context, RouteGenerator.HOME);
     });
   }
 

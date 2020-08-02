@@ -1,6 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/models/usuario.dart';
+import 'package:applancasalgados/util/usuarioFireBase.dart';
+import 'package:applancasalgados/util/utilFireBase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,10 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   TextEditingController _controllerNome = TextEditingController(text: "Tester");
   TextEditingController _controllerEmail =
       TextEditingController(text: "teste@teste.com");
+  TextEditingController _controllerEndereco =
+      TextEditingController(text: "Rua Teste, N 1, Centro, Fatima-to");
+  TextEditingController _controllerFone =
+      TextEditingController(text: "63 9 9262 0510");
   TextEditingController _controllerSenha =
       TextEditingController(text: "1234567");
   String _mensagemErro = "";
@@ -23,16 +28,35 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
     String nome = _controllerNome.text;
     String email = _controllerEmail.text;
     String senha = _controllerSenha.text;
+    String fone = _controllerFone.text;
+    String endereco = _controllerEndereco.text;
 
     if (nome.length >= 3) {
       if (email.isNotEmpty && email.contains("@")) {
         if (senha.length > 5) {
+          if (fone.isNotEmpty) {
+            if (endereco.length > 6) {
+              usuario.senha = senha;
+              usuario.nome = nome;
+              usuario.email = email;
+              usuario.foneContato1 = fone;
+              usuario.endereco = endereco;
 
-          usuario.senha = senha;
-          usuario.nome = nome;
-          usuario.email = email;
 
-          _cadastrarUsuario(usuario);
+              _cadastrarUsuario(usuario);
+            }
+            else {
+              setState(() {
+                _mensagemErro =
+                " Endereço deve ser conter pelo menos 6 caracteres ";
+              });
+            }
+          }
+          else {
+            setState(() {
+              _mensagemErro = " Um Numero telefonico deve ser informado ";
+            });
+          }
 
         } else {
           setState(() {
@@ -56,15 +80,12 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
     auth
         .createUserWithEmailAndPassword(email: user.email, password: user.senha)
         .then((firebaseUser) async {
-          Firestore bd = Firestore.instance;
           usuario.uidUser = firebaseUser.user.uid;
-      await bd
-          .collection("usuarios")
-          .document(firebaseUser.user.uid)
-          .setData(usuario.toJson());
-
-      Navigator.pushNamedAndRemoveUntil(
-          context, RouteGenerator.HOME, (_) => false);
+          UtilFirebase.cadastrarDados(
+              "usuarios", usuario.uidUser, usuario.toJson());
+          UserFirebase.fireLogged = usuario;
+          Navigator.pushNamedAndRemoveUntil(
+              context, RouteGenerator.HOME, (_) => false);
 
     }).catchError((onError) {
       print("Erro: " + onError.toString());
@@ -75,6 +96,19 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
       });
 
     });
+  }
+
+  Future _verificarUsuarioLogado() async {
+    if (UserFirebase.logado) {
+      Navigator.pushReplacementNamed(context, RouteGenerator.HOME);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _verificarUsuarioLogado();
   }
 
   @override
@@ -129,6 +163,42 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                           hintText: "Email",
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                    ),
+                  ),
+
+                  //Fone
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child: TextField(
+                      controller: _controllerFone,
+                      autofocus: true,
+                      keyboardType: TextInputType.number,
+                      style: TextStyle(fontSize: 20),
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                          hintText: "Telefone(whatsapp)",
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                    ),
+                  ),
+
+                  //Endereco
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child: TextField(
+                      controller: _controllerEndereco,
+                      autofocus: true,
+                      keyboardType: TextInputType.text,
+                      style: TextStyle(fontSize: 20),
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                          hintText: "Endereço",
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(

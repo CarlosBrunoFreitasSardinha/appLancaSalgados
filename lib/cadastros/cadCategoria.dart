@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/models/CategoriaProduto.dart';
+import 'package:applancasalgados/util/usuarioFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -88,10 +90,17 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
     });
   }
 
+  _verificarUsuarioLogado() {
+    if (UserFirebase.fireLogged.isAdm) {
+      Navigator.pushReplacementNamed(context, RouteGenerator.HOME);
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _verificarUsuarioLogado();
     _adicionarListenerConversas();
   }
 

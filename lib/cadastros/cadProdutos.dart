@@ -4,12 +4,15 @@ import 'dart:io';
 import 'package:applancasalgados/models/CategoriaProduto.dart';
 import 'package:applancasalgados/models/Produto.dart';
 import 'package:applancasalgados/util/Util.dart';
+import 'package:applancasalgados/util/usuarioFireBase.dart';
 import 'package:applancasalgados/util/utilFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../RouteGenerator.dart';
 
 class CadastroProdutos extends StatefulWidget {
   @override
@@ -175,11 +178,18 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
     });
   }
 
+  _verificarUsuarioLogado() {
+    if (UserFirebase.fireLogged.isAdm) {
+      Navigator.pushReplacementNamed(context, RouteGenerator.HOME);
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     _obterIndice();
     super.initState();
+    _verificarUsuarioLogado();
     _adicionarListenerConversas();
   }
 

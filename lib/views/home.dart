@@ -5,8 +5,8 @@ import 'package:applancasalgados/util/utilFireBase.dart';
 import 'package:applancasalgados/views/viewCardapio.dart';
 import 'package:applancasalgados/views/viewCarrinho.dart';
 import 'package:applancasalgados/views/viewDestaques.dart';
+import 'package:applancasalgados/views/viewPedidos.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../RouteGenerator.dart';
@@ -19,28 +19,27 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   TabController _tabController;
-  bool isInitial = true;
   String coletionPai, documentPai, subColection, subDocument;
   Carrinho carrinho = Carrinho();
-  List<String> _itensMenu = [
-    "Configurações",
-    "Perfil",
-    "Pag. de Testes",
-    "Sair"
-  ];
+  List<String> _itensMenu = ["Fazer login", "sair login"];
 
-  Future _verificarUsuarioLogado() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseUser usuarioLogado = await auth.currentUser();
-
-    if (usuarioLogado == null) {
-      Navigator.pushReplacementNamed(context, RouteGenerator.LOGIN);
+  inicializacao() {
+    if (UserFirebase.logado) {
+      if (UserFirebase.fireLogged.isAdm == true) {
+        setState(() {
+          _itensMenu = ["Configurações", "Perfil", "Pag. de Testes", "Sair"];
+        });
+      } else {
+        setState(() {
+          _itensMenu = ["Perfil", "Sair"];
+        });
+      }
     }
   }
 
-  _deslogar() async {
-    UserFirebase.deslogar();
-    Navigator.pushReplacementNamed(context, RouteGenerator.LOGIN);
+  _deslogar() {
+    if (UserFirebase.logado) UserFirebase.deslogar();
+    Navigator.popAndPushNamed(context, RouteGenerator.HOME);
   }
 
   _escolhaMenuItem(String itemEscolhido) {
@@ -54,10 +53,40 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       case "Pag. de Testes":
         Navigator.pushNamed(context, RouteGenerator.TESTE);
         break;
+      case "Fazer login":
+        Navigator.pushNamed(context, RouteGenerator.LOGIN);
+        break;
       case "Sair":
         _deslogar();
         break;
+      case "sair login":
+        _deslogar();
+        break;
     }
+  }
+
+  List<Widget> carrinhoZerado() {
+    return [
+      Icon(
+        Icons.shopping_cart,
+        color: Colors.white,
+      ),
+      Padding(
+        padding: EdgeInsets.only(left: 24),
+        child: CircleAvatar(
+          radius: 10,
+          backgroundColor: Colors.blueAccent,
+          child: Text(
+            "0",
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.bold
+            ),
+          ),
+        ),
+      )
+    ];
   }
 
   Future<int> _listenerCarrinho() async {
@@ -79,14 +108,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _verificarUsuarioLogado();
+    inicializacao();
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
-
-    var futureCarrinho = FutureBuilder(
+    var futureCarrinho = UserFirebase.logado
+        ? FutureBuilder(
         future: _listenerCarrinho(),
         builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
 
@@ -117,58 +146,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           }
 
           else if (snapshot.hasError) {
-            children = <Widget>[
-              Icon(
-                Icons.shopping_cart,
-                color: Colors.white,
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 24 ),
-                child: CircleAvatar(
-                  radius: 10,
-                  backgroundColor: Colors.blueAccent,
-                  child: Text(
-                    "0",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold
-                    ),
-                  ),
-                ),
-              )
-            ];
+            children = carrinhoZerado();
           }
 
           else {
-            children = <Widget>[
-              Icon(
-                Icons.shopping_cart,
-                color: Colors.white,
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 24 ),
-                child: CircleAvatar(
-                  radius: 10,
-                  backgroundColor: Colors.blueAccent,
-                  child: Text(
-                    "0",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold
-                    ),
-                  ),
-                ),
-              )
-            ];
+            children = carrinhoZerado();
           }
 
           return Stack(
             alignment: Alignment.topLeft,
             children: children,
           );
-        });
+        })
+        : Stack(alignment: Alignment.topLeft,
+      children: carrinhoZerado(),)
+    ;
 
     return Scaffold(
       body: DefaultTabController(
@@ -214,6 +206,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     Tab(icon: Icon(Icons.home)),
                     Tab(icon: Icon(Icons.restaurant_menu)),
                     Tab(child: futureCarrinho,),
+                    Tab(icon: Icon(Icons.storage)),
                   ],
                 ),
                 actions: <Widget>[
@@ -238,6 +231,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               Destaques(),
               Cardapio(),
               ViewCarrinho(),
+              ViewPedidos(),
             ],
           ),
         ),

@@ -1,11 +1,12 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:applancasalgados/util/usuarioFireBase.dart';
+import 'package:applancasalgados/util/utilFireBase.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../RouteGenerator.dart';
 
 class ViewPerfil extends StatefulWidget {
   @override
@@ -15,8 +16,9 @@ class ViewPerfil extends StatefulWidget {
 class _ViewPerfilState extends State<ViewPerfil> {
   TextEditingController _controllerNome = TextEditingController();
   TextEditingController _controllerNumber = TextEditingController();
-  String _idUsuarioLogado, _urlImagemRecuperada;
+  TextEditingController _controllerEndereco = TextEditingController();
   String imagem = "";
+  String colection = "usuario";
   bool _upload = false;
   File _image;
   final picker = ImagePicker();
@@ -36,7 +38,7 @@ class _ViewPerfilState extends State<ViewPerfil> {
     StorageReference pastaRaiz = storage.ref();
     StorageReference arquivo = pastaRaiz
         .child("perfil")
-        .child(_idUsuarioLogado+".jpg");
+        .child(UserFirebase.fireLogged.uidUser + ".jpg");
     arquivo.putFile(_image);
     StorageUploadTask task = arquivo.putFile(_image);
     task.events.listen((event) {
@@ -61,32 +63,23 @@ class _ViewPerfilState extends State<ViewPerfil> {
   Future _recuperarUrlImagem(StorageTaskSnapshot snapshot) async{
     String url = await snapshot.ref.getDownloadURL();
     setState(() {
-      _urlImagemRecuperada = url;
+      UserFirebase.fireLogged.urlPerfil = url;
     });
     _atualizarUrlImagemFirestore(url);
   }
 
   Future _atualizarUrlImagemFirestore(String url){
-    Map<String, dynamic> dadosAtualizar ={
-      "urlPerfil": url
-    };
-
-    Firestore bd = Firestore.instance;
-    bd.collection("usuarios")
-        .document(_idUsuarioLogado)
-        .updateData(dadosAtualizar);
+    Map<String, dynamic> json;
+    json["urlPerfil"] = url;
+    UtilFirebase.alterarDados(colection, UserFirebase.fireLogged.uidUser, json);
   }
 
-  Future _atualizarNomeFirestore(){
-    Map<String, dynamic> dadosAtualizar ={
-      "nome": _controllerNome.text,
-      "foneContato1": _controllerNumber.text
-    };
-
-    Firestore bd = Firestore.instance;
-    bd.collection("usuarios")
-        .document(_idUsuarioLogado)
-        .updateData(dadosAtualizar);
+  Future _atualizarDadosFirestore() {
+    Map<String, dynamic> json;
+    json["nome"] = _controllerNome.text;
+    json["foneContato1"] = _controllerNumber.text;
+    json["endereco"] = _controllerEndereco.text;
+    UtilFirebase.alterarDados(colection, UserFirebase.fireLogged.uidUser, json);
   }
 
   Future _recuperarImagem(String urlImg) async {
@@ -101,28 +94,29 @@ class _ViewPerfilState extends State<ViewPerfil> {
   }
 
   _recuperaDadosUsuario() async{
-    FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseUser usuarioLogado = await auth.currentUser();
-    _idUsuarioLogado = usuarioLogado.uid;
+    UserFirebase.recuperaDadosUsuario();
 
-    Firestore bd = Firestore.instance;
-    DocumentSnapshot snapshot = await bd.collection("usuarios")
-        .document(_idUsuarioLogado).get();
-
-    Map<String, dynamic> dados = snapshot.data;
     setState(() {
-      _controllerNome.text = dados["nome"];
-      _urlImagemRecuperada = dados["urlPerfil"] != null ? dados["urlPerfil"] : null;
+      _controllerNome.text = UserFirebase.fireLogged.nome;
+      _controllerNumber.text = UserFirebase.fireLogged.foneContato1;
+      _controllerEndereco.text = UserFirebase.fireLogged.endereco;
     });
+  }
 
+  _verificarUsuarioLogado() {
+    if (UserFirebase.logado) {
+      Navigator.pushReplacementNamed(context, RouteGenerator.LOGIN);
+    }
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _verificarUsuarioLogado();
     _recuperaDadosUsuario();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,17 +133,20 @@ class _ViewPerfilState extends State<ViewPerfil> {
                       : CircleAvatar(
                     radius: 100,
                     backgroundColor: Colors.grey,
-                    backgroundImage: _urlImagemRecuperada != null
-                        ? NetworkImage(_urlImagemRecuperada)
+                    backgroundImage: UserFirebase.fireLogged.urlPerfil != null
+                        ? NetworkImage(UserFirebase.fireLogged.urlPerfil)
                         : null,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
+                      Icon(Icons.camera_alt),
                       FlatButton(onPressed: (){
                         _recuperarImagem("camera");
                       },
                           child: Text("Câmera")),
+
+                      Icon(Icons.photo_library),
                       FlatButton(onPressed: (){
                         _recuperarImagem("galeria");
                       },
@@ -170,9 +167,10 @@ class _ViewPerfilState extends State<ViewPerfil> {
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(32))),
+                              borderRadius: BorderRadius.circular(10))),
                     ),
                   ),
+
                   //Contato
                   Padding(
                     padding: EdgeInsets.all(8),
@@ -187,10 +185,28 @@ class _ViewPerfilState extends State<ViewPerfil> {
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(32))),
+                              borderRadius: BorderRadius.circular(10))),
                     ),
                   ),
 
+                  //endereco
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child: TextField(
+                      controller: _controllerEndereco,
+                      keyboardType: TextInputType.text,
+                      style: TextStyle(fontSize: 20),
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                          hintText: "Endereço Ex(Bairro tal, Rua tal, Número tal)",
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                    ),
+                  ),
+
+                  //botao salvar
                   Padding(
                     padding: EdgeInsets.only(top: 16, bottom: 10),
                     child: RaisedButton(
@@ -201,9 +217,9 @@ class _ViewPerfilState extends State<ViewPerfil> {
                         color: Color(0xffd19c3c),
                         padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(32)),
+                            borderRadius: BorderRadius.circular(10)),
                         onPressed: () {
-                          _atualizarNomeFirestore();
+                          _atualizarDadosFirestore();
                         }),
                   ),
                 ],

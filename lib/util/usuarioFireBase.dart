@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:applancasalgados/models/usuario.dart';
 import 'package:applancasalgados/util/utilFireBase.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,24 +13,20 @@ class UserFirebase {
   static bool logado = false;
   static String colection = "usuarios";
 
-  static recuperaDadosUsuario() async {
+  static Future<Usuario> recuperaDadosUsuario() async {
     FirebaseUser usuarioLogado = await auth.currentUser();
-
-    Firestore bd = Firestore.instance;
-    DocumentSnapshot snapshot =
-        await bd.collection(colection).document(usuarioLogado.uid).get();
-    if (snapshot.data != null) {
-      Map<String, dynamic> dados = snapshot.data;
-      UserFirebase.fireLogged = Usuario.fromJson(dados);
-      UserFirebase.logado = true;
-
-        print("Dados Usuario initial: " + UserFirebase.fireLogged.toString());
-    }
+    Map<String, dynamic> json =
+        await UtilFirebase.recuperarUmObjeto(colection, usuarioLogado.uid);
+    UserFirebase.fireLogged = Usuario.fromJson(json);
+    UserFirebase.logado = true;
+    print("Dados Usuario initial: " + UserFirebase.fireLogged.toString());
+    return UserFirebase.fireLogged;
   }
 
   static deslogar() async {
     await auth.signOut();
     UserFirebase.logado = false;
+    UserFirebase.fireLogged = Usuario();
   }
 
   Future getImage(bool i) async {

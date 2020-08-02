@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/models/usuario.dart';
+import 'package:applancasalgados/util/usuarioFireBase.dart';
+import 'package:applancasalgados/views/home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -42,8 +44,13 @@ class _LoginState extends State<Login> {
 
     auth
         .signInWithEmailAndPassword(email: user.email, password: user.senha)
-        .then((firebaseUser) {
-      Navigator.pushReplacementNamed(context, RouteGenerator.HOME);
+        .then((firebaseUser) async {
+      var usuario = await UserFirebase.recuperaDadosUsuario();
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => Home()),
+        ModalRoute.withName('/'),
+      );
     }).catchError((onError) {
       print("Erro: " + onError.toString());
       setState(() {
@@ -54,11 +61,10 @@ class _LoginState extends State<Login> {
   }
 
   Future _verificarUsuarioLogado() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseUser usuarioLogado = await auth.currentUser();
-
-    if (usuarioLogado != null) {
-      Navigator.pushReplacementNamed(context, RouteGenerator.HOME);
+    print("tela login = " + UserFirebase.logado.toString());
+    print("Usuario fire login = " + UserFirebase.fireLogged.toString());
+    if (UserFirebase.logado) {
+      Navigator.pop(context);
     }
   }
 
