@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:applancasalgados/models/Pedido.dart';
 import 'package:applancasalgados/util/Util.dart';
 import 'package:applancasalgados/util/usuarioFireBase.dart';
+import 'package:applancasalgados/util/utilFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -14,8 +15,10 @@ class ViewPedidos extends StatefulWidget {
 class _ViewPedidosState extends State<ViewPedidos>
     with SingleTickerProviderStateMixin {
   Firestore bd = Firestore.instance;
-  Pedido pedido = Pedido();
   String coletionPai, documentPai, subColection, subDocument;
+  String stts_saiu = "Saiu Para Entrega",
+      stts_recebido = "Pedido Recebido",
+      stts_EmPreparacao = "Pedido Recebido";
   final _controller = StreamController<QuerySnapshot>.broadcast();
   ScrollController _scrollControllerMensagens = ScrollController();
 
@@ -24,6 +27,11 @@ class _ViewPedidosState extends State<ViewPedidos>
     coletionPai = "pedidos";
     documentPai = UserFirebase.fireLogged.uidUser;
     subColection = "pedidos";
+  }
+
+  Future _alterarDadoPedido(String documentRef, Map<String, dynamic> json) {
+    UtilFirebase.alterarItemColecaoGenerica(
+        coletionPai, documentPai, subColection, documentRef, json);
   }
 
   Widget listaPedidosVazia() {
@@ -39,11 +47,13 @@ class _ViewPedidosState extends State<ViewPedidos>
     );
   }
 
+
   Stream<QuerySnapshot> _adicionarListenerProdutos() {
     final stream = bd
         .collection(coletionPai)
         .document(documentPai)
         .collection(subColection)
+        .where("atendido", isEqualTo: false)
         .snapshots();
 
     stream.listen((dados) {
@@ -99,6 +109,7 @@ class _ViewPedidosState extends State<ViewPedidos>
                     itemBuilder: (context, indice) {
                       DocumentSnapshot json = produtos[indice];
 
+
                       Pedido produto = Pedido.fromJson(json.data);
 
                       return Card(
@@ -106,11 +117,26 @@ class _ViewPedidosState extends State<ViewPedidos>
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             ListTile(
-                              leading: Icon(Icons.format_list_numbered),
-                              title: Text(produto.usuario.nome),
-                              subtitle: Text(produto.formaPagamento),
-                              trailing: Text(
-                                  Util.moeda(produto.carrinho.total)),
+                              title: Text(produto.tituloPedido),
+                              subtitle: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(produto.formaPagamento),
+                                  Padding(
+                                      padding: EdgeInsets.all(4),
+                                      child: Text(
+                                        produto.status,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                            color: Colors.green),
+                                      )),
+                                ],
+                              ),
+                              trailing:
+                              Text(Util.moeda(produto.carrinho.total)),
                             ),
                             Row(
                               children: <Widget>[
@@ -118,22 +144,24 @@ class _ViewPedidosState extends State<ViewPedidos>
                                   children: <Widget>[
                                     FlatButton(
                                       child: const Text('Visualizar'),
-                                      onPressed: () {
-                                        /* ... */
-                                      },
+                                      onPressed: () {},
                                     ),
-                                    FlatButton(
-                                      child: const Text('Pedido Recebido'),
-                                      onPressed: () {
-                                        /* ... */
-                                      },
-                                    ),
-                                    FlatButton(
-                                      child: const Text('Saiu Para Entrega'),
-                                      onPressed: () {
-                                        /* ... */
-                                      },
-                                    ),
+                                    UserFirebase.fireLogged.isAdm
+                                        ? FlatButton(
+                                      child: Text(stts_recebido),
+                                      onPressed: () =>
+                                          _alterarDadoPedido(json.documentID,
+                                              {"status": stts_recebido}),
+                                    )
+                                        : Center(),
+                                    UserFirebase.fireLogged.isAdm
+                                        ? FlatButton(
+                                      child: Text(stts_saiu),
+                                      onPressed: () =>
+                                          _alterarDadoPedido(json.documentID,
+                                              {"status": stts_saiu}),
+                                    )
+                                        : Center(),
                                   ],
                                 )
                               ],
@@ -142,7 +170,6 @@ class _ViewPedidosState extends State<ViewPedidos>
                         ),
                       );
                     })
-
                     : listaPedidosVazia(),
               );
             }

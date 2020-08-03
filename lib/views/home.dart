@@ -23,11 +23,10 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   TabController _tabController;
-  String coletionPai, documentPai, subColection, subDocument;
-  Carrinho carrinho = Carrinho();
   List<String> _itensMenu = ["Fazer login", "sair login"];
 
   inicializacao() {
+    UserFirebase.recuperaDadosUsuario();
     if (UserFirebase.logado) {
       if (UserFirebase.fireLogged.isAdm == true) {
         setState(() {
@@ -58,7 +57,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         Navigator.pushNamed(context, RouteGenerator.TESTE);
         break;
       case "Fazer login":
-        Navigator.pushNamed(context, RouteGenerator.LOGIN);
+        if (!UserFirebase.logado)
+          Navigator.pushNamed(context, RouteGenerator.LOGIN);
         break;
       case "Sair":
         _deslogar();
@@ -94,6 +94,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   Future<int> _listenerCarrinho() async {
+    String coletionPai, documentPai, subColection, subDocument;
     coletionPai = "carrinho";
     documentPai = UserFirebase.fireLogged.uidUser;
     subDocument = "ativo";

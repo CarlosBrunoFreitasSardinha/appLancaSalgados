@@ -1,5 +1,6 @@
 import 'package:applancasalgados/models/Carrinho.dart';
 import 'package:applancasalgados/models/usuario.dart';
+import 'package:applancasalgados/util/Util.dart';
 
 class Pedido {
   Carrinho _carrinho;
@@ -7,6 +8,7 @@ class Pedido {
   bool _atendido = false;
   String _status = "Solicitado";
   String _formaPagamento;
+  String _tituloPedido;
 
   Pedido();
 
@@ -21,6 +23,8 @@ class Pedido {
     data["status"] = status;
     data["atendido"] = atendido;
     data["formaPagamento"] = formaPagamento;
+    data["tituloPedido"] =
+        usuario.nome + " _ " + Util.formatarData(DateTime.now());
     return data;
   }
 
@@ -28,6 +32,7 @@ class Pedido {
     status = json["status"];
     atendido = json["atendido"];
     formaPagamento = json["formaPagamento"];
+    tituloPedido = json["tituloPedido"];
     carrinho = Carrinho.fromJson(json["carrinho"]);
     usuario = Usuario.fromJson(json["usuario"]);
   }
@@ -57,4 +62,9 @@ class Pedido {
     _formaPagamento = value;
   }
 
+  String get tituloPedido => _tituloPedido;
+
+  set tituloPedido(String value) {
+    _tituloPedido = value;
+  }
 }

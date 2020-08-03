@@ -38,10 +38,10 @@ class UtilFirebase {
           .delete();
   }
 
-  static Future<void>alterarItemColecaoGenerica(String coletionPai, String documentPai,
-      String subColection, String subDocument, Map<String, dynamic> json) async {
-    await UtilFirebase.bd
-          .collection(coletionPai)
+  static alterarItemColecaoGenerica(String coletionPai, String documentPai,
+      String subColection, String subDocument, Map<String, dynamic> json) {
+    UtilFirebase.bd
+        .collection(coletionPai)
           .document(documentPai)
           .collection(subColection)
           .document(subDocument)
