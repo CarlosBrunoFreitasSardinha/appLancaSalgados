@@ -18,6 +18,7 @@ class ViewCarrinho extends StatefulWidget {
 
 class _ViewCarrinhoState extends State<ViewCarrinho>
     with SingleTickerProviderStateMixin {
+  TextEditingController _controllerEndereco = TextEditingController();
   Firestore bd = Firestore.instance;
   Carrinho carrinho = Carrinho();
   ProdutoCarrinho _ultimaTarefaRemovida = ProdutoCarrinho();
@@ -26,6 +27,20 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
       subColection,
       subDocument,
       strPedido = "pedidos";
+  String _escolhaUsuario = "";
+  String _resultado = "";
+
+  void _selecionados() {
+    if (_escolhaUsuario == "m")
+      setState(() {
+        _resultado = "Masculino";
+      });
+    else
+      setState(() {
+        _resultado = "Femenino";
+      });
+  }
+
   List<String> _itensMenu = [
     "Remover",
     "Editar",
@@ -55,8 +70,8 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
 
   Future<Carrinho> _listenerCarrinho() async {
     DocumentSnapshot snapshot =
-        await UtilFirebase.recuperarItemsColecaoGenerica(
-            coletionPai, documentPai, subColection, subDocument);
+    await UtilFirebase.recuperarItemsColecaoGenerica(
+        coletionPai, documentPai, subColection, subDocument);
 
     if (snapshot.data != null) {
       Map<String, dynamic> dados = snapshot.data;
@@ -109,23 +124,27 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
     );
   }
 
+  Future _salvarPedido() {
+    Pedido pedido = Pedido();
+    pedido.usuario = UserFirebase.fireLogged;
+    pedido.carrinho = carrinho;
+    pedido.formaPagamento = "Cartão de Crédito";
+    carrinho.fecharPedido();
+
+    UtilFirebase.criarItemAutoIdColecaoGenerica(
+        strPedido, documentPai, strPedido, pedido.toJson());
+    carrinho.limpar();
+    UtilFirebase.criarItemComIdColecaoGenerica(
+        coletionPai, documentPai, subColection, subDocument, carrinho.toJson());
+
+    Navigator.pushReplacementNamed(context, RouteGenerator.HOME, arguments: 3);
+  }
+
   Future _adicionarPedido() {
     if (UserFirebase.logado && carrinho.produtos.length != 0) {
-      Pedido pedido = Pedido();
-      pedido.usuario = UserFirebase.fireLogged;
-      pedido.carrinho = carrinho;
-      pedido.formaPagamento = "Cartão de Crédito";
-      carrinho.fecharPedido();
-
-      UtilFirebase.criarItemAutoIdColecaoGenerica(
-          strPedido, documentPai, strPedido, pedido.toJson());
-      carrinho.limpar();
-      UtilFirebase.criarItemComIdColecaoGenerica(
-          coletionPai, documentPai, subColection, subDocument,
-          carrinho.toJson());
-
-      Navigator.pushReplacementNamed(
-          context, RouteGenerator.HOME, arguments: 3);
+      _controllerEndereco.text = UserFirebase.fireLogged.endereco;
+//      AlertDialogEndereco(context);
+      AlertDialogFormaPagamento(context);
     }
     else {
       showDialog(
@@ -139,7 +158,6 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
                     child: Text("Cancelar")),
                 FlatButton(
                     onPressed: () {
-//                      _removerAnotacao(id);
                       Navigator.pushNamed(context, RouteGenerator.LOGIN);
                     },
                     child: Text("Efetuar login")),
@@ -147,6 +165,50 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
             );
           });
     }
+  }
+
+  AlertDialogEndereco(BuildContext context) {
+    return showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        title: Text("Endereço diferente do Cadastrado"),
+        content: TextField(
+          controller: _controllerEndereco,
+        ),
+        actions: <Widget>[
+          FlatButton(onPressed: () {
+            Navigator.pop(context);
+          }, child: Text("Enviar"))
+        ],
+      );
+    });
+  }
+
+  AlertDialogFormaPagamento(BuildContext context) {
+    return showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          int selectedRadio = 0;
+          return AlertDialog(
+            title: Text("Forma de Pagamento"),
+            content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List<Widget>.generate(4, (int index) {
+                    return RadioListTile(
+                      title: Text(index.toString()),
+                      value: index,
+                      groupValue: selectedRadio,
+                      onChanged: (int value) {
+                        setState(() => selectedRadio = value);
+                      },
+                    );
+                  }),
+                );
+              },
+            ),
+          );
+        });
   }
 
   @override
