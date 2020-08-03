@@ -9,9 +9,8 @@ class Configuracoes extends StatefulWidget {
 }
 
 class _ConfiguracoesState extends State<Configuracoes> {
-  _verificarUsuarioLogado() {
-    UserFirebase.recuperaDadosUsuario();
-    if (UserFirebase.logado) {
+  _verificarUsuarioLogado() async {
+    if (!UserFirebase.fireLogged.isAdm) {
       Navigator.pushReplacementNamed(context, RouteGenerator.LOGIN);
     }
   }
@@ -36,6 +35,7 @@ class _ConfiguracoesState extends State<Configuracoes> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
+
                   Padding(
                     padding: EdgeInsets.only(bottom: 32),
                     child: Image.asset(
@@ -44,8 +44,9 @@ class _ConfiguracoesState extends State<Configuracoes> {
                       height: 150,
                     ),
                   ),
+
                   Padding(
-                    padding: EdgeInsets.only(top: 16, bottom: 10),
+                    padding: EdgeInsets.only(top: 10),
                     child: RaisedButton(
                         child: Text(
                           "Categoria",
@@ -59,8 +60,9 @@ class _ConfiguracoesState extends State<Configuracoes> {
                           Navigator.pushNamed(context, RouteGenerator.CAD_CATEGORIA);
                         }),
                   ),
+
                   Padding(
-                    padding: EdgeInsets.only(top: 16, bottom: 10),
+                    padding: EdgeInsets.only(top: 10),
                     child: RaisedButton(
                         child: Text(
                           "Produtos",
@@ -72,6 +74,23 @@ class _ConfiguracoesState extends State<Configuracoes> {
                             borderRadius: BorderRadius.circular(10)),
                         onPressed: () {
                           Navigator.pushNamed(context, RouteGenerator.CAD_PRODUTOS);
+                        }),
+                  ),
+
+                  Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child: RaisedButton(
+                        child: Text(
+                          "Forma de Pagamento",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                        color: Color(0xffd19c3c),
+                        padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        onPressed: () {
+                          Navigator.pushNamed(
+                              context, RouteGenerator.CAD_FORMAPAGAMENTO);
                         }),
                   ),
                 ],

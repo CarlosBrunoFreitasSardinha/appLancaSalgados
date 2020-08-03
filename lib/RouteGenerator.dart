@@ -1,4 +1,5 @@
 import 'package:applancasalgados/cadastros/cadCategoria.dart';
+import 'package:applancasalgados/cadastros/cadFormaPagamento.dart';
 import 'package:applancasalgados/cadastros/cadProdutos.dart';
 import 'package:applancasalgados/cadastros/cadUsuario.dart';
 import 'package:applancasalgados/login/login.dart';
@@ -32,6 +33,7 @@ class RouteGenerator{
 
   static const String CAD_USER = "/cadastro";
   static const String CAD_CATEGORIA = "/cadCategoria";
+  static const String CAD_FORMAPAGAMENTO = "/cadFormaPagamento";
   static const String CAD_PRODUTOS = "/cadProdutos";
 
 
@@ -62,6 +64,8 @@ class RouteGenerator{
 
       case CAD_USER: return MaterialPageRoute(builder: (_) => CadastroUsuario());
       case CAD_CATEGORIA: return MaterialPageRoute(builder: (_) => CadastroCategoriaProdutos());
+      case CAD_FORMAPAGAMENTO:
+        return MaterialPageRoute(builder: (_) => CadastroFormaPagamento());
       case CAD_PRODUTOS: return MaterialPageRoute(builder: (_) => CadastroProdutos());
 
       case CONFIG: return MaterialPageRoute(builder: (_) => Configuracoes());

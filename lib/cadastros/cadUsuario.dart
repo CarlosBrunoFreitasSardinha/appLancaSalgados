@@ -100,8 +100,8 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   Future _verificarUsuarioLogado() async {
     UserFirebase.recuperaDadosUsuario();
     if (UserFirebase.logado) {
-      Navigator.pushReplacementNamed(
-          context, RouteGenerator.HOME, arguments: 0);
+      Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
+          arguments: 0);
     }
   }
 

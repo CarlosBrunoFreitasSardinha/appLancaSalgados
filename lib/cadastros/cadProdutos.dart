@@ -35,7 +35,6 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   final picker = ImagePicker();
   Produto produto = Produto();
   List<CategoriaProduto> options = [];
-  int idCategoria;
   bool isCad = true;
 
   Future _recuperarImagem(String urlImg) async {
@@ -59,7 +58,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
     });
   }
 
-  Future _uploadImagem() {
+  Future _uploadImagem() async {
     FirebaseStorage storage = FirebaseStorage.instance;
 
     StorageReference pastaRaiz = storage.ref();
@@ -180,7 +179,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
   _verificarUsuarioLogado() {
     UserFirebase.recuperaDadosUsuario();
-    if (UserFirebase.fireLogged.isAdm) {
+    if (!UserFirebase.fireLogged.isAdm) {
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
           arguments: 0);
     }

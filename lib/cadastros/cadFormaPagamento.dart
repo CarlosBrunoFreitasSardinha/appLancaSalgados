@@ -1,33 +1,30 @@
 import 'dart:async';
 
 import 'package:applancasalgados/RouteGenerator.dart';
-import 'package:applancasalgados/models/CategoriaProduto.dart';
+import 'package:applancasalgados/models/FormaPagamento.dart';
 import 'package:applancasalgados/util/usuarioFireBase.dart';
 import 'package:applancasalgados/util/utilFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 
-class CadastroCategoriaProdutos extends StatefulWidget {
+class CadastroFormaPagamento extends StatefulWidget {
   @override
-  _CadastroCategoriaProdutosState createState() =>
-      _CadastroCategoriaProdutosState();
+  _CadastroFormaPagamentoState createState() => _CadastroFormaPagamentoState();
 }
 
-class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
+class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
   //Controladores
   TextEditingController _controllerTitulo = TextEditingController();
   Firestore bd = Firestore.instance;
   final _controller = StreamController<QuerySnapshot>.broadcast();
-  String _mensagemErro = "", colection = "categoria";
-  List<CategoriaProduto> options = [];
+  String _mensagemErro = "", colection = "formaPagamento";
+  List<FormaPagamento> options = [];
   int id;
   var selectedItem;
 
-
   _obterIndice() async {
     Map<String, dynamic> json =
-    await UtilFirebase.recuperarUmObjeto("indices", colection);
+        await UtilFirebase.recuperarUmObjeto("indices", colection);
     setState(() {
       id = int.parse(json["id"]);
     });
@@ -63,7 +60,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
       options.forEach((element) {
         if (element.descricao == selectedItem) {
           selectedItem = null;
-          _alterarCategoria(element.idCategoria.toString());
+          _alterarCategoria(element.id.toString());
         }
       });
     }
@@ -74,10 +71,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
 
   _cadastrarCategoria() async {
     UtilFirebase.cadastrarDados(colection, id.toString(),
-        {
-          "idCategoria": id.toString(),
-          "descricao": _controllerTitulo.text
-        });
+        {"id": id, "descricao": _controllerTitulo.text});
     UtilFirebase.alterarDados(
         "indices", colection, {"id": (id + 1).toString()});
   }
@@ -88,10 +82,8 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
   }
 
   Stream<QuerySnapshot> _adicionarListenerConversas() {
-    final stream = bd
-        .collection(colection)
-        .orderBy("idCategoria", descending: false)
-        .snapshots();
+    final stream =
+        bd.collection(colection).orderBy("id", descending: false).snapshots();
 
     stream.listen((dados) {
       _controller.add(dados);
@@ -124,7 +116,6 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
 
   @override
   Widget build(BuildContext context) {
-
     var streamCategoria = StreamBuilder<QuerySnapshot>(
         stream: _controller.stream,
         // ignore: missing_return
@@ -135,10 +126,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
             List<DropdownMenuItem> currencyItems = [];
             for (int i = 0; i < snapshot.data.documents.length; i++) {
               DocumentSnapshot snap = snapshot.data.documents[i];
-              options.add(CategoriaProduto.fromJson({
-                'idCategoria': snap.data["idCategoria"],
-                'descricao': snap.data["descricao"]
-              }));
+              options.add(FormaPagamento.fromJson(snap.data));
 
               currencyItems.add(
                 DropdownMenuItem(
@@ -161,9 +149,8 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
                   onChanged: (currencyValue) {
                     final snackBar = SnackBar(
                       content: Text(
-                        'Categoria $currencyValue, foi selecionada!',
-                        style:
-                        TextStyle(color: Color(0xffd19c3c)),
+                        'Forma de Pagamento $currencyValue, foi selecionada!',
+                        style: TextStyle(color: Color(0xffd19c3c)),
                       ),
                     );
                     Scaffold.of(context).showSnackBar(snackBar);
@@ -175,7 +162,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
                   value: selectedItem,
                   isExpanded: true,
                   hint: new Text(
-                    "Nova Categoria!",
+                    "Nova Forma de Pagamento!",
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -189,7 +176,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cadastro Categoria"),
+        title: Text("Cadastro de Forma de Pagamento"),
       ),
       body: Container(
           decoration: BoxDecoration(color: Color(0xff5c3838)),

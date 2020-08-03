@@ -61,8 +61,6 @@ class _LoginState extends State<Login> {
   }
 
   Future _verificarUsuarioLogado() async {
-    print("tela login = " + UserFirebase.logado.toString());
-    print("Usuario fire login = " + UserFirebase.fireLogged.toString());
     if (UserFirebase.logado) {
       Navigator.pop(context);
     }
