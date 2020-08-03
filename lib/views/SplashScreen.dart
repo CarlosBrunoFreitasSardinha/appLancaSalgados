@@ -9,7 +9,32 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  AnimationController controller;
+  Animation<double> animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller = AnimationController(
+      duration: Duration(seconds: 1),
+      vsync: this,
+    );
+
+    animation = CurvedAnimation(
+      parent: controller,
+      curve: Curves.easeInOutCubic,
+    ).drive(Tween(begin: 0, end: 1));
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -31,8 +56,18 @@ class _SplashScreenState extends State<SplashScreen> {
 
         padding: EdgeInsets.all(60),
         child: SafeArea(
+            child: GestureDetector(
+          onTap: () {
+            controller
+              ..reset()
+              ..forward();
+          },
+          child: RotationTransition(
+            turns: animation,
             child: Center(
               child: Image.asset("imagens/logo.png"),
+            ),
+          ),
         )),
       ),
     );
