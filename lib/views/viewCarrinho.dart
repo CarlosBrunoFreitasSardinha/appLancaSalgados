@@ -4,7 +4,7 @@ import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/models/Carrinho.dart';
 import 'package:applancasalgados/models/Pedido.dart';
 import 'package:applancasalgados/models/ProdutoCarrinho.dart';
-import 'package:applancasalgados/stateLess/CustomListTile.dart';
+import 'package:applancasalgados/stateLess/CustomListItemTwo.dart';
 import 'package:applancasalgados/util/Util.dart';
 import 'package:applancasalgados/util/usuarioFireBase.dart';
 import 'package:applancasalgados/util/utilFireBase.dart';
@@ -28,18 +28,6 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
       subDocument,
       strPedido = "pedidos";
   String _escolhaUsuario = "";
-  String _resultado = "";
-
-  void _selecionados() {
-    if (_escolhaUsuario == "m")
-      setState(() {
-        _resultado = "Masculino";
-      });
-    else
-      setState(() {
-        _resultado = "Femenino";
-      });
-  }
 
   List<String> _itensMenu = [
     "Remover",
@@ -47,11 +35,14 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
   ];
 
   _initilizer() {
-    UserFirebase.recuperaDadosUsuario();
+    var obj = UserFirebase.recuperaDadosUsuario();
     coletionPai = "carrinho";
     documentPai = UserFirebase.fireLogged.uidUser;
     subDocument = "ativo";
     subColection = "carrinho";
+    setState(() {
+      _controllerEndereco.text = UserFirebase.fireLogged.endereco;
+    });
   }
 
   _escolhaMenuItem(String itemEscolhido) {
@@ -142,7 +133,6 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
 
   Future _adicionarPedido() {
     if (UserFirebase.logado && carrinho.produtos.length != 0) {
-      _controllerEndereco.text = UserFirebase.fireLogged.endereco;
 //      AlertDialogEndereco(context);
       AlertDialogFormaPagamento(context);
     }
@@ -170,8 +160,8 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
   AlertDialogEndereco(BuildContext context) {
     return showDialog(context: context, builder: (context) {
       return AlertDialog(
-        title: Text("Endereço diferente do Cadastrado"),
-        content: TextField(
+            title: Text("Endereço de Cadastrado"),
+            content: TextField(
           controller: _controllerEndereco,
         ),
         actions: <Widget>[

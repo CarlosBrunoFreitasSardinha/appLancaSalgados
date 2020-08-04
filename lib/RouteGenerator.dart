@@ -13,7 +13,7 @@ import 'package:applancasalgados/views/viewCarrinho.dart';
 import 'package:applancasalgados/views/viewDestaques.dart';
 import 'package:applancasalgados/views/viewPedidos.dart';
 import 'package:applancasalgados/views/viewPerfil.dart';
-import 'package:applancasalgados/views/viewProdutos.dart';
+import 'package:applancasalgados/views/viewProduto.dart';
 import 'package:flutter/material.dart';
 
 

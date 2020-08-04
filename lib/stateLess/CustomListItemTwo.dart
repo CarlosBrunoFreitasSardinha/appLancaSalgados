@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class _ArticleDescription extends StatelessWidget {
-  _ArticleDescription({
-    Key key,
-    this.title,
-    this.subtitle,
-    this.preco,
-    this.quantidade,
-    this.subTotal
-  }) : super(key: key);
+  _ArticleDescription(
+      {Key key,
+      this.title,
+      this.subtitle,
+      this.preco,
+      this.quantidade,
+      this.subTotal})
+      : super(key: key);
 
   final String title;
   final String subtitle;
@@ -30,19 +30,22 @@ class _ArticleDescription extends StatelessWidget {
                 '$title',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xffd19c3c)),
-              ),
-              Padding(padding: EdgeInsets.only(top: 3.0, left: 4), child: Text(
-                '$subtitle',
-                maxLines: 2,
                 style: const TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.black54,
-                    fontWeight: FontWeight.bold
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Color(0xffd19c3c)),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 3.0, left: 4),
+                child: Text(
+                  '$subtitle',
+                  maxLines: 2,
+                  style: const TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.black54,
+                      fontWeight: FontWeight.bold),
                 ),
-              ),),
-
+              ),
             ],
           ),
         ),
@@ -52,26 +55,26 @@ class _ArticleDescription extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              Text( '$preco',
+              Text(
+                '$preco',
                 style: const TextStyle(
                     fontSize: 18.0,
                     color: Color(0xff006400),
-                    fontWeight: FontWeight.bold
-                ),
+                    fontWeight: FontWeight.bold),
               ),
-              Text( 'x $quantidade',
+              Text(
+                'x $quantidade',
                 style: const TextStyle(
                     fontSize: 18.0,
                     color: Color(0xff006400),
-                    fontWeight: FontWeight.bold
-                ),
+                    fontWeight: FontWeight.bold),
               ),
-              Text( ' = $subTotal',
+              Text(
+                ' = $subTotal',
                 style: const TextStyle(
                     fontSize: 18.0,
                     color: Color(0xff006400),
-                    fontWeight: FontWeight.bold
-                ),
+                    fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -137,9 +140,11 @@ class CustomListItemTwo extends StatelessWidget {
                 ),
               ),
               AspectRatio(
-                aspectRatio: 0.35,
-                child: Align(alignment: Alignment.topCenter,
-                  child: icone,),
+                aspectRatio: 0.45,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: icone,
+                ),
               ),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:applancasalgados/models/Pedido.dart';
+import 'package:applancasalgados/stateLess/CustomListItemOne.dart';
 import 'package:applancasalgados/util/Util.dart';
 import 'package:applancasalgados/util/usuarioFireBase.dart';
 import 'package:applancasalgados/util/utilFireBase.dart';
@@ -21,6 +22,31 @@ class _ViewPedidosState extends State<ViewPedidos>
       stts_EmPreparacao = "Pedido Recebido";
   final _controller = StreamController<QuerySnapshot>.broadcast();
   ScrollController _scrollControllerMensagens = ScrollController();
+  List<String> _itensMenu = [
+    "Visualizar Pedido",
+    "Pedido Recebido",
+    "Saiu para Entrega",
+    "Pedido Entregue"
+  ];
+
+  _escolhaMenuItem(String itemEscolhido) {
+    String i = itemEscolhido.split("-")[1];
+    String item = itemEscolhido.split("-")[0];
+
+    switch (item) {
+      case "Visualizar Pedido":
+        break;
+      case "Pedido Recebido":
+        _alterarDadoPedido(i, {"status": stts_recebido});
+        break;
+      case "Saiu para Entrega":
+        _alterarDadoPedido(i, {"status": stts_saiu});
+        break;
+      case "Pedido Entregue":
+        _alterarDadoPedido(i, {"atendido": true});
+        break;
+    }
+  }
 
   _initilizer() {
     UserFirebase.recuperaDadosUsuario();
@@ -107,66 +133,26 @@ class _ViewPedidosState extends State<ViewPedidos>
                     controller: _scrollControllerMensagens,
                     itemCount: querySnapshot.documents.length,
                     itemBuilder: (context, indice) {
-                      DocumentSnapshot json = produtos[indice];
+                          DocumentSnapshot json = produtos[indice];
+                      Pedido pedido = Pedido.fromJson(json.data);
 
-
-                      Pedido produto = Pedido.fromJson(json.data);
-
-                      return Card(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            ListTile(
-                              title: Text(produto.tituloPedido),
-                              subtitle: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(produto.formaPagamento),
-                                  Padding(
-                                      padding: EdgeInsets.all(4),
-                                      child: Text(
-                                        produto.status,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                            color: Colors.green),
-                                      )),
-                                ],
-                              ),
-                              trailing:
-                              Text(Util.moeda(produto.carrinho.total)),
-                            ),
-                            Row(
-                              children: <Widget>[
-                                ButtonBar(
-                                  children: <Widget>[
-                                    FlatButton(
-                                      child: const Text('Visualizar'),
-                                      onPressed: () {},
-                                    ),
-                                    UserFirebase.fireLogged.isAdm
-                                        ? FlatButton(
-                                      child: Text(stts_recebido),
-                                      onPressed: () =>
-                                          _alterarDadoPedido(json.documentID,
-                                              {"status": stts_recebido}),
-                                    )
-                                        : Center(),
-                                    UserFirebase.fireLogged.isAdm
-                                        ? FlatButton(
-                                      child: Text(stts_saiu),
-                                      onPressed: () =>
-                                          _alterarDadoPedido(json.documentID,
-                                              {"status": stts_saiu}),
-                                    )
-                                        : Center(),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ],
+                      return CustomListItemOne(
+                        title: pedido.tituloPedido,
+                        subtitle: pedido.formaPagamento + " " +
+                            Util.moeda(pedido.carrinho.total),
+                        preco: pedido.status,
+                        color: Colors.white,
+                        radius: 5,
+                        icone: PopupMenuButton<String>(
+                          onSelected: _escolhaMenuItem,
+                          itemBuilder: (context) {
+                            return _itensMenu.map((String item) {
+                              return PopupMenuItem<String>(
+                                value: item + '-' + json.documentID,
+                                child: Text(item),
+                              );
+                            }).toList();
+                          },
                         ),
                       );
                     })
