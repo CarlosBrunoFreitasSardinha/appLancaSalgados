@@ -153,7 +153,7 @@ class _ViewProdutoState extends State<ViewProduto> {
                     onTap: () => Navigator.pop(context),
                   ),
                 ),
-                ),
+              ),
                 ),
 
                 //container dados produto

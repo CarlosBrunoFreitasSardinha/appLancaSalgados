@@ -27,7 +27,6 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
       subColection,
       subDocument,
       strPedido = "pedidos";
-  String _escolhaUsuario = "";
 
   List<String> _itensMenu = [
     "Remover",
@@ -115,26 +114,14 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
     );
   }
 
-  Future _salvarPedido() {
-    Pedido pedido = Pedido();
-    pedido.usuario = UserFirebase.fireLogged;
-    pedido.carrinho = carrinho;
-    pedido.formaPagamento = "Cartão de Crédito";
-    carrinho.fecharPedido();
-
-    UtilFirebase.criarItemAutoIdColecaoGenerica(
-        strPedido, documentPai, strPedido, pedido.toJson());
-    carrinho.limpar();
-    UtilFirebase.criarItemComIdColecaoGenerica(
-        coletionPai, documentPai, subColection, subDocument, carrinho.toJson());
-
-    Navigator.pushReplacementNamed(context, RouteGenerator.HOME, arguments: 3);
-  }
 
   Future _adicionarPedido() {
     if (UserFirebase.logado && carrinho.produtos.length != 0) {
-//      AlertDialogEndereco(context);
-      AlertDialogFormaPagamento(context);
+      Pedido pedido = Pedido();
+      pedido.usuario = UserFirebase.fireLogged;
+      pedido.carrinho = carrinho;
+      pedido.enderecoEntrega = pedido.usuario.endereco;
+      Navigator.pushNamed(context, RouteGenerator.PEDIDO, arguments: pedido);
     }
     else {
       showDialog(
@@ -155,50 +142,6 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
             );
           });
     }
-  }
-
-  AlertDialogEndereco(BuildContext context) {
-    return showDialog(context: context, builder: (context) {
-      return AlertDialog(
-            title: Text("Endereço de Cadastrado"),
-            content: TextField(
-          controller: _controllerEndereco,
-        ),
-        actions: <Widget>[
-          FlatButton(onPressed: () {
-            Navigator.pop(context);
-          }, child: Text("Enviar"))
-        ],
-      );
-    });
-  }
-
-  AlertDialogFormaPagamento(BuildContext context) {
-    return showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          int selectedRadio = 0;
-          return AlertDialog(
-            title: Text("Forma de Pagamento"),
-            content: StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: List<Widget>.generate(4, (int index) {
-                    return RadioListTile(
-                      title: Text(index.toString()),
-                      value: index,
-                      groupValue: selectedRadio,
-                      onChanged: (int value) {
-                        setState(() => selectedRadio = value);
-                      },
-                    );
-                  }),
-                );
-              },
-            ),
-          );
-        });
   }
 
   @override
@@ -293,8 +236,8 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
                                   color: Colors.white,
                                   onPressed: () {},
                                 ),
-                                Text('Finalizar Pedido',
-                                    style: TextStyle(
+                                          Text('Fechar Carrinho',
+                                              style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 19.0,
                                         color: Colors.white)),

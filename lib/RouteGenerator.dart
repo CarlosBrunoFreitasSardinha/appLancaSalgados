@@ -11,6 +11,7 @@ import 'package:applancasalgados/views/home.dart';
 import 'package:applancasalgados/views/viewCardapio.dart';
 import 'package:applancasalgados/views/viewCarrinho.dart';
 import 'package:applancasalgados/views/viewDestaques.dart';
+import 'package:applancasalgados/views/viewPedido.dart';
 import 'package:applancasalgados/views/viewPedidos.dart';
 import 'package:applancasalgados/views/viewPerfil.dart';
 import 'package:applancasalgados/views/viewProduto.dart';
@@ -29,7 +30,8 @@ class RouteGenerator{
   static const String CARRINHO = "/viewCarrinho";
   static const String PERFIL = "/viewPerfil";
   static const String PRODUTO = "/viewProduto";
-  static const String PEDIDO = "/viewPedidos";
+  static const String PEDIDO = "/viewPedido";
+  static const String PEDIDOS = "/viewPedidos";
 
   static const String CAD_USER = "/cadastro";
   static const String CAD_CATEGORIA = "/cadCategoria";
@@ -59,8 +61,10 @@ class RouteGenerator{
       case CARRINHO: return MaterialPageRoute(builder: (_) => ViewCarrinho());
       case PERFIL: return MaterialPageRoute(builder: (_) => ViewPerfil());
       case PRODUTO: return MaterialPageRoute(builder: (_) => ViewProduto(args));
-      case PEDIDO:
+      case PEDIDOS:
         return MaterialPageRoute(builder: (_) => ViewPedidos());
+      case PEDIDO:
+        return MaterialPageRoute(builder: (_) => ViewPedido(args));
 
       case CAD_USER: return MaterialPageRoute(builder: (_) => CadastroUsuario());
       case CAD_CATEGORIA: return MaterialPageRoute(builder: (_) => CadastroCategoriaProdutos());

@@ -100,7 +100,7 @@ class _CardapioState extends State<Cardapio>
                           MediaQuery.of(context).size.width;
 
                       return Padding(
-                        padding: EdgeInsets.all(6),
+                        padding: EdgeInsets.all(3),
                         child: GestureDetector(
                             onTap: () {
                               Navigator.pushNamed(
@@ -131,19 +131,17 @@ class _CardapioState extends State<Cardapio>
                               preco: Util.moeda(produto.preco),
                               color: Colors.white,
                               radius: 5,
-                              icone: IconButton(
-                                  icon: PopupMenuButton<String>(
-                                    onSelected: _escolhaMenuItem,
-                                    itemBuilder: (context) {
-                                      return _itensMenu.map((String item) {
-                                        return PopupMenuItem<String>(
-                                          value: item + '-' + json.documentID,
-                                          child: Text(item),
-                                        );
-                                      }).toList();
-                                    },
-                                  ),
-                                  onPressed: () {}),
+                              icone: PopupMenuButton<String>(
+                                onSelected: _escolhaMenuItem,
+                                itemBuilder: (context) {
+                                  return _itensMenu.map((String item) {
+                                    return PopupMenuItem<String>(
+                                      value: item + '-' + json.documentID,
+                                      child: Text(item),
+                                    );
+                                  }).toList();
+                                },
+                              ),
                             )),
                       );
                     }),

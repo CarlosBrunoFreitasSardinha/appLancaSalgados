@@ -1,6 +1,8 @@
 import 'package:applancasalgados/models/Carrinho.dart';
 import 'package:applancasalgados/models/usuario.dart';
 import 'package:applancasalgados/util/Util.dart';
+import 'package:applancasalgados/util/usuarioFireBase.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Pedido {
   Carrinho _carrinho;
@@ -8,7 +10,10 @@ class Pedido {
   bool _atendido = false;
   String _status = "Solicitado";
   String _formaPagamento;
-  String _tituloPedido;
+  String _enderecoEntrega;
+  String _tituloPedido =
+      UserFirebase.fireLogged.nome + " _ " + Util.formatarData(DateTime.now());
+  String _dataPedido = Timestamp.now().toString();
 
   Pedido();
 
@@ -17,15 +22,17 @@ class Pedido {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data["usuario"] = usuario.toJson();
-    data["carrinho"] = carrinho.toJson();
-    data["status"] = status;
-    data["atendido"] = atendido;
-    data["formaPagamento"] = formaPagamento;
-    data["tituloPedido"] =
-        usuario.nome + " _ " + Util.formatarData(DateTime.now());
-    return data;
+    final Map<String, dynamic> json = new Map<String, dynamic>();
+    json["usuario"] = usuario.toJson();
+    json["carrinho"] = carrinho.toJson();
+    json["status"] = status;
+    json["atendido"] = atendido;
+    json["formaPagamento"] = formaPagamento;
+    json["tituloPedido"] = tituloPedido;
+    json["enderecoEntrega"] = enderecoEntrega;
+    json["dataPedido"] = dataPedido;
+
+    return json;
   }
 
   Pedido.fromJson(Map<String, dynamic> json) {
@@ -35,6 +42,8 @@ class Pedido {
     tituloPedido = json["tituloPedido"];
     carrinho = Carrinho.fromJson(json["carrinho"]);
     usuario = Usuario.fromJson(json["usuario"]);
+    enderecoEntrega = json["enderecoEntrega"];
+    dataPedido = json["dataPedido"];
   }
 
   Usuario get usuario => _usuario;
@@ -63,8 +72,19 @@ class Pedido {
   }
 
   String get tituloPedido => _tituloPedido;
-
   set tituloPedido(String value) {
     _tituloPedido = value;
+  }
+
+  String get enderecoEntrega => _enderecoEntrega;
+
+  set enderecoEntrega(String value) {
+    _enderecoEntrega = value;
+  }
+
+  String get dataPedido => _dataPedido;
+
+  set dataPedido(String value) {
+    _dataPedido = value;
   }
 }

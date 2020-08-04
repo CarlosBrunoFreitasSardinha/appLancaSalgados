@@ -121,7 +121,7 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
         // ignore: missing_return
         builder: (context, snapshot) {
           if (!snapshot.hasData)
-            const Text("Loading.....");
+            const Text("Carregando...");
           else {
             List<DropdownMenuItem> currencyItems = [];
             for (int i = 0; i < snapshot.data.documents.length; i++) {

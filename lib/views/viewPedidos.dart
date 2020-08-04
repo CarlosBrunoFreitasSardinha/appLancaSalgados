@@ -35,6 +35,7 @@ class _ViewPedidosState extends State<ViewPedidos>
 
     switch (item) {
       case "Visualizar Pedido":
+//        Navigator.pushNamed(context, RouteGenerator.PEDIDO, arguments: pedido);
         break;
       case "Pedido Recebido":
         _alterarDadoPedido(i, {"status": stts_recebido});
@@ -136,26 +137,33 @@ class _ViewPedidosState extends State<ViewPedidos>
                           DocumentSnapshot json = produtos[indice];
                       Pedido pedido = Pedido.fromJson(json.data);
 
-                      return CustomListItemOne(
-                        title: pedido.tituloPedido,
-                        subtitle: pedido.formaPagamento + " " +
-                            Util.moeda(pedido.carrinho.total),
-                        preco: pedido.status,
-                        color: Colors.white,
-                        radius: 5,
-                        icone: PopupMenuButton<String>(
-                          onSelected: _escolhaMenuItem,
-                          itemBuilder: (context) {
-                            return _itensMenu.map((String item) {
-                              return PopupMenuItem<String>(
-                                value: item + '-' + json.documentID,
-                                child: Text(item),
-                              );
-                            }).toList();
-                          },
-                        ),
-                      );
-                    })
+                          return Padding(
+                              padding: EdgeInsets.all(3),
+                              child: GestureDetector(
+                                  onTap: () {
+//                      Navigator.pushNamed( context, RouteGenerator.PRODUTO, arguments: produto);
+                                  },
+                                  child: CustomListItemOne(
+                                    title: pedido.tituloPedido,
+                                    subtitle: pedido.formaPagamento +
+                                        " " +
+                                        Util.moeda(pedido.carrinho.total),
+                                    preco: pedido.status,
+                                    color: Colors.white,
+                                    radius: 5,
+                                    icone: PopupMenuButton<String>(
+                                      onSelected: _escolhaMenuItem,
+                                      itemBuilder: (context) {
+                                        return _itensMenu.map((String item) {
+                                          return PopupMenuItem<String>(
+                                            value: item + '-' + json.documentID,
+                                            child: Text(item),
+                                          );
+                                        }).toList();
+                                      },
+                                    ),
+                                  )));
+                        })
                     : listaPedidosVazia(),
               );
             }
