@@ -123,25 +123,25 @@ class _ViewProdutoState extends State<ViewProduto> {
                 fit: BoxFit.cover)),
         alignment: Alignment.topCenter,
         child: SingleChildScrollView(
-          child: Hero(
-            tag: widget.produto.idProduto,
             child: Column(
-              children: <Widget>[
-
-                //imagem do produto
-                Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black45.withOpacity(0.7),
-                        spreadRadius: 40,
-                        blurRadius: 100,
-                        offset: Offset(0, 0),
-                      )
-                    ],
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 24, bottom: 10),
+          children: <Widget>[
+            //imagem do produto
+            Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black45.withOpacity(0.7),
+                    spreadRadius: 40,
+                    blurRadius: 100,
+                    offset: Offset(0, 0),
+                  )
+                ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(top: 24, bottom: 10),
+                child: Hero(
+                  tag: widget.produto.idProduto,
+                  child: GestureDetector(
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(15),
                         child: Image.network(
@@ -150,7 +150,10 @@ class _ViewProdutoState extends State<ViewProduto> {
                           height: 290,
                           fit: BoxFit.cover,
                         )),
+                    onTap: () => Navigator.pop(context),
                   ),
+                ),
+                ),
                 ),
 
                 //container dados produto
@@ -161,7 +164,8 @@ class _ViewProdutoState extends State<ViewProduto> {
                         children: <Widget>[
                           Padding(
                             padding:
-                            EdgeInsets.only(left: 16, top: 16, bottom: 16,  right: 8),
+                            EdgeInsets.only(
+                                left: 16, top: 16, bottom: 16, right: 8),
                             child: Text(
                               widget.produto.titulo,
                               style: TextStyle(
@@ -172,7 +176,7 @@ class _ViewProdutoState extends State<ViewProduto> {
                           ),
                           Padding(
                             padding:
-                            EdgeInsets.only(left: 16,  right: 8),
+                            EdgeInsets.only(left: 16, right: 8),
                             child: Text(widget.produto.descricao,
                                 style: TextStyle(
                                     fontSize: 20.0, color: Colors.grey)),
@@ -197,7 +201,8 @@ class _ViewProdutoState extends State<ViewProduto> {
                                   BoxDecoration(
                                       borderRadius:
                                       BorderRadius.all(Radius.circular(10.0)),
-                                      border: Border.all(width: 1, color: Colors.grey)
+                                      border: Border.all(
+                                          width: 1, color: Colors.grey)
                                   ),
                                   child: Row(
                                     children: <Widget>[
@@ -209,7 +214,8 @@ class _ViewProdutoState extends State<ViewProduto> {
                                         onPressed: () => _reduzir(),
                                       ),
                                       Text(
-                                        "${produtoCarrinho.quantidade.toString()}",
+                                        "${produtoCarrinho.quantidade
+                                            .toString()}",
                                         style: TextStyle(
                                             color: Colors.blueAccent,
                                             fontWeight: FontWeight.bold,
@@ -241,13 +247,15 @@ class _ViewProdutoState extends State<ViewProduto> {
                                           child: Row(
                                             children: <Widget>[
                                               IconButton(
-                                                icon: Icon(Icons.add_shopping_cart),
+                                                icon: Icon(
+                                                    Icons.add_shopping_cart),
                                                 color: Colors.white,
                                                 onPressed: () {},
                                               ),
                                               Text(
                                                   'Adicionar ${Util.moeda(
-                                                      produtoCarrinho.subtotal)}',
+                                                      produtoCarrinho
+                                                          .subtotal)}',
                                                   style: TextStyle(
                                                       fontWeight: FontWeight
                                                           .w500,
@@ -269,8 +277,7 @@ class _ViewProdutoState extends State<ViewProduto> {
                     )
                 ),
               ],
-            ),
-          ),
+            )
         ),
       ),
     );

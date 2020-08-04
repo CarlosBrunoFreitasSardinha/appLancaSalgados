@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:applancasalgados/models/Produto.dart';
+import 'package:applancasalgados/stateLess/CustomListItemOne.dart';
 import 'package:applancasalgados/util/Util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,22 @@ class _CardapioState extends State<Cardapio>
   final _controller = StreamController<QuerySnapshot>.broadcast();
   ScrollController _scrollControllerMensagens = ScrollController();
   String idReceptor, urlImagemEnviada;
+  List<String> _itensMenu = [
+    "Editar",
+    "Deletar",
+  ];
+
+  _escolhaMenuItem(String itemEscolhido) {
+    String i = itemEscolhido.split("-")[1];
+    String item = itemEscolhido.split("-")[0];
+
+    switch (item) {
+      case "Editar":
+        break;
+      case "Deletar":
+        break;
+    }
+  }
 
   Stream<QuerySnapshot> _adicionarListenerProdutos() {
     final stream = bd
@@ -82,90 +99,52 @@ class _CardapioState extends State<Cardapio>
                       double larguraContainer =
                           MediaQuery.of(context).size.width;
 
-                      return Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: EdgeInsets.all(6),
-                          child: Container(
-                            width: larguraContainer,
-                            padding: EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                                color: Colors.grey[100],
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8))),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                    context, RouteGenerator.PRODUTO,
-                                    arguments: produto);
-                              },
-                              child: Row(
-                                children: <Widget>[
-                                  Flexible(
-                                      flex: 1,
-                                      child: GestureDetector(
-                                        child: Hero(
-                                          tag: produto.idProduto,
-                                          child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                              child: Image.network(
-                                                produto.urlImg,
-                                                height: 100,
-                                                width: 100,
-                                                fit: BoxFit.cover,
-                                              )),
-                                        ),
-                                        onTap: () {
-                                          Navigator.pushNamed(
-                                              context, RouteGenerator.PRODUTO,
-                                              arguments: produto);
-                                        },
+                      return Padding(
+                        padding: EdgeInsets.all(6),
+                        child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                  context, RouteGenerator.PRODUTO,
+                                  arguments: produto);
+                            },
+                            child: CustomListItemOne(
+                              thumbnail: GestureDetector(
+                                child: Hero(
+                                  tag: produto.idProduto,
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: Image.network(
+                                        produto.urlImg,
+                                        height: 100,
+                                        width: 100,
+                                        fit: BoxFit.cover,
                                       )),
-                                  Flexible(
-                                    flex: 3,
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(10, 2, 8, 2),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        children: <Widget>[
-                                          Padding(
-                                              padding: EdgeInsets.all(4),
-                                              child: Text(produto.titulo,
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color:
-                                                          Color(0xffd19c3c)))),
-                                          Padding(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  8, 2, 4, 4),
-                                              child: Text(produto.descricao,
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.grey))),
-                                          Padding(
-                                              padding: EdgeInsets.all(4),
-                                              child: Text(Util.moeda(produto.preco),
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black87))),
-                                          //Color(0xff5c3838)
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                ],
+                                ),
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                      context, RouteGenerator.PRODUTO,
+                                      arguments: produto);
+                                },
                               ),
-                            ),
-                          ),
-                        ),
+                              title: produto.titulo,
+                              subtitle: produto.descricao,
+                              preco: Util.moeda(produto.preco),
+                              color: Colors.white,
+                              radius: 5,
+                              icone: IconButton(
+                                  icon: PopupMenuButton<String>(
+                                    onSelected: _escolhaMenuItem,
+                                    itemBuilder: (context) {
+                                      return _itensMenu.map((String item) {
+                                        return PopupMenuItem<String>(
+                                          value: item + '-' + json.documentID,
+                                          child: Text(item),
+                                        );
+                                      }).toList();
+                                    },
+                                  ),
+                                  onPressed: () {}),
+                            )),
                       );
                     }),
               );

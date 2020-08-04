@@ -210,12 +210,21 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
 
   Widget _criarItemLista(context, index) {
     return CustomListItemTwo(
-      thumbnail: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
-          child: Image.network(
-            carrinho.produtos[index].urlImg,
-            fit: BoxFit.cover,
-          )),
+      thumbnail: GestureDetector(
+        child: Hero(
+          tag: carrinho.produtos[index].idProduto,
+          child: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Image.network(
+                carrinho.produtos[index].urlImg,
+                fit: BoxFit.cover,
+              )),
+        ),
+        onTap: () {
+          Navigator.pushNamed(context, RouteGenerator.PRODUTO,
+              arguments: carrinho.produtos[index]);
+        },
+      ),
       title: carrinho.produtos[index].titulo,
       subtitle: carrinho.produtos[index].descricao,
       preco: Util.moeda(carrinho.produtos[index].preco),

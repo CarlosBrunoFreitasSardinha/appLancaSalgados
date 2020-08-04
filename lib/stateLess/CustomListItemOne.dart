@@ -101,7 +101,7 @@ class CustomListItemOne extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0),
         child: SizedBox(
-          height: 80,
+          height: thumbnail != null ? 100 : 80,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
