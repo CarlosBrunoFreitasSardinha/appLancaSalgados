@@ -27,6 +27,7 @@ class _ViewPedidoState extends State<ViewPedido>
   ScrollController _scrollControllerMensagens = ScrollController();
   final _controller = StreamController<QuerySnapshot>.broadcast();
   TextEditingController _controllerEndereco = TextEditingController();
+  TextEditingController _controllerTroco = TextEditingController();
   String bdCarrinho = "carrinho";
   var selectedItem;
   List<FormaPagamento> options = [];
@@ -37,15 +38,15 @@ class _ViewPedidoState extends State<ViewPedido>
     documentPai = UserFirebase.fireLogged.uidUser;
     subColection = "pedidos";
     _controllerEndereco.text = widget.pedido.enderecoEntrega;
+    selectedItem = widget.pedido.formaPagamento;
   }
 
   Future _salvarPedido() {
-    print("Resultados Esperados");
-    print(_controllerEndereco.text);
-    print(widget.pedido.formaPagamento);
     if (_controllerEndereco.text.isNotEmpty &&
         widget.pedido.formaPagamento.isNotEmpty) {
       widget.pedido.carrinho.fecharPedido();
+      widget.pedido.trocoPara =
+          _controllerTroco.text == "" ? 0 : double.parse(_controllerTroco.text);
 
       UtilFirebase.criarItemAutoIdColecaoGenerica(
           strPedido, documentPai, strPedido, widget.pedido.toJson());
@@ -228,6 +229,23 @@ class _ViewPedidoState extends State<ViewPedido>
                 ),
               ),
               streamCategoria,
+              selectedItem == "Dinheiro"
+                  ? Padding(
+                padding: EdgeInsets.all(5),
+                child: TextField(
+                  controller: _controllerTroco,
+                  keyboardType: TextInputType.text,
+                  style: TextStyle(fontSize: 20),
+                  decoration: InputDecoration(
+                      contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                      hintText: "Troco Para: ",
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5))),
+                ),
+              )
+                  : SizedBox(),
               Padding(
                 padding: EdgeInsets.all(16),
                 child: Text(

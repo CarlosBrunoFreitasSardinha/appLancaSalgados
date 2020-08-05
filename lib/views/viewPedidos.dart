@@ -8,6 +8,8 @@ import 'package:applancasalgados/util/utilFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../RouteGenerator.dart';
+
 class ViewPedidos extends StatefulWidget {
   @override
   _ViewPedidosState createState() => _ViewPedidosState();
@@ -28,26 +30,6 @@ class _ViewPedidosState extends State<ViewPedidos>
     "Saiu para Entrega",
     "Pedido Entregue"
   ];
-
-  _escolhaMenuItem(String itemEscolhido) {
-    String i = itemEscolhido.split("-")[1];
-    String item = itemEscolhido.split("-")[0];
-
-    switch (item) {
-      case "Visualizar Pedido":
-//        Navigator.pushNamed(context, RouteGenerator.PEDIDO, arguments: pedido);
-        break;
-      case "Pedido Recebido":
-        _alterarDadoPedido(i, {"status": stts_recebido});
-        break;
-      case "Saiu para Entrega":
-        _alterarDadoPedido(i, {"status": stts_saiu});
-        break;
-      case "Pedido Entregue":
-        _alterarDadoPedido(i, {"atendido": true});
-        break;
-    }
-  }
 
   _initilizer() {
     UserFirebase.recuperaDadosUsuario();
@@ -81,6 +63,7 @@ class _ViewPedidosState extends State<ViewPedidos>
         .document(documentPai)
         .collection(subColection)
         .where("atendido", isEqualTo: false)
+        .orderBy("dataPedido")
         .snapshots();
 
     stream.listen((dados) {
@@ -135,7 +118,15 @@ class _ViewPedidosState extends State<ViewPedidos>
                     itemCount: querySnapshot.documents.length,
                     itemBuilder: (context, indice) {
                           DocumentSnapshot json = produtos[indice];
-                      Pedido pedido = Pedido.fromJson(json.data);
+                          Pedido pedido = Pedido.fromJson(json.data);
+                          String subtitle = "Pagamento via " +
+                              pedido.formaPagamento +
+                              "\nTotal: " +
+                              Util.moeda(pedido.carrinho.total);
+                          if (pedido.trocoPara != 0) {
+                            subtitle +=
+                                " Troco para " + Util.moeda(pedido.trocoPara);
+                          }
 
                           return Padding(
                               padding: EdgeInsets.all(3),
@@ -145,18 +136,36 @@ class _ViewPedidosState extends State<ViewPedidos>
                                   },
                                   child: CustomListItemOne(
                                     title: pedido.tituloPedido,
-                                    subtitle: pedido.formaPagamento +
-                                        " " +
-                                        Util.moeda(pedido.carrinho.total),
+                                    subtitle: subtitle,
                                     preco: pedido.status,
                                     color: Colors.white,
                                     radius: 5,
                                     icone: PopupMenuButton<String>(
-                                      onSelected: _escolhaMenuItem,
+                                      onSelected: (item) {
+                                        switch (item) {
+                                          case "Visualizar Pedido":
+                                            Navigator.pushNamed(
+                                                context, RouteGenerator.PEDIDO,
+                                                arguments: pedido);
+                                            break;
+                                          case "Pedido Recebido":
+                                            _alterarDadoPedido(json.documentID,
+                                                {"status": stts_recebido});
+                                            break;
+                                          case "Saiu para Entrega":
+                                            _alterarDadoPedido(json.documentID,
+                                                {"status": stts_saiu});
+                                            break;
+                                          case "Pedido Entregue":
+                                            _alterarDadoPedido(json.documentID,
+                                                {"atendido": true});
+                                            break;
+                                        }
+                                      },
                                       itemBuilder: (context) {
                                         return _itensMenu.map((String item) {
                                           return PopupMenuItem<String>(
-                                            value: item + '-' + json.documentID,
+                                            value: item,
                                             child: Text(item),
                                           );
                                         }).toList();

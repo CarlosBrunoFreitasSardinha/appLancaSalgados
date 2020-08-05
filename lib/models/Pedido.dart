@@ -11,6 +11,7 @@ class Pedido {
   String _status = "Solicitado";
   String _formaPagamento;
   String _enderecoEntrega;
+  double _trocoPara = 0;
   String _tituloPedido =
       UserFirebase.fireLogged.nome + " _ " + Util.formatarData(DateTime.now());
   String _dataPedido = Timestamp.now().toString();
@@ -31,6 +32,7 @@ class Pedido {
     json["tituloPedido"] = tituloPedido;
     json["enderecoEntrega"] = enderecoEntrega;
     json["dataPedido"] = dataPedido;
+    json["trocoPara"] = trocoPara;
 
     return json;
   }
@@ -44,6 +46,7 @@ class Pedido {
     usuario = Usuario.fromJson(json["usuario"]);
     enderecoEntrega = json["enderecoEntrega"];
     dataPedido = json["dataPedido"];
+    trocoPara = json["trocoPara"];
   }
 
   Usuario get usuario => _usuario;
@@ -86,5 +89,11 @@ class Pedido {
 
   set dataPedido(String value) {
     _dataPedido = value;
+  }
+
+  double get trocoPara => _trocoPara;
+
+  set trocoPara(double value) {
+    _trocoPara = value;
   }
 }
