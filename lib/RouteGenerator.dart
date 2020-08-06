@@ -4,7 +4,7 @@ import 'package:applancasalgados/cadastros/cadProdutos.dart';
 import 'package:applancasalgados/cadastros/cadUsuario.dart';
 import 'package:applancasalgados/login/login.dart';
 import 'package:applancasalgados/login/recuperarSenha.dart';
-import 'package:applancasalgados/views/dados.dart';
+import 'package:applancasalgados/views/teste.dart';
 import 'package:applancasalgados/views/viewCardapio.dart';
 import 'package:applancasalgados/views/viewCarrinho.dart';
 import 'package:applancasalgados/views/viewConfiguracoes.dart';
@@ -74,7 +74,8 @@ class RouteGenerator{
 
       case CONFIG: return MaterialPageRoute(builder: (_) => Configuracoes());
 
-      case TESTE: return MaterialPageRoute(builder: (_) => AnimatedIconExample());
+      case TESTE:
+        return MaterialPageRoute(builder: (_) => pagCarrinhoStream());
 
       default: _erroRota();
     }

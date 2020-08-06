@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
 import 'package:applancasalgados/bloc/appBloc.dart';
-import 'package:applancasalgados/models/Carrinho.dart';
-import 'package:applancasalgados/models/Pedido.dart';
-import 'package:applancasalgados/models/ProdutoCarrinho.dart';
+import 'package:applancasalgados/models/CarrinhoModel.dart';
+import 'package:applancasalgados/models/PedidoModel.dart';
+import 'package:applancasalgados/models/ProdutoCarrinhoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/services/BdFireBase.dart';
+import 'package:applancasalgados/services/BdService.dart';
+import 'package:applancasalgados/services/UtilService.dart';
 import 'package:applancasalgados/stateLess/CustomListItemTwo.dart';
-import 'package:applancasalgados/util/Util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -20,8 +20,6 @@ class ViewCarrinho extends StatefulWidget {
 
 class _ViewCarrinhoState extends State<ViewCarrinho>
     with SingleTickerProviderStateMixin {
-  TextEditingController _controllerEndereco = TextEditingController(
-      text: AppModel.to.bloc<UserFirebase>().usuario.endereco);
   Firestore bd = Firestore.instance;
   Carrinho carrinho = Carrinho();
   ProdutoCarrinho _ultimaTarefaRemovida = ProdutoCarrinho();
@@ -54,8 +52,7 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
   }
 
   Future<Carrinho> _listenerCarrinho() async {
-    DocumentSnapshot snapshot =
-    await UtilFirebase.recuperarItemsColecaoGenerica(
+    DocumentSnapshot snapshot = await BdService.recuperarItemsColecaoGenerica(
         coletionPai, documentPai, subColection, subDocument);
 
     if (snapshot.data != null) {
@@ -90,7 +87,7 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
   }
 
   Future _alterarCarrinho() =>
-      UtilFirebase.alterarItemColecaoGenerica(
+      BdService.alterarItemColecaoGenerica(
         coletionPai, documentPai, subColection, subDocument, carrinho.toJson());
 
   Widget carrinhoVazio() {
@@ -163,9 +160,9 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
       ),
       title: carrinho.produtos[index].titulo,
       subtitle: carrinho.produtos[index].descricao,
-      preco: Util.moeda(carrinho.produtos[index].preco),
+      preco: UtilService.moeda(carrinho.produtos[index].preco),
       quantidade: carrinho.produtos[index].quantidade.toString(),
-      subTotal: Util.moeda(carrinho.produtos[index].subtotal),
+      subTotal: UtilService.moeda(carrinho.produtos[index].subtotal),
       color: Colors.white,
       radius: 5,
       icone: PopupMenuButton<String>(
@@ -248,7 +245,7 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
                     Padding(
                       padding: EdgeInsets.all(15),
                       child: Text(
-                        "Total: " + Util.moeda(carrinho.total),
+                        "Total: " + UtilService.moeda(carrinho.total),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20.0,

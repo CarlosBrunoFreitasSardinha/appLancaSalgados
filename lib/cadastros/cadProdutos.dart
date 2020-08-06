@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
-import 'package:applancasalgados/models/CategoriaProduto.dart';
-import 'package:applancasalgados/models/Produto.dart';
+import 'package:applancasalgados/models/CategoriaProdutoModel.dart';
+import 'package:applancasalgados/models/ProdutoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/services/BdFireBase.dart';
-import 'package:applancasalgados/util/Util.dart';
+import 'package:applancasalgados/services/BdService.dart';
+import 'package:applancasalgados/services/UtilService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -100,7 +100,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   _obterIndice() async {
     if (true) {
       Map<String, dynamic> id =
-          await UtilFirebase.recuperarUmObjeto("indices", "produtos");
+          await BdService.recuperarUmObjeto("indices", "produtos");
       setState(() {
         produto.idProduto = id["id"];
       });
@@ -115,19 +115,20 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   _cadastrarProduto() async {
     int indice = int.parse(produto.idProduto)+1;
     if(isCad){
-      UtilFirebase.cadastrarDados("produtos", produto.idProduto, produto.toJson());
-      UtilFirebase.alterarDados("indices", "produtos", {"id": indice.toString()});
+      BdService.cadastrarDados("produtos", produto.idProduto, produto.toJson());
+      BdService.alterarDados("indices", "produtos", {"id": indice.toString()});
       isCad = false;
     }
     else {
-      UtilFirebase.alterarDados("produtos", produto.idCategoria, produto.toJson());
+      BdService.alterarDados("produtos", produto.idCategoria, produto.toJson());
     }
   }
 
   validarCampos() {
     String titulo = _controllerTitulo.text;
     String descricao = _controllerDescricao.text;
-    double preco = double.parse(Util.moeda(double.parse(_controllerPreco.text)));
+    double preco = double.parse(
+        UtilService.moeda(double.parse(_controllerPreco.text)));
     String temp = _controllerTempPreparo.text;
 
 

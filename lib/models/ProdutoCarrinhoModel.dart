@@ -1,4 +1,4 @@
-import 'package:applancasalgados/models/Produto.dart';
+import 'package:applancasalgados/models/ProdutoModel.dart';
 
 class ProdutoCarrinho extends Produto{
 

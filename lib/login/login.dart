@@ -1,9 +1,8 @@
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/models/usuario.dart';
-import 'package:applancasalgados/services/Autenticacao.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:applancasalgados/models/usuarioModel.dart';
+import 'package:applancasalgados/services/AuthService.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
@@ -40,10 +39,8 @@ class _LoginState extends State<Login> {
     }
   }
 
-  Future _logarUsuario(Usuario user) async {
-    await Autenticacao.logarUsuario(user);
-    FirebaseAuth.instance.onAuthStateChanged.listen((firebaseUser) {
-      if (firebaseUser != null)
+  Future<void> _logarUsuario(Usuario user) async {
+    if (await AuthService.logar(user))
         Navigator.pop(context);
       else {
         setState(() {
@@ -51,7 +48,7 @@ class _LoginState extends State<Login> {
               "Erro ao efetuar Login, verifique as informações e tente Novamente";
         });
       }
-    });
+    return;
   }
 
   _verificarUsuarioLogado() {

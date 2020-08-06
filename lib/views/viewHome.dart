@@ -1,17 +1,13 @@
-import 'dart:async';
-
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
 import 'package:applancasalgados/bloc/appBloc.dart';
-import 'package:applancasalgados/models/Carrinho.dart';
 import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/services/Autenticacao.dart';
-import 'package:applancasalgados/services/BdFireBase.dart';
+import 'package:applancasalgados/services/AuthService.dart';
+import 'package:applancasalgados/stateLess/CarrinhoAppBarIcon.dart';
 import 'package:applancasalgados/views/viewCardapio.dart';
 import 'package:applancasalgados/views/viewCarrinho.dart';
 import 'package:applancasalgados/views/viewDestaques.dart';
 import 'package:applancasalgados/views/viewPedidos.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -42,16 +38,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         Navigator.pushNamed(context, RouteGenerator.TESTE);
         break;
       case "Login":
-        if (!AppModel.to
-            .bloc<AppBloc>()
-            .isLogged)
+        if (!AppModel.to.bloc<AppBloc>().isLogged)
           Navigator.pushNamed(context, RouteGenerator.LOGIN);
         break;
       case "Sair":
         if (AppModel.to
             .bloc<AppBloc>()
             .isLogged) {
-          Autenticacao.deslogar();
+          AuthService.deslogar();
           print(AppModel.to
               .bloc<UserFirebase>()
               .usuario
@@ -62,48 +56,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
   }
 
-  List<Widget> carrinhoZerado() {
-    return [
-      Icon(
-        Icons.shopping_cart,
-        color: Colors.white,
-      ),
-      Padding(
-        padding: EdgeInsets.only(left: 24),
-        child: CircleAvatar(
-          radius: 10,
-          backgroundColor: Colors.blueAccent,
-          child: Text(
-            "0",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.bold
-            ),
-          ),
-        ),
-      )
-    ];
-  }
-
-  Future<int> _listenerCarrinho() async {
-    String coletionPai, documentPai, subColection, subDocument;
-    coletionPai = "carrinho";
-    documentPai = AppModel.to
-        .bloc<UserFirebase>()
-        .usuario
-        .uidUser;
-    subDocument = "ativo";
-    subColection = "carrinho";
-    DocumentSnapshot snapshot =
-    await UtilFirebase.recuperarItemsColecaoGenerica(
-        coletionPai, documentPai, subColection, subDocument);
-
-    if (snapshot.data != null) {
-      Map<String, dynamic> dados = snapshot.data;
-      return Carrinho.fromJson(dados).produtos.length;
-    }
-  }
 
   @override
   void initState() {
@@ -115,56 +67,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    var futureCarrinho = AppModel.to
-        .bloc<AppBloc>()
-        .isLogged
-        ? FutureBuilder(
-        future: _listenerCarrinho(),
-        builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-
-          List<Widget> children;
-
-          if (snapshot.hasData) {
-            children = <Widget>[
-                Icon(
-                  Icons.shopping_cart,
-                  color: Colors.white,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 24 ),
-                  child: CircleAvatar(
-                    radius: 10,
-                    backgroundColor: Colors.blueAccent,
-                    child: Text(
-                      snapshot.data.toString(),
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold
-                      ),
-                    ),
-                  ),
-                )
-              ];
-          }
-
-          else if (snapshot.hasError) {
-            children = carrinhoZerado();
-          }
-
-          else {
-            children = carrinhoZerado();
-          }
-
-          return Stack(
-            alignment: Alignment.topLeft,
-            children: children,
-          );
-        })
-        : Stack(
-            alignment: Alignment.topLeft,
-            children: carrinhoZerado(),
-          );
+    var futureCarrinho = CarrinhoAppBarIcon();
 
     return Scaffold(
       body: DefaultTabController(

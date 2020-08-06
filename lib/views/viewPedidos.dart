@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
-import 'package:applancasalgados/models/Pedido.dart';
+import 'package:applancasalgados/models/PedidoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/services/BdFireBase.dart';
+import 'package:applancasalgados/services/BdService.dart';
+import 'package:applancasalgados/services/UtilService.dart';
 import 'package:applancasalgados/stateLess/CustomListItemOne.dart';
-import 'package:applancasalgados/util/Util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +41,7 @@ class _ViewPedidosState extends State<ViewPedidos>
   ];
 
   Future _alterarDadoPedido(String documentRef, Map<String, dynamic> json) {
-    UtilFirebase.alterarItemColecaoGenerica(
+    BdService.alterarItemColecaoGenerica(
         coletionPai, documentPai, subColection, documentRef, json);
   }
 
@@ -123,10 +123,10 @@ class _ViewPedidosState extends State<ViewPedidos>
                           String subtitle = "Pagamento via " +
                               pedido.formaPagamento +
                               "\nTotal: " +
-                              Util.moeda(pedido.carrinho.total);
+                              UtilService.moeda(pedido.carrinho.total);
                           if (pedido.trocoPara != 0) {
-                            subtitle +=
-                                " Troco para " + Util.moeda(pedido.trocoPara);
+                            subtitle += " Troco para " +
+                                UtilService.moeda(pedido.trocoPara);
                           }
 
                           return Padding(

@@ -1,12 +1,13 @@
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
 import 'package:applancasalgados/bloc/appBloc.dart';
-import 'package:applancasalgados/models/Carrinho.dart';
-import 'package:applancasalgados/models/Produto.dart';
-import 'package:applancasalgados/models/ProdutoCarrinho.dart';
+import 'package:applancasalgados/models/CarrinhoModel.dart';
+import 'package:applancasalgados/models/ProdutoCarrinhoModel.dart';
+import 'package:applancasalgados/models/ProdutoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/services/BdFireBase.dart';
-import 'package:applancasalgados/util/Util.dart';
+import 'package:applancasalgados/services/BdService.dart';
+import 'package:applancasalgados/services/CarrinhoService.dart';
+import 'package:applancasalgados/services/UtilService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class ViewProduto extends StatefulWidget {
 }
 
 class _ViewProdutoState extends State<ViewProduto> {
+  final streamCarrinho = AppModel.to.bloc<CarrinhoService>();
   Carrinho carrinho = Carrinho();
   ProdutoCarrinho produtoCarrinho = ProdutoCarrinho();
   bool isInitial = true;
@@ -39,8 +41,7 @@ class _ViewProdutoState extends State<ViewProduto> {
   }
 
   _listenerCarrinho() async {
-    DocumentSnapshot snapshot =
-    await UtilFirebase.recuperarItemsColecaoGenerica(
+    DocumentSnapshot snapshot = await BdService.recuperarItemsColecaoGenerica(
         coletionPai, documentPai, subColection, subDocument);
 
     if (snapshot.data != null) {
@@ -53,12 +54,13 @@ class _ViewProdutoState extends State<ViewProduto> {
     if (AppModel.to
         .bloc<AppBloc>()
         .isLogged) {
+      streamCarrinho.addition.add(produtoCarrinho);
       carrinho.addProdutos(produtoCarrinho);
       isInitial
-          ? UtilFirebase.criarItemComIdColecaoGenerica(coletionPai, documentPai,
-              subColection, subDocument, carrinho.toJson())
-          : UtilFirebase.alterarItemColecaoGenerica(coletionPai, documentPai,
-              subColection, subDocument, carrinho.toJson());
+          ? BdService.criarItemComIdColecaoGenerica(coletionPai, documentPai,
+          subColection, subDocument, carrinho.toJson())
+          : BdService.alterarItemColecaoGenerica(coletionPai, documentPai,
+          subColection, subDocument, carrinho.toJson());
 
       Navigator.pop(context);
     } else {
@@ -67,7 +69,7 @@ class _ViewProdutoState extends State<ViewProduto> {
           builder: (context) {
             return AlertDialog(
               title:
-                  Text("Para adicionar ao Carrinho é necessário efetuar Login"),
+              Text("Para adicionar ao Carrinho é necessário efetuar Login"),
               actions: <Widget>[
                 FlatButton(
                     onPressed: () => Navigator.pop(context),
@@ -128,36 +130,36 @@ class _ViewProdutoState extends State<ViewProduto> {
         alignment: Alignment.topCenter,
         child: SingleChildScrollView(
             child: Column(
-          children: <Widget>[
-            //imagem do produto
-            Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black45.withOpacity(0.7),
-                    spreadRadius: 40,
-                    blurRadius: 100,
-                    offset: Offset(0, 0),
-                  )
-                ],
-              ),
-              child: Padding(
-                padding: EdgeInsets.only(top: 24, bottom: 10),
-                child: Hero(
-                  tag: widget.produto.idProduto,
-                  child: GestureDetector(
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
-                        child: Image.network(
-                          widget.produto.urlImg,
-                          width: 290,
-                          height: 290,
-                          fit: BoxFit.cover,
-                        )),
-                    onTap: () => Navigator.pop(context),
+              children: <Widget>[
+                //imagem do produto
+                Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black45.withOpacity(0.7),
+                        spreadRadius: 40,
+                        blurRadius: 100,
+                        offset: Offset(0, 0),
+                      )
+                    ],
                   ),
-                ),
-              ),
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 24, bottom: 10),
+                    child: Hero(
+                      tag: widget.produto.idProduto,
+                      child: GestureDetector(
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: Image.network(
+                              widget.produto.urlImg,
+                              width: 290,
+                              height: 290,
+                              fit: BoxFit.cover,
+                            )),
+                        onTap: () => Navigator.pop(context),
+                      ),
+                    ),
+                  ),
                 ),
 
                 //container dados produto
@@ -188,7 +190,7 @@ class _ViewProdutoState extends State<ViewProduto> {
                           Padding(
                               padding: EdgeInsets.all(16),
                               child: Text(
-                                Util.moeda(widget.produto.preco),
+                                UtilService.moeda(widget.produto.preco),
                                 style: TextStyle(
                                     fontSize: 24.0,
                                     color: Colors.green,
@@ -257,7 +259,8 @@ class _ViewProdutoState extends State<ViewProduto> {
                                                 onPressed: () {},
                                               ),
                                               Text(
-                                                  'Adicionar ${Util.moeda(
+                                                  'Adicionar ${UtilService
+                                                      .moeda(
                                                       produtoCarrinho
                                                           .subtotal)}',
                                                   style: TextStyle(

@@ -1,7 +1,7 @@
 import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
-import 'package:applancasalgados/models/Carrinho.dart';
-import 'package:applancasalgados/models/usuario.dart';
-import 'package:applancasalgados/util/Util.dart';
+import 'package:applancasalgados/models/CarrinhoModel.dart';
+import 'package:applancasalgados/models/usuarioModel.dart';
+import 'package:applancasalgados/services/UtilService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'appModel.dart';
@@ -16,7 +16,7 @@ class Pedido {
   double _trocoPara = 0;
   String _tituloPedido = AppModel.to.bloc<UserFirebase>().usuario.nome +
       " _ " +
-      Util.formatarData(DateTime.now());
+      UtilService.formatarData(DateTime.now());
   String _dataPedido = Timestamp.now().toString();
 
   Pedido();

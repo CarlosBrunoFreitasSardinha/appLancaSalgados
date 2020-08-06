@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
-import 'package:applancasalgados/models/FormaPagamento.dart';
+import 'package:applancasalgados/models/FormaPagamentoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/services/BdFireBase.dart';
+import 'package:applancasalgados/services/BdService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +25,7 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
 
   _obterIndice() async {
     Map<String, dynamic> json =
-        await UtilFirebase.recuperarUmObjeto("indices", colection);
+        await BdService.recuperarUmObjeto("indices", colection);
     setState(() {
       id = int.parse(json["id"]);
     });
@@ -71,14 +71,14 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
   }
 
   _cadastrarCategoria() async {
-    UtilFirebase.cadastrarDados(colection, id.toString(),
+    BdService.cadastrarDados(colection, id.toString(),
         {"id": id, "descricao": _controllerTitulo.text});
-    UtilFirebase.alterarDados(
+    BdService.alterarDados(
         "indices", colection, {"id": (id + 1).toString()});
   }
 
   _alterarCategoria(String ident) {
-    UtilFirebase.alterarDados(
+    BdService.alterarDados(
         colection, ident, {"descricao": _controllerTitulo.text});
   }
 

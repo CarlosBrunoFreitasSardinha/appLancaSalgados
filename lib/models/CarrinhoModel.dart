@@ -1,4 +1,4 @@
-import 'package:applancasalgados/models/ProdutoCarrinho.dart';
+import 'package:applancasalgados/models/ProdutoCarrinhoModel.dart';
 
 class Carrinho {
   List<ProdutoCarrinho> produtos = [];

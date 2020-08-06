@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:applancasalgados/models/Produto.dart';
-import 'package:applancasalgados/util/Util.dart';
+import 'package:applancasalgados/models/ProdutoModel.dart';
+import 'package:applancasalgados/services/UtilService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -146,8 +146,9 @@ class _DestaquesState extends State<Destaques>
 
                                   Flexible(child: Align(
                                       alignment: Alignment.bottomCenter,
-                                      child: Text(Util.moeda(produto.preco),
-                                          textAlign: TextAlign.center,
+                                          child: Text(
+                                              UtilService.moeda(produto.preco),
+                                              textAlign: TextAlign.center,
                                           style: TextStyle(
                                               fontSize: 40,
                                               color: Color(0xffd19c3c),

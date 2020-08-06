@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
 import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/services/BdFireBase.dart';
+import 'package:applancasalgados/services/BdService.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -76,8 +76,8 @@ class _ViewPerfilState extends State<ViewPerfil> {
   Future _atualizarUrlImagemFirestore(String url){
     Map<String, dynamic> json;
     json["urlPerfil"] = url;
-    UtilFirebase.alterarDados(colection, AppModel.to
-        .bloc<UserFirebase>()
+    BdService.alterarDados(
+        colection, AppModel.to.bloc<UserFirebase>()
         .usuario
         .uidUser, json);
   }
@@ -87,10 +87,8 @@ class _ViewPerfilState extends State<ViewPerfil> {
     json["nome"] = _controllerNome.text;
     json["foneContato1"] = _controllerNumber.text;
     json["endereco"] = _controllerEndereco.text;
-    UtilFirebase.alterarDados(colection, AppModel.to
-        .bloc<UserFirebase>()
-        .usuario
-        .uidUser, json);
+    BdService.alterarDados(
+        colection, AppModel.to.bloc<UserFirebase>().usuario.uidUser, json);
   }
 
   Future _recuperarImagem(String urlImg) async {

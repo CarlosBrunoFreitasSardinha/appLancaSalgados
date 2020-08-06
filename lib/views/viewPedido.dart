@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
-import 'package:applancasalgados/models/FormaPagamento.dart';
-import 'package:applancasalgados/models/Pedido.dart';
+import 'package:applancasalgados/models/FormaPagamentoModel.dart';
+import 'package:applancasalgados/models/PedidoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/services/BdFireBase.dart';
+import 'package:applancasalgados/services/BdService.dart';
+import 'package:applancasalgados/services/UtilService.dart';
 import 'package:applancasalgados/stateLess/CustomListItemOne.dart';
-import 'package:applancasalgados/util/Util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +27,8 @@ class _ViewPedidoState extends State<ViewPedido>
   String strPedido = "pedidos";
   ScrollController _scrollControllerMensagens = ScrollController();
   final _controller = StreamController<QuerySnapshot>.broadcast();
-  TextEditingController _controllerEndereco = TextEditingController();
+  TextEditingController _controllerEndereco = TextEditingController(
+      text: AppModel.to.bloc<UserFirebase>().usuario.endereco);
   TextEditingController _controllerTroco = TextEditingController();
   String bdCarrinho = "carrinho";
   var selectedItem;
@@ -48,10 +49,10 @@ class _ViewPedidoState extends State<ViewPedido>
       widget.pedido.trocoPara =
           _controllerTroco.text == "" ? 0 : double.parse(_controllerTroco.text);
 
-      UtilFirebase.criarItemAutoIdColecaoGenerica(
+      BdService.criarItemAutoIdColecaoGenerica(
           strPedido, documentPai, strPedido, widget.pedido.toJson());
       widget.pedido.carrinho.limpar();
-      UtilFirebase.criarItemComIdColecaoGenerica(bdCarrinho, documentPai,
+      BdService.criarItemComIdColecaoGenerica(bdCarrinho, documentPai,
           bdCarrinho, "ativo", widget.pedido.carrinho.toJson());
 
       Navigator.pop(context);
@@ -93,12 +94,13 @@ class _ViewPedidoState extends State<ViewPedido>
           controller: _scrollControllerMensagens,
           itemCount: widget.pedido.carrinho.produtos.length,
           itemBuilder: (context, indice) {
-            String valores = Util.moeda(
+            String valores = UtilService.moeda(
                     widget.pedido.carrinho.produtos[indice].preco) +
                 " X " +
                 widget.pedido.carrinho.produtos[indice].quantidade.toString() +
                 " = " +
-                Util.moeda(widget.pedido.carrinho.produtos[indice].subtotal);
+                UtilService.moeda(
+                    widget.pedido.carrinho.produtos[indice].subtotal);
 
             return Padding(
                 padding: EdgeInsets.all(3),
@@ -298,7 +300,8 @@ class _ViewPedidoState extends State<ViewPedido>
                     Padding(
                       padding: EdgeInsets.all(15),
                       child: Text(
-                        "Total: " + Util.moeda(widget.pedido.carrinho.total),
+                        "Total: " + UtilService.moeda(widget.pedido.carrinho
+                            .total),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20.0,

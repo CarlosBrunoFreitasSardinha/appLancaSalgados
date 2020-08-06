@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:applancasalgados/interfaces/LocalStorageInterface.dart';
+import 'package:applancasalgados/interfaces/ILocalStorageInterface.dart';
 import 'package:applancasalgados/services/SharedLocalStorageService.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
 

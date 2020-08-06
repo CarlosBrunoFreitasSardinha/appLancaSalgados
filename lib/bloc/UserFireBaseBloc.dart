@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/models/usuario.dart';
+import 'package:applancasalgados/models/usuarioModel.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../services/BdFireBase.dart';
+import '../services/BdService.dart';
 
 class UserFirebase extends BlocBase {
   Usuario _usuario = Usuario();
@@ -21,7 +21,7 @@ class UserFirebase extends BlocBase {
     FirebaseUser usuarioLogado = await auth.currentUser();
     if (usuarioLogado != null) {
       Map<String, dynamic> json =
-          await UtilFirebase.recuperarUmObjeto(colection, usuarioLogado.uid);
+          await BdService.recuperarUmObjeto(colection, usuarioLogado.uid);
       usuario = Usuario.fromJson(json);
       AppModel.to.bloc<AppBloc>().isLogged = true;
     }

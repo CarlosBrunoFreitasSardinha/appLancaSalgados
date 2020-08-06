@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:applancasalgados/models/Produto.dart';
+import 'package:applancasalgados/models/ProdutoModel.dart';
+import 'package:applancasalgados/services/UtilService.dart';
 import 'package:applancasalgados/stateLess/CustomListItemOne.dart';
-import 'package:applancasalgados/util/Util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -128,7 +128,7 @@ class _CardapioState extends State<Cardapio>
                               ),
                               title: produto.titulo,
                               subtitle: produto.descricao,
-                              preco: Util.moeda(produto.preco),
+                              preco: UtilService.moeda(produto.preco),
                               color: Colors.white,
                               radius: 5,
                               icone: PopupMenuButton<String>(

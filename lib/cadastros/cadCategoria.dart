@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
-import 'package:applancasalgados/models/CategoriaProduto.dart';
+import 'package:applancasalgados/models/CategoriaProdutoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/services/BdFireBase.dart';
+import 'package:applancasalgados/services/BdService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -28,7 +28,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
 
   _obterIndice() async {
     Map<String, dynamic> json =
-    await UtilFirebase.recuperarUmObjeto("indices", colection);
+        await BdService.recuperarUmObjeto("indices", colection);
     setState(() {
       id = int.parse(json["id"]);
     });
@@ -74,17 +74,17 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
   }
 
   _cadastrarCategoria() async {
-    UtilFirebase.cadastrarDados(colection, id.toString(),
+    BdService.cadastrarDados(colection, id.toString(),
         {
           "idCategoria": id.toString(),
           "descricao": _controllerTitulo.text
         });
-    UtilFirebase.alterarDados(
+    BdService.alterarDados(
         "indices", colection, {"id": (id + 1).toString()});
   }
 
   _alterarCategoria(String ident) {
-    UtilFirebase.alterarDados(
+    BdService.alterarDados(
         colection, ident, {"descricao": _controllerTitulo.text});
   }
 

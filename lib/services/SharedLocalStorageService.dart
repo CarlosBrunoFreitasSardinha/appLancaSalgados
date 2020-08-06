@@ -1,4 +1,4 @@
-import 'package:applancasalgados/interfaces/LocalStorageInterface.dart';
+import 'package:applancasalgados/interfaces/ILocalStorageInterface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedLocalStorageService implements ILocalStorageInterface {

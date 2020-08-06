@@ -2,8 +2,8 @@ import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
 import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/models/usuario.dart';
-import 'package:applancasalgados/services/BdFireBase.dart';
+import 'package:applancasalgados/models/usuarioModel.dart';
+import 'package:applancasalgados/services/BdService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -83,8 +83,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
         .createUserWithEmailAndPassword(email: user.email, password: user.senha)
         .then((firebaseUser) async {
           usuario.uidUser = firebaseUser.user.uid;
-          UtilFirebase.cadastrarDados(
-              "usuarios", usuario.uidUser, usuario.toJson());
+      BdService.cadastrarDados("usuarios", usuario.uidUser, usuario.toJson());
       AppModel.to.bloc<UserFirebase>().usuario = usuario;
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
           arguments: 0);
