@@ -1,13 +1,15 @@
 import 'dart:async';
 
 import 'package:applancasalgados/RouteGenerator.dart';
+import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/Carrinho.dart';
 import 'package:applancasalgados/models/Pedido.dart';
 import 'package:applancasalgados/models/ProdutoCarrinho.dart';
+import 'package:applancasalgados/models/appModel.dart';
+import 'package:applancasalgados/services/BdFireBase.dart';
 import 'package:applancasalgados/stateLess/CustomListItemTwo.dart';
 import 'package:applancasalgados/util/Util.dart';
-import 'package:applancasalgados/util/usuarioFireBase.dart';
-import 'package:applancasalgados/util/utilFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -18,31 +20,24 @@ class ViewCarrinho extends StatefulWidget {
 
 class _ViewCarrinhoState extends State<ViewCarrinho>
     with SingleTickerProviderStateMixin {
-  TextEditingController _controllerEndereco = TextEditingController();
+  TextEditingController _controllerEndereco = TextEditingController(
+      text: AppModel.to.bloc<UserFirebase>().usuario.endereco);
   Firestore bd = Firestore.instance;
   Carrinho carrinho = Carrinho();
   ProdutoCarrinho _ultimaTarefaRemovida = ProdutoCarrinho();
-  String coletionPai,
-      documentPai,
-      subColection,
-      subDocument,
+  String coletionPai = "carrinho",
+      documentPai = AppModel.to
+          .bloc<UserFirebase>()
+          .usuario
+          .uidUser,
+      subDocument = "ativo",
+      subColection = "carrinho",
       strPedido = "pedidos";
 
   List<String> _itensMenu = [
     "Remover",
     "Editar",
   ];
-
-  _initilizer() {
-    var obj = UserFirebase.recuperaDadosUsuario();
-    coletionPai = "carrinho";
-    documentPai = UserFirebase.fireLogged.uidUser;
-    subDocument = "ativo";
-    subColection = "carrinho";
-    setState(() {
-      _controllerEndereco.text = UserFirebase.fireLogged.endereco;
-    });
-  }
 
   _escolhaMenuItem(String itemEscolhido) {
     int i = int.parse(itemEscolhido.split("-")[1]);
@@ -94,10 +89,9 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
     Scaffold.of(context).showSnackBar(snackbar);
   }
 
-  Future _alterarCarrinho() {
-    UtilFirebase.alterarItemColecaoGenerica(
+  Future _alterarCarrinho() =>
+      UtilFirebase.alterarItemColecaoGenerica(
         coletionPai, documentPai, subColection, subDocument, carrinho.toJson());
-  }
 
   Widget carrinhoVazio() {
     return Center(
@@ -106,24 +100,24 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
         child: Text(
           'Nenhum Produto adicionado ainda:(',
           style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: Colors.white),
+              fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
         ),
       ),
     );
   }
 
-
   Future _adicionarPedido() {
-    if (UserFirebase.logado && carrinho.produtos.length != 0) {
+    if (AppModel.to
+        .bloc<AppBloc>()
+        .isLogged && carrinho.produtos.length != 0) {
       Pedido pedido = Pedido();
-      pedido.usuario = UserFirebase.fireLogged;
+      pedido.usuario = AppModel.to
+          .bloc<UserFirebase>()
+          .usuario;
       pedido.carrinho = carrinho;
       pedido.enderecoEntrega = pedido.usuario.endereco;
       Navigator.pushNamed(context, RouteGenerator.PEDIDO, arguments: pedido);
-    }
-    else {
+    } else {
       showDialog(
           context: context,
           builder: (context) {
@@ -148,7 +142,6 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
   void initState() {
     // TODO: implement initState
     super.initState();
-    _initilizer();
   }
 
   Widget _criarItemLista(context, index) {
@@ -191,7 +184,9 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
 
   @override
   Widget build(BuildContext context) {
-    var resultante = UserFirebase.logado
+    var resultante = AppModel.to
+        .bloc<AppBloc>()
+        .isLogged
         ? FutureBuilder(
         future: _listenerCarrinho(),
         builder: (BuildContext context, AsyncSnapshot<Carrinho> snapshot) {
@@ -212,7 +207,8 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
               carrinho.produtos.length > 0
                   ? Container(
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderRadius:
+                    BorderRadius.all(Radius.circular(10.0)),
                     border: Border.all(width: 1, color: Colors.grey),
                     color: Colors.white),
                 child: Row(
@@ -222,8 +218,8 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
                       padding: EdgeInsets.all(0),
                       child: Container(
                           decoration: BoxDecoration(
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(10.0)),
                               border: Border.all(
                                   width: 1, color: Colors.grey),
                               color: Color(0xffd19c3c)),
@@ -238,9 +234,9 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
                                 ),
                                           Text('Fechar Carrinho',
                                               style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 19.0,
-                                        color: Colors.white)),
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 19.0,
+                                                  color: Colors.white)),
                               ],
                             ),
                           )),
@@ -266,9 +262,7 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
                   : Center()
             ];
           } else if (snapshot.hasError) {
-            children = <Widget>[
-              carrinhoVazio()
-            ];
+            children = <Widget>[carrinhoVazio()];
           } else {
             children = <Widget>[
               SizedBox(

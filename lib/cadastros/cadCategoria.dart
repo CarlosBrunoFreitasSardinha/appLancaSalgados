@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:applancasalgados/RouteGenerator.dart';
+import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
 import 'package:applancasalgados/models/CategoriaProduto.dart';
-import 'package:applancasalgados/util/usuarioFireBase.dart';
-import 'package:applancasalgados/util/utilFireBase.dart';
+import 'package:applancasalgados/models/appModel.dart';
+import 'package:applancasalgados/services/BdFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -99,8 +100,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
   }
 
   _verificarUsuarioLogado() {
-    UserFirebase.recuperaDadosUsuario();
-    if (!UserFirebase.fireLogged.isAdm) {
+    if (!AppModel.to.bloc<UserFirebase>().usuario.isAdm) {
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
           arguments: 0);
     }

@@ -1,8 +1,10 @@
+import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
 import 'package:applancasalgados/models/Carrinho.dart';
 import 'package:applancasalgados/models/usuario.dart';
 import 'package:applancasalgados/util/Util.dart';
-import 'package:applancasalgados/util/usuarioFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'appModel.dart';
 
 class Pedido {
   Carrinho _carrinho;
@@ -12,8 +14,9 @@ class Pedido {
   String _formaPagamento;
   String _enderecoEntrega;
   double _trocoPara = 0;
-  String _tituloPedido =
-      UserFirebase.fireLogged.nome + " _ " + Util.formatarData(DateTime.now());
+  String _tituloPedido = AppModel.to.bloc<UserFirebase>().usuario.nome +
+      " _ " +
+      Util.formatarData(DateTime.now());
   String _dataPedido = Timestamp.now().toString();
 
   Pedido();
@@ -50,31 +53,37 @@ class Pedido {
   }
 
   Usuario get usuario => _usuario;
+
   set usuario(Usuario value) {
     _usuario = value;
   }
 
   Carrinho get carrinho => _carrinho;
+
   set carrinho(Carrinho value) {
     _carrinho = value;
   }
 
   bool get atendido => _atendido;
+
   set atendido(bool value) {
     _atendido = value;
   }
 
   String get status => _status;
+
   set status(String value) {
     _status = value;
   }
 
   String get formaPagamento => _formaPagamento;
+
   set formaPagamento(String value) {
     _formaPagamento = value;
   }
 
   String get tituloPedido => _tituloPedido;
+
   set tituloPedido(String value) {
     _tituloPedido = value;
   }

@@ -1,16 +1,20 @@
 import 'dart:async';
 
+import 'package:applancasalgados/RouteGenerator.dart';
+import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/Carrinho.dart';
-import 'package:applancasalgados/util/utilFireBase.dart';
+import 'package:applancasalgados/models/appModel.dart';
+import 'package:applancasalgados/services/Autenticacao.dart';
+import 'package:applancasalgados/services/BdFireBase.dart';
 import 'package:applancasalgados/views/viewCardapio.dart';
 import 'package:applancasalgados/views/viewCarrinho.dart';
 import 'package:applancasalgados/views/viewDestaques.dart';
 import 'package:applancasalgados/views/viewPedidos.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../RouteGenerator.dart';
-import '../util/usuarioFireBase.dart';
 
 class Home extends StatefulWidget {
   final int opcao;
@@ -23,27 +27,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   TabController _tabController;
-  List<String> _itensMenu = ["Fazer login", "sair login"];
-
-  inicializacao() {
-    UserFirebase.recuperaDadosUsuario();
-    if (UserFirebase.logado) {
-      if (UserFirebase.fireLogged.isAdm == true) {
-        setState(() {
-          _itensMenu = ["Configurações", "Perfil", "Pag. de Testes", "Sair"];
-        });
-      } else {
-        setState(() {
-          _itensMenu = ["Perfil", "Sair"];
-        });
-      }
-    }
-  }
-
-  _deslogar() {
-    if (UserFirebase.logado) UserFirebase.deslogar();
-    Navigator.popAndPushNamed(context, RouteGenerator.HOME);
-  }
+  List<String> _itensMenu = ["Login"];
+  final UsuarioLogado = AppModel.to.bloc<UserFirebase>();
 
   _escolhaMenuItem(String itemEscolhido) {
     switch (itemEscolhido) {
@@ -56,15 +41,23 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       case "Pag. de Testes":
         Navigator.pushNamed(context, RouteGenerator.TESTE);
         break;
-      case "Fazer login":
-        if (!UserFirebase.logado)
+      case "Login":
+        if (!AppModel.to
+            .bloc<AppBloc>()
+            .isLogged)
           Navigator.pushNamed(context, RouteGenerator.LOGIN);
         break;
       case "Sair":
-        _deslogar();
-        break;
-      case "sair login":
-        _deslogar();
+        if (AppModel.to
+            .bloc<AppBloc>()
+            .isLogged) {
+          Autenticacao.deslogar();
+          print(AppModel.to
+              .bloc<UserFirebase>()
+              .usuario
+              .toString());
+          print(AppModel.to.bloc<AppBloc>().toString());
+        }
         break;
     }
   }
@@ -96,7 +89,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Future<int> _listenerCarrinho() async {
     String coletionPai, documentPai, subColection, subDocument;
     coletionPai = "carrinho";
-    documentPai = UserFirebase.fireLogged.uidUser;
+    documentPai = AppModel.to
+        .bloc<UserFirebase>()
+        .usuario
+        .uidUser;
     subDocument = "ativo";
     subColection = "carrinho";
     DocumentSnapshot snapshot =
@@ -113,14 +109,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void initState() {
     // TODO: implement initState
     super.initState();
-    inicializacao();
     _tabController = TabController(length: 4, vsync: this);
     _tabController.index = widget.opcao != null ? widget.opcao : 0;
   }
 
   @override
   Widget build(BuildContext context) {
-    var futureCarrinho = UserFirebase.logado
+    var futureCarrinho = AppModel.to
+        .bloc<AppBloc>()
+        .isLogged
         ? FutureBuilder(
         future: _listenerCarrinho(),
         builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
@@ -217,15 +214,31 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   ],
                 ),
                 actions: <Widget>[
-                  PopupMenuButton<String>(
-                    onSelected: _escolhaMenuItem,
-                    itemBuilder: (context) {
-                      return _itensMenu.map((String item) {
-                        return PopupMenuItem<String>(
-                          value: item,
-                          child: Text(item),
-                        );
-                      }).toList();
+                  StreamBuilder<Object>(
+                    stream: FirebaseAuth.instance.onAuthStateChanged,
+                    builder: (BuildContext context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (UsuarioLogado.usuario
+                            .isAdm) { // logged in using email and password
+                          _itensMenu =
+                          ["Configurações", "Perfil", "Pag. de Testes", "Sair"];
+                        } else { // logged in using other providers
+                          _itensMenu = ["Perfil", "Sair"];
+                        }
+                      } else {
+                        _itensMenu = ["Login"];
+                      }
+                      return PopupMenuButton<String>(
+                        onSelected: _escolhaMenuItem,
+                        itemBuilder: (context) {
+                          return _itensMenu.map((String item) {
+                            return PopupMenuItem<String>(
+                              value: item,
+                              child: Text(item),
+                            );
+                          }).toList();
+                        },
+                      );
                     },
                   )
                 ],

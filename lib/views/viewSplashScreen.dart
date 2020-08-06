@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:applancasalgados/RouteGenerator.dart';
+import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/appBloc.dart';
+import 'package:applancasalgados/models/appModel.dart';
 import 'package:flutter/material.dart';
 
 
@@ -17,6 +20,9 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
+
+    AppModel.to.bloc<AppBloc>().recuperaUsuarioLogado();
+    AppModel.to.bloc<UserFirebase>().recuperaDadosUsuarioLogado();
 
     controller = AnimationController(
       duration: Duration(seconds: 1),
@@ -38,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    Timer(Duration(seconds: 4), () {
+    Timer(Duration(seconds: 5), () {
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
           arguments: 0);
     });

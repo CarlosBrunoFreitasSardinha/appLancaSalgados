@@ -1,10 +1,12 @@
 import 'package:applancasalgados/RouteGenerator.dart';
+import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/Carrinho.dart';
 import 'package:applancasalgados/models/Produto.dart';
 import 'package:applancasalgados/models/ProdutoCarrinho.dart';
+import 'package:applancasalgados/models/appModel.dart';
+import 'package:applancasalgados/services/BdFireBase.dart';
 import 'package:applancasalgados/util/Util.dart';
-import 'package:applancasalgados/util/usuarioFireBase.dart';
-import 'package:applancasalgados/util/utilFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,8 +31,8 @@ class _ViewProdutoState extends State<ViewProduto> {
   _initilizer() {
     produtoCarrinho = ProdutoCarrinho.fromJson(widget.produto.toJson());
     coletionPai = "carrinho";
-    documentPai = UserFirebase.fireLogged.uidUser != null
-        ? UserFirebase.fireLogged.uidUser
+    documentPai = AppModel.to.bloc<UserFirebase>().usuario.uidUser != null
+        ? AppModel.to.bloc<UserFirebase>().usuario.uidUser
         : "";
     subColection = "carrinho";
     subDocument = "ativo";
@@ -48,7 +50,9 @@ class _ViewProdutoState extends State<ViewProduto> {
   }
 
   Future _adicionarAoCarrinho() {
-    if (UserFirebase.logado) {
+    if (AppModel.to
+        .bloc<AppBloc>()
+        .isLogged) {
       carrinho.addProdutos(produtoCarrinho);
       isInitial
           ? UtilFirebase.criarItemComIdColecaoGenerica(coletionPai, documentPai,

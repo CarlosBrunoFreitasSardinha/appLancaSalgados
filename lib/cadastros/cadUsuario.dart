@@ -1,7 +1,9 @@
 import 'package:applancasalgados/RouteGenerator.dart';
+import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/appBloc.dart';
+import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/models/usuario.dart';
-import 'package:applancasalgados/util/usuarioFireBase.dart';
-import 'package:applancasalgados/util/utilFireBase.dart';
+import 'package:applancasalgados/services/BdFireBase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -83,7 +85,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
           usuario.uidUser = firebaseUser.user.uid;
           UtilFirebase.cadastrarDados(
               "usuarios", usuario.uidUser, usuario.toJson());
-          UserFirebase.fireLogged = usuario;
+      AppModel.to.bloc<UserFirebase>().usuario = usuario;
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
           arguments: 0);
     }).catchError((onError) {
@@ -98,8 +100,9 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   }
 
   Future _verificarUsuarioLogado() async {
-    UserFirebase.recuperaDadosUsuario();
-    if (UserFirebase.logado) {
+    if (AppModel.to
+        .bloc<AppBloc>()
+        .isLogged) {
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
           arguments: 0);
     }

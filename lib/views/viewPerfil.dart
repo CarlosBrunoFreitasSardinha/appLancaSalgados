@@ -1,7 +1,9 @@
 import 'dart:io';
 
-import 'package:applancasalgados/util/usuarioFireBase.dart';
-import 'package:applancasalgados/util/utilFireBase.dart';
+import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/appBloc.dart';
+import 'package:applancasalgados/models/appModel.dart';
+import 'package:applancasalgados/services/BdFireBase.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -38,7 +40,7 @@ class _ViewPerfilState extends State<ViewPerfil> {
     StorageReference pastaRaiz = storage.ref();
     StorageReference arquivo = pastaRaiz
         .child("perfil")
-        .child(UserFirebase.fireLogged.uidUser + ".jpg");
+        .child(AppModel.to.bloc<UserFirebase>().usuario.uidUser + ".jpg");
     arquivo.putFile(_image);
     StorageUploadTask task = arquivo.putFile(_image);
     task.events.listen((event) {
@@ -63,7 +65,10 @@ class _ViewPerfilState extends State<ViewPerfil> {
   Future _recuperarUrlImagem(StorageTaskSnapshot snapshot) async{
     String url = await snapshot.ref.getDownloadURL();
     setState(() {
-      UserFirebase.fireLogged.urlPerfil = url;
+      AppModel.to
+          .bloc<UserFirebase>()
+          .usuario
+          .urlPerfil = url;
     });
     _atualizarUrlImagemFirestore(url);
   }
@@ -71,7 +76,10 @@ class _ViewPerfilState extends State<ViewPerfil> {
   Future _atualizarUrlImagemFirestore(String url){
     Map<String, dynamic> json;
     json["urlPerfil"] = url;
-    UtilFirebase.alterarDados(colection, UserFirebase.fireLogged.uidUser, json);
+    UtilFirebase.alterarDados(colection, AppModel.to
+        .bloc<UserFirebase>()
+        .usuario
+        .uidUser, json);
   }
 
   Future _atualizarDadosFirestore() {
@@ -79,7 +87,10 @@ class _ViewPerfilState extends State<ViewPerfil> {
     json["nome"] = _controllerNome.text;
     json["foneContato1"] = _controllerNumber.text;
     json["endereco"] = _controllerEndereco.text;
-    UtilFirebase.alterarDados(colection, UserFirebase.fireLogged.uidUser, json);
+    UtilFirebase.alterarDados(colection, AppModel.to
+        .bloc<UserFirebase>()
+        .usuario
+        .uidUser, json);
   }
 
   Future _recuperarImagem(String urlImg) async {
@@ -94,18 +105,28 @@ class _ViewPerfilState extends State<ViewPerfil> {
   }
 
   _recuperaDadosUsuario() async{
-    UserFirebase.recuperaDadosUsuario();
     _verificarUsuarioLogado();
 
     setState(() {
-      _controllerNome.text = UserFirebase.fireLogged.nome;
-      _controllerNumber.text = UserFirebase.fireLogged.foneContato1;
-      _controllerEndereco.text = UserFirebase.fireLogged.endereco;
+      _controllerNome.text = AppModel.to
+          .bloc<UserFirebase>()
+          .usuario
+          .nome;
+      _controllerNumber.text = AppModel.to
+          .bloc<UserFirebase>()
+          .usuario
+          .foneContato1;
+      _controllerEndereco.text = AppModel.to
+          .bloc<UserFirebase>()
+          .usuario
+          .endereco;
     });
   }
 
   _verificarUsuarioLogado() {
-    if (UserFirebase.logado) {
+    if (!AppModel.to
+        .bloc<AppBloc>()
+        .isLogged) {
       Navigator.pushReplacementNamed(context, RouteGenerator.LOGIN);
     }
   }
@@ -133,8 +154,14 @@ class _ViewPerfilState extends State<ViewPerfil> {
                       : CircleAvatar(
                     radius: 100,
                     backgroundColor: Colors.grey,
-                    backgroundImage: UserFirebase.fireLogged.urlPerfil != null
-                        ? NetworkImage(UserFirebase.fireLogged.urlPerfil)
+                    backgroundImage: AppModel.to
+                        .bloc<UserFirebase>()
+                        .usuario
+                        .urlPerfil != null
+                        ? NetworkImage(AppModel.to
+                        .bloc<UserFirebase>()
+                        .usuario
+                        .urlPerfil)
                         : null,
                   ),
                   Row(

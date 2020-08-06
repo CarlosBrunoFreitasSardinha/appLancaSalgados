@@ -1,7 +1,8 @@
 import 'package:applancasalgados/RouteGenerator.dart';
+import 'package:applancasalgados/bloc/appBloc.dart';
+import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/models/usuario.dart';
-import 'package:applancasalgados/util/usuarioFireBase.dart';
-import 'package:applancasalgados/views/home.dart';
+import 'package:applancasalgados/services/Autenticacao.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -39,29 +40,24 @@ class _LoginState extends State<Login> {
     }
   }
 
-  _logarUsuario(Usuario user) {
-    FirebaseAuth auth = FirebaseAuth.instance;
-
-    auth
-        .signInWithEmailAndPassword(email: user.email, password: user.senha)
-        .then((firebaseUser) async {
-      var usuario = await UserFirebase.recuperaDadosUsuario();
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (BuildContext context) => Home(0)),
-        ModalRoute.withName('/'),
-      );
-    }).catchError((onError) {
-      print("Erro: " + onError.toString());
-      setState(() {
-        _mensagemErro =
-            "Erro ao efetuar Login, verifique as informações e tente Novamente";
-      });
+  Future _logarUsuario(Usuario user) async {
+    await Autenticacao.logarUsuario(user);
+    FirebaseAuth.instance.onAuthStateChanged.listen((firebaseUser) {
+      if (firebaseUser != null)
+        Navigator.pop(context);
+      else {
+        setState(() {
+          _mensagemErro =
+              "Erro ao efetuar Login, verifique as informações e tente Novamente";
+        });
+      }
     });
   }
 
-  Future _verificarUsuarioLogado() async {
-    if (UserFirebase.logado) {
+  _verificarUsuarioLogado() {
+    if (AppModel.to
+        .bloc<AppBloc>()
+        .isLogged) {
       Navigator.pop(context);
     }
   }

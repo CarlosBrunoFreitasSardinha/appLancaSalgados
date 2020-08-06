@@ -4,17 +4,17 @@ import 'package:applancasalgados/cadastros/cadProdutos.dart';
 import 'package:applancasalgados/cadastros/cadUsuario.dart';
 import 'package:applancasalgados/login/login.dart';
 import 'package:applancasalgados/login/recuperarSenha.dart';
-import 'package:applancasalgados/views/SplashScreen.dart';
-import 'package:applancasalgados/views/configuracoes.dart';
 import 'package:applancasalgados/views/dados.dart';
-import 'package:applancasalgados/views/home.dart';
 import 'package:applancasalgados/views/viewCardapio.dart';
 import 'package:applancasalgados/views/viewCarrinho.dart';
+import 'package:applancasalgados/views/viewConfiguracoes.dart';
 import 'package:applancasalgados/views/viewDestaques.dart';
+import 'package:applancasalgados/views/viewHome.dart';
 import 'package:applancasalgados/views/viewPedido.dart';
 import 'package:applancasalgados/views/viewPedidos.dart';
 import 'package:applancasalgados/views/viewPerfil.dart';
 import 'package:applancasalgados/views/viewProduto.dart';
+import 'package:applancasalgados/views/viewSplashScreen.dart';
 import 'package:flutter/material.dart';
 
 

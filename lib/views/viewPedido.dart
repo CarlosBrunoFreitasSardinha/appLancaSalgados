@@ -1,12 +1,13 @@
 import 'dart:async';
 
 import 'package:applancasalgados/RouteGenerator.dart';
+import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
 import 'package:applancasalgados/models/FormaPagamento.dart';
 import 'package:applancasalgados/models/Pedido.dart';
+import 'package:applancasalgados/models/appModel.dart';
+import 'package:applancasalgados/services/BdFireBase.dart';
 import 'package:applancasalgados/stateLess/CustomListItemOne.dart';
 import 'package:applancasalgados/util/Util.dart';
-import 'package:applancasalgados/util/usuarioFireBase.dart';
-import 'package:applancasalgados/util/utilFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -33,9 +34,8 @@ class _ViewPedidoState extends State<ViewPedido>
   List<FormaPagamento> options = [];
 
   _initilizer() {
-    UserFirebase.recuperaDadosUsuario();
     coletionPai = "pedidos";
-    documentPai = UserFirebase.fireLogged.uidUser;
+    documentPai = AppModel.to.bloc<UserFirebase>().usuario.uidUser;
     subColection = "pedidos";
     _controllerEndereco.text = widget.pedido.enderecoEntrega;
     selectedItem = widget.pedido.formaPagamento;

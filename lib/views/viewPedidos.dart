@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
 import 'package:applancasalgados/models/Pedido.dart';
+import 'package:applancasalgados/models/appModel.dart';
+import 'package:applancasalgados/services/BdFireBase.dart';
 import 'package:applancasalgados/stateLess/CustomListItemOne.dart';
 import 'package:applancasalgados/util/Util.dart';
-import 'package:applancasalgados/util/usuarioFireBase.dart';
-import 'package:applancasalgados/util/utilFireBase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../RouteGenerator.dart';
@@ -18,25 +20,25 @@ class ViewPedidos extends StatefulWidget {
 class _ViewPedidosState extends State<ViewPedidos>
     with SingleTickerProviderStateMixin {
   Firestore bd = Firestore.instance;
-  String coletionPai, documentPai, subColection, subDocument;
+  final UsuarioLogado = AppModel.to.bloc<UserFirebase>();
+
+  String coletionPai = "pedidos",
+      documentPai = AppModel.to.bloc<UserFirebase>().usuario.uidUser,
+      subColection = "pedidos";
+
   String stts_saiu = "Saiu Para Entrega",
       stts_recebido = "Pedido Recebido",
       stts_EmPreparacao = "Pedido Recebido";
+
   final _controller = StreamController<QuerySnapshot>.broadcast();
   ScrollController _scrollControllerMensagens = ScrollController();
+
   List<String> _itensMenu = [
     "Visualizar Pedido",
     "Pedido Recebido",
     "Saiu para Entrega",
     "Pedido Entregue"
   ];
-
-  _initilizer() {
-    UserFirebase.recuperaDadosUsuario();
-    coletionPai = "pedidos";
-    documentPai = UserFirebase.fireLogged.uidUser;
-    subColection = "pedidos";
-  }
 
   Future _alterarDadoPedido(String documentRef, Map<String, dynamic> json) {
     UtilFirebase.alterarItemColecaoGenerica(
@@ -56,7 +58,6 @@ class _ViewPedidosState extends State<ViewPedidos>
     );
   }
 
-
   Stream<QuerySnapshot> _adicionarListenerProdutos() {
     final stream = bd
         .collection(coletionPai)
@@ -75,7 +76,6 @@ class _ViewPedidosState extends State<ViewPedidos>
   void initState() {
     // TODO: implement initState
     super.initState();
-    _initilizer();
     _adicionarListenerProdutos();
   }
 
@@ -110,7 +110,8 @@ class _ViewPedidosState extends State<ViewPedidos>
 
             if (snapshot.hasError) {
               return Expanded(child: Text("Erro ao carregar os dados!"));
-            } else {
+            }
+            else {
               return Expanded(
                 child: produtos.length != 0
                     ? ListView.builder(
@@ -181,6 +182,21 @@ class _ViewPedidosState extends State<ViewPedidos>
       },
     );
 
+    var streamResultanteLogged = StreamBuilder<FirebaseUser>(
+      stream: FirebaseAuth.instance.onAuthStateChanged,
+      // ignore: missing_return
+      builder: (BuildContext context, snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data
+              .isEmailVerified) { // logged in using email and password
+            return stream;
+          }
+        } else { //NotLogged }
+          return listaPedidosVazia();
+        }
+      },
+    );
+
     return Scaffold(
       body: Container(
         width: MediaQuery
@@ -199,7 +215,8 @@ class _ViewPedidosState extends State<ViewPedidos>
                   stream,
                 ],
               ),
-            )),
+            )
+        ),
       ),
     );
   }
