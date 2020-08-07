@@ -12,16 +12,17 @@ import 'package:applancasalgados/views/viewDestaques.dart';
 import 'package:applancasalgados/views/viewPedidos.dart';
 import 'package:flutter/material.dart';
 
-class Home extends StatefulWidget {
+class ViewHome extends StatefulWidget {
   final int opcao;
 
-  Home(this.opcao);
+  ViewHome(this.opcao);
 
   @override
-  _HomeState createState() => _HomeState();
+  _ViewHomeState createState() => _ViewHomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class _ViewHomeState extends State<ViewHome>
+    with SingleTickerProviderStateMixin {
   TabController _tabController;
   List<String> _itensMenu = ["Login"];
   final UsuarioLogado = AppModel.to.bloc<UserBloc>();
@@ -116,7 +117,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   ],
                 ),
                 actions: <Widget>[
-                  StreamBuilder<Usuario>(
+                  StreamBuilder<UsuarioModel>(
                     stream: UsuarioLogado.userLogged,
                     builder: (BuildContext context, snapshot) {
                       if (snapshot.hasData) {

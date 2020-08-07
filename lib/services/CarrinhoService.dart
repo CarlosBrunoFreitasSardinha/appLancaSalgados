@@ -18,14 +18,14 @@ class CarrinhoService {
 
     if (snapshot.data != null) {
       Map<String, dynamic> dados = snapshot.data;
-      Carrinho cart = Carrinho.fromJson(dados);
+      CarrinhoModel cart = CarrinhoModel.fromJson(dados);
       streamCarrinho.cartAddition.add(cart);
     }
 
     return;
   }
 
-  static Future updateCart({Carrinho cart}) async {
+  static Future updateCart({CarrinhoModel cart}) async {
     if (cart?.fechado) {
       await Firestore.instance
           .collection('carrinho')

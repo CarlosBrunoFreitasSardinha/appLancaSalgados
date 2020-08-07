@@ -1,12 +1,11 @@
 import 'package:applancasalgados/models/ProdutoModel.dart';
 
-class ProdutoCarrinho extends Produto{
-
+class ProdutoCarrinhoModel extends ProdutoModel {
   int _quantidade;
   double _subtotal;
 
 
-  ProdutoCarrinho();
+  ProdutoCarrinhoModel();
 
 
   Map<String, dynamic> toJson() {
@@ -26,7 +25,7 @@ class ProdutoCarrinho extends Produto{
   }
 
 
-  ProdutoCarrinho.fromJson(Map<String, dynamic> json) {
+  ProdutoCarrinhoModel.fromJson(Map<String, dynamic> json) {
     idProduto = json['idProduto'];
     titulo = json['titulo'];
     urlImg = json['urlImg'];

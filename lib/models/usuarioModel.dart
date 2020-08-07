@@ -1,4 +1,4 @@
-class Usuario {
+class UsuarioModel {
   String _uidUser;
   String _nome;
   String _email;
@@ -8,7 +8,7 @@ class Usuario {
   String _endereco;
   bool _isAdm = false;
 
-  Usuario();
+  UsuarioModel();
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -24,7 +24,7 @@ class Usuario {
     return data;
   }
 
-  Usuario.fromJson(Map<String, dynamic> json) {
+  UsuarioModel.fromJson(Map<String, dynamic> json) {
     _uidUser = json['uidUser'] != null ? json['uidUser'] : "";
     _nome = json['nome'] != null ? json['nome'] : "";
     _senha = json['senha'] != null ? json['senha'] : "";

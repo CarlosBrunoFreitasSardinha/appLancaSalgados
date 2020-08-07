@@ -12,7 +12,7 @@ class AppModel extends ModuleWidget {
         Bloc((i) => AppBloc()),
         Bloc((i) => UserBloc()),
         Bloc((i) => AuthService()),
-    Bloc((i) => CarrinhoBloc()),
+        Bloc((i) => CarrinhoBloc()),
       ];
 
   @override

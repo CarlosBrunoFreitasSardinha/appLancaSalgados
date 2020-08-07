@@ -12,7 +12,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ViewPedido extends StatefulWidget {
-  final Pedido pedido;
+  final PedidoModel pedido;
 
   ViewPedido(this.pedido);
 
@@ -32,7 +32,7 @@ class _ViewPedidoState extends State<ViewPedido>
   TextEditingController _controllerTroco = TextEditingController();
   String bdCarrinho = "carrinho";
   var selectedItem;
-  List<FormaPagamento> options = [];
+  List<FormaPagamentoModel> options = [];
 
   _initilizer() {
     coletionPai = "pedidos";
@@ -132,7 +132,7 @@ class _ViewPedidoState extends State<ViewPedido>
             List<DropdownMenuItem> currencyItems = [];
             for (int i = 0; i < snapshot.data.documents.length; i++) {
               DocumentSnapshot snap = snapshot.data.documents[i];
-              options.add(FormaPagamento.fromJson(snap.data));
+              options.add(FormaPagamentoModel.fromJson(snap.data));
 
               currencyItems.add(
                 DropdownMenuItem(

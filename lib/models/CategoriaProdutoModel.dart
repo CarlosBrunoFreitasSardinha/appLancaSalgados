@@ -1,9 +1,8 @@
-class CategoriaProduto {
+class CategoriaProdutoModel {
   String _idCategoria;
   String _descricao;
 
-  CategoriaProduto();
-
+  CategoriaProdutoModel();
 
   // ignore: unnecessary_getters_setters
   String get idCategoria => _idCategoria;
@@ -30,7 +29,7 @@ class CategoriaProduto {
     return data;
   }
 
-  CategoriaProduto.fromJson(Map<String, dynamic> json) {
+  CategoriaProdutoModel.fromJson(Map<String, dynamic> json) {
     idCategoria = json['idCategoria'];
     descricao = json['descricao'];
   }

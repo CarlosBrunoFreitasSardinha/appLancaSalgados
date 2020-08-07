@@ -14,7 +14,7 @@ class _LoginState extends State<Login> {
   TextEditingController _controllerSenha =
       TextEditingController(text: "1234567");
   String _mensagemErro = "";
-  Usuario usuario = Usuario();
+  UsuarioModel usuario = UsuarioModel();
 
   validarCampos(_controllerEmail, _controllerSenha) {
     String email = _controllerEmail.text;
@@ -37,7 +37,7 @@ class _LoginState extends State<Login> {
     }
   }
 
-  _logarUsuario(Usuario user) {
+  _logarUsuario(UsuarioModel user) {
     FirebaseAuth auth = FirebaseAuth.instance;
 
     auth

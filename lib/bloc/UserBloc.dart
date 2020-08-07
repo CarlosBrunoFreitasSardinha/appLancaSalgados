@@ -6,22 +6,22 @@ import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:rxdart/rxdart.dart';
 
 class UserBloc extends BlocBase {
-  Usuario usuario = Usuario();
+  UsuarioModel usuario = UsuarioModel();
 
   /// Sinks
-  Sink<Usuario> get userAddition => userLoggedController.sink;
-  final userLoggedController = StreamController<Usuario>();
+  Sink<UsuarioModel> get userAddition => userLoggedController.sink;
+  final userLoggedController = StreamController<UsuarioModel>();
 
   /// Streams
-  Stream<Usuario> get userLogged => _User$.stream;
-  final _User$ = BehaviorSubject<Usuario>();
+  Stream<UsuarioModel> get userLogged => _User$.stream;
+  final _User$ = BehaviorSubject<UsuarioModel>();
 
   UserBloc() {
     userLoggedController.stream.listen(recUser);
   }
 
   /// Logic for product removed from shopping cart.
-  void recUser(Usuario thisUser) {
+  void recUser(UsuarioModel thisUser) {
     usuario = thisUser;
     _User$.add(usuario);
     CarrinhoService.futureCarrinho();

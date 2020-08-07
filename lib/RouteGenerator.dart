@@ -50,9 +50,10 @@ class RouteGenerator{
     final args = settings.arguments;
 
     switch(settings.name){
-      case BASE: return MaterialPageRoute(builder: (_) => SplashScreen());
+      case BASE:
+        return MaterialPageRoute(builder: (_) => ViewSplashScreen());
       case HOME:
-        return MaterialPageRoute(builder: (_) => Home(args));
+        return MaterialPageRoute(builder: (_) => ViewHome(args));
       case LOGIN: return MaterialPageRoute(builder: (_) => Login());
       case RECP: return MaterialPageRoute(builder: (_) => ResetPasswordView());
 

@@ -24,8 +24,8 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
   Firestore bd = Firestore.instance;
 
   final cartShip = AppModel.to.bloc<CarrinhoBloc>();
-  Carrinho carrinho = Carrinho();
-  ProdutoCarrinho _ultimaTarefaRemovida = ProdutoCarrinho();
+  CarrinhoModel carrinho = CarrinhoModel();
+  ProdutoCarrinhoModel _ultimaTarefaRemovida = ProdutoCarrinhoModel();
   String coletionPai = "carrinho",
       documentPai = AppModel.to.bloc<UserBloc>().usuario
           .uidUser,
@@ -100,7 +100,7 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
     if (AppModel.to
         .bloc<AppBloc>()
         .isLogged && carrinho.produtos.length != 0) {
-      Pedido pedido = Pedido();
+      PedidoModel pedido = PedidoModel();
       pedido.usuario = AppModel.to
           .bloc<UserBloc>()
           .usuario;
@@ -182,8 +182,9 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
         .isLogged
         ? StreamBuilder(
         stream: cartShip.cartStream,
-        builder: (BuildContext context, AsyncSnapshot<Carrinho> snapshot) {
-          List<Widget> children;
+            builder:
+                (BuildContext context, AsyncSnapshot<CarrinhoModel> snapshot) {
+              List<Widget> children;
           if (snapshot.hasData) {
             carrinho = snapshot.data;
 

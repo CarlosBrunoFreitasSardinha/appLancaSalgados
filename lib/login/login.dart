@@ -16,7 +16,7 @@ class _LoginState extends State<Login> {
   TextEditingController _controllerSenha =
       TextEditingController(text: "1234567");
   String _mensagemErro = "";
-  Usuario usuario = Usuario();
+  UsuarioModel usuario = UsuarioModel();
 
   validarCampos(_controllerEmail, _controllerSenha) {
     String email = _controllerEmail.text;
@@ -39,7 +39,7 @@ class _LoginState extends State<Login> {
     }
   }
 
-  Future<void> _logarUsuario(Usuario user) async {
+  Future<void> _logarUsuario(UsuarioModel user) async {
     if (await AuthService.logar(user)) {
       Navigator.pop(context);
     } else {

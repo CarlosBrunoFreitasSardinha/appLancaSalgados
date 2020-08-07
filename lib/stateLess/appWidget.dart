@@ -16,7 +16,7 @@ class AppWidget extends StatelessWidget {
         builder: (context, snapshot) {
           return MaterialApp(
             title: "Lança Salgados",
-            home: SplashScreen(),
+            home: ViewSplashScreen(),
             theme: temaPadrao,
             // ignore: missing_return
             onGenerateRoute: RouteGenerator.generateRoute,

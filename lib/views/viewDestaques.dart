@@ -97,7 +97,8 @@ class _DestaquesState extends State<Destaques>
                     List<DocumentSnapshot> produtos = querySnapshot.documents.toList();
                     bool active = indice == currentPage;
 
-                    Produto produto = Produto.fromJson(produtos[indice].data);
+                    ProdutoModel produto =
+                        ProdutoModel.fromJson(produtos[indice].data);
 
                     final double blur = active ? 30 : 0;
                     final double offset = active ? 20 : 0;

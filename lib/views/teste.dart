@@ -14,7 +14,7 @@ class pagCarrinhoStream extends StatefulWidget {
 }
 
 class _pagCarrinhoStreamState extends State<pagCarrinhoStream> {
-  Carrinho cart;
+  CarrinhoModel cart;
   final CartShip = AppModel.to.bloc<CarrinhoBloc>();
 
   @override
@@ -90,7 +90,7 @@ class _pagCarrinhoStreamState extends State<pagCarrinhoStream> {
   List<Widget> getProductTiles() {
     List<Widget> list = [];
     if (cart != null) {
-      for (ProdutoCarrinho p in cart.produtos) {
+      for (ProdutoCarrinhoModel p in cart.produtos) {
         String name = p.titulo;
         String price = p.preco.toString();
         list.add(ListTile(
@@ -112,7 +112,7 @@ class _pagCarrinhoStreamState extends State<pagCarrinhoStream> {
   List<Widget> getProdutos() {
     List<Widget> list = [];
     if (cart != null) {
-      for (ProdutoCarrinho p in cart.produtos) {
+      for (ProdutoCarrinhoModel p in cart.produtos) {
         list.add(CustomListItemTwo(
           thumbnail: GestureDetector(
             child: Hero(

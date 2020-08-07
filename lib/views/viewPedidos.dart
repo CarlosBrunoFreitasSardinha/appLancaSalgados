@@ -119,7 +119,7 @@ class _ViewPedidosState extends State<ViewPedidos>
                     itemCount: querySnapshot.documents.length,
                     itemBuilder: (context, indice) {
                           DocumentSnapshot json = produtos[indice];
-                          Pedido pedido = Pedido.fromJson(json.data);
+                          PedidoModel pedido = PedidoModel.fromJson(json.data);
                           String subtitle = "Pagamento via " +
                               pedido.formaPagamento +
                               "\nTotal: " +

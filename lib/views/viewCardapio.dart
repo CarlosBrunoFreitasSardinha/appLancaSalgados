@@ -94,7 +94,7 @@ class _CardapioState extends State<Cardapio>
                           querySnapshot.documents.toList();
                       DocumentSnapshot json = produtos[indice];
 
-                      Produto produto = Produto.fromJson(json.data);
+                      ProdutoModel produto = ProdutoModel.fromJson(json.data);
 
                       double larguraContainer =
                           MediaQuery.of(context).size.width;

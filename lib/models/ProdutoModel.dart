@@ -1,4 +1,4 @@
-class Produto {
+class ProdutoModel {
   String _idProduto;
   String _titulo;
   String _urlImg;
@@ -8,10 +8,7 @@ class Produto {
   String _idCategoria;
   String _tempoPreparo;
 
-
-  Produto();
-
-
+  ProdutoModel();
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -28,7 +25,7 @@ class Produto {
   }
 
 
-  Produto.fromJson(Map<String, dynamic> json) {
+  ProdutoModel.fromJson(Map<String, dynamic> json) {
     idProduto = json['idProduto'];
     titulo = json['titulo'];
     urlImg = json['urlImg'];

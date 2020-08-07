@@ -5,9 +5,9 @@ import 'package:applancasalgados/services/UserService.dart';
 import 'package:flutter/material.dart';
 
 
-class SplashScreen extends StatefulWidget {
+class ViewSplashScreen extends StatefulWidget {
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  _ViewSplashScreenState createState() => _ViewSplashScreenState();
 }
 
 Future<void> recuperarUser() async {
@@ -15,7 +15,7 @@ Future<void> recuperarUser() async {
   return;
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _ViewSplashScreenState extends State<ViewSplashScreen>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation<double> animation;

@@ -6,9 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'appModel.dart';
 
-class Pedido {
-  Carrinho _carrinho;
-  Usuario _usuario;
+class PedidoModel {
+  CarrinhoModel _carrinho;
+  UsuarioModel _usuario;
   bool _atendido = false;
   String _status = "Solicitado";
   String _formaPagamento;
@@ -19,7 +19,7 @@ class Pedido {
       UtilService.formatarData(DateTime.now());
   String _dataPedido = Timestamp.now().toString();
 
-  Pedido();
+  PedidoModel();
 
   void fecharPedido(){
     atendido = true;
@@ -40,27 +40,27 @@ class Pedido {
     return json;
   }
 
-  Pedido.fromJson(Map<String, dynamic> json) {
+  PedidoModel.fromJson(Map<String, dynamic> json) {
     status = json["status"];
     atendido = json["atendido"];
     formaPagamento = json["formaPagamento"];
     tituloPedido = json["tituloPedido"];
-    carrinho = Carrinho.fromJson(json["carrinho"]);
-    usuario = Usuario.fromJson(json["usuario"]);
+    carrinho = CarrinhoModel.fromJson(json["carrinho"]);
+    usuario = UsuarioModel.fromJson(json["usuario"]);
     enderecoEntrega = json["enderecoEntrega"];
     dataPedido = json["dataPedido"];
     trocoPara = json["trocoPara"];
   }
 
-  Usuario get usuario => _usuario;
+  UsuarioModel get usuario => _usuario;
 
-  set usuario(Usuario value) {
+  set usuario(UsuarioModel value) {
     _usuario = value;
   }
 
-  Carrinho get carrinho => _carrinho;
+  CarrinhoModel get carrinho => _carrinho;
 
-  set carrinho(Carrinho value) {
+  set carrinho(CarrinhoModel value) {
     _carrinho = value;
   }
 

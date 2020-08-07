@@ -8,11 +8,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'BdService.dart';
 
 class UserService {
-  static Future<Stream<List<Usuario>>> streamUsers() async {
+  static Future<Stream<List<UsuarioModel>>> streamUsers() async {
     var ref = Firestore.instance.collection('users');
 
     return ref.snapshots().map((list) =>
-        list.documents.map((doc) => Usuario.fromJson(doc.data)).toList());
+        list.documents.map((doc) => UsuarioModel.fromJson(doc.data)).toList());
   }
 
   static Future recuperaDadosUsuarioLogado() async {
@@ -21,13 +21,16 @@ class UserService {
     if (usuarioLogado != null) {
       Map<String, dynamic> json =
           await BdService.recuperarUmObjeto("usuarios", usuarioLogado.uid);
-      AppModel.to.bloc<UserBloc>().userAddition.add(Usuario.fromJson(json));
+      AppModel.to
+          .bloc<UserBloc>()
+          .userAddition
+          .add(UsuarioModel.fromJson(json));
       AppModel.to.bloc<AppBloc>().isLogged = true;
     }
   }
 
   static Future updateUser({
-    Usuario user,
+    UsuarioModel user,
     bool isRegistering,
   }) async {
     if (isRegistering) {
@@ -52,7 +55,7 @@ class UserService {
   }
 
   static Future updateUserPassword({
-    Usuario user,
+    UsuarioModel user,
   }) async {
     await Firestore.instance.collection('users_update_password').add(
       {

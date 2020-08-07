@@ -1,13 +1,13 @@
 import 'package:applancasalgados/models/ProdutoCarrinhoModel.dart';
 
-class Carrinho {
-  List<ProdutoCarrinho> produtos = [];
+class CarrinhoModel {
+  List<ProdutoCarrinhoModel> produtos = [];
   double total = 0;
   bool _fechado = false;
 
-  Carrinho();
+  CarrinhoModel();
 
-  void addProdutos(ProdutoCarrinho p) {
+  void addProdutos(ProdutoCarrinhoModel p) {
     int posicao = verificaitem(p);
     if (posicao != -1) {
       produtos[posicao].quantidade = p.quantidade;
@@ -18,13 +18,12 @@ class Carrinho {
     calcular();
   }
 
-  void remProdutos(ProdutoCarrinho p) {
-
+  void remProdutos(ProdutoCarrinhoModel p) {
     produtos.remove(p);
     calcular();
   }
 
-  int verificaitem(ProdutoCarrinho p){
+  int verificaitem(ProdutoCarrinhoModel p) {
     for (int i = 0; i < produtos.length; i++) {
       if (produtos[i].idProduto == p.idProduto) {
         return i;
@@ -64,11 +63,11 @@ class Carrinho {
     return {"total": this.total.toStringAsFixed(2), "produtos": data};
   }
 
-  Carrinho.fromJson(Map<String, dynamic> json) {
+  CarrinhoModel.fromJson(Map<String, dynamic> json) {
     total = double.parse(json["total"]);
 
     json["produtos"].forEach((key, value) {
-      ProdutoCarrinho item = ProdutoCarrinho.fromJson(value);
+      ProdutoCarrinhoModel item = ProdutoCarrinhoModel.fromJson(value);
       produtos.add(item);
     });
   }

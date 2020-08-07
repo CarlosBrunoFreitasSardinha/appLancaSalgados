@@ -15,7 +15,7 @@ class AuthService extends BlocBase {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final Firestore _firebase = Firestore.instance;
 
-  static Future<Stream<Usuario>> streamUsuario() async {
+  static Future<Stream<UsuarioModel>> streamUsuario() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     var ref = Firestore.instance
         .collection('usuarios')
@@ -25,21 +25,21 @@ class AuthService extends BlocBase {
 
     return ref.map((snap) {
       if (snap.exists) {
-        return Usuario.fromJson(snap.data);
+        return UsuarioModel.fromJson(snap.data);
       } else {
         return null;
       }
     });
   }
 
-  static Future<Usuario> recuperaDadosUsuario() async {
+  static Future<UsuarioModel> recuperaDadosUsuario() async {
     FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
-    Usuario user;
-    Stream<Usuario> streamUser;
+    UsuarioModel user;
+    Stream<UsuarioModel> streamUser;
     if (fbUser != null) {
       streamUser = await streamUsuario();
       streamUser = streamUser.take(1);
-      await for (Usuario i in streamUser) {
+      await for (UsuarioModel i in streamUser) {
         if (i != null) {
           user = i;
         }
@@ -48,7 +48,7 @@ class AuthService extends BlocBase {
     return user;
   }
 
-  static Future<bool> logar(Usuario user) async {
+  static Future<bool> logar(UsuarioModel user) async {
     try {
       AuthResult authResult = await _auth.signInWithEmailAndPassword(
           email: user.email, password: user.senha);
@@ -85,8 +85,8 @@ class AuthService extends BlocBase {
   static Future<void> deslogar() async {
     await _auth.signOut();
     AppModel.to.bloc<AppBloc>().isLogged = false;
-    AppModel.to.bloc<UserBloc>().userAddition.add(Usuario());
-    AppModel.to.bloc<CarrinhoBloc>().cartAddition.add(Carrinho());
+    AppModel.to.bloc<UserBloc>().userAddition.add(UsuarioModel());
+    AppModel.to.bloc<CarrinhoBloc>().cartAddition.add(CarrinhoModel());
     return;
   }
 }

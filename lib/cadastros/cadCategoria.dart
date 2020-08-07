@@ -21,7 +21,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
   Firestore bd = Firestore.instance;
   final _controller = StreamController<QuerySnapshot>.broadcast();
   String _mensagemErro = "", colection = "categoria";
-  List<CategoriaProduto> options = [];
+  List<CategoriaProdutoModel> options = [];
   int id;
   var selectedItem;
 
@@ -135,7 +135,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
             List<DropdownMenuItem> currencyItems = [];
             for (int i = 0; i < snapshot.data.documents.length; i++) {
               DocumentSnapshot snap = snapshot.data.documents[i];
-              options.add(CategoriaProduto.fromJson({
+              options.add(CategoriaProdutoModel.fromJson({
                 'idCategoria': snap.data["idCategoria"],
                 'descricao': snap.data["descricao"]
               }));

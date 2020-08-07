@@ -1,8 +1,8 @@
-class FormaPagamento {
+class FormaPagamentoModel {
   int _id;
   String _descricao;
 
-  FormaPagamento();
+  FormaPagamentoModel();
 
   // ignore: unnecessary_getters_setters
   int get id => _id;
@@ -28,7 +28,7 @@ class FormaPagamento {
     return data;
   }
 
-  FormaPagamento.fromJson(Map<String, dynamic> json) {
+  FormaPagamentoModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     descricao = json['descricao'];
   }

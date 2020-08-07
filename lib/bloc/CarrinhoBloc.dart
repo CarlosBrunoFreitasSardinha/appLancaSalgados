@@ -8,21 +8,21 @@ import 'package:rxdart/rxdart.dart';
 class CarrinhoBloc extends BlocBase {
   static const String TAG = "CarrinhoServiceBloc";
 
-  Carrinho cart = Carrinho();
+  CarrinhoModel cart = CarrinhoModel();
 
   /// Sinks
-  Sink<ProdutoCarrinho> get addition => itemAdditionController.sink;
-  final itemAdditionController = StreamController<ProdutoCarrinho>();
+  Sink<ProdutoCarrinhoModel> get addition => itemAdditionController.sink;
+  final itemAdditionController = StreamController<ProdutoCarrinhoModel>();
 
-  Sink<ProdutoCarrinho> get substraction => itemSubtractionController.sink;
-  final itemSubtractionController = StreamController<ProdutoCarrinho>();
+  Sink<ProdutoCarrinhoModel> get substraction => itemSubtractionController.sink;
+  final itemSubtractionController = StreamController<ProdutoCarrinhoModel>();
 
-  Sink<Carrinho> get cartAddition => cartAdditionController.sink;
-  final cartAdditionController = StreamController<Carrinho>();
+  Sink<CarrinhoModel> get cartAddition => cartAdditionController.sink;
+  final cartAdditionController = StreamController<CarrinhoModel>();
 
   /// Streams
-  Stream<Carrinho> get cartStream => _carrinho.stream;
-  final _carrinho = BehaviorSubject<Carrinho>();
+  Stream<CarrinhoModel> get cartStream => _carrinho.stream;
+  final _carrinho = BehaviorSubject<CarrinhoModel>();
 
   CarrinhoBloc() {
     itemAdditionController.stream.listen(adicionarItemCarrinho);
@@ -31,7 +31,7 @@ class CarrinhoBloc extends BlocBase {
   }
 
   /// Logic for product added to shopping cart.
-  void adicionarItemCarrinho(ProdutoCarrinho item) {
+  void adicionarItemCarrinho(ProdutoCarrinhoModel item) {
     cart.addProdutos(item);
     cart.calcular();
     _carrinho.add(cart);
@@ -39,7 +39,7 @@ class CarrinhoBloc extends BlocBase {
   }
 
   /// Logic for product removed from shopping cart.
-  void removerItemCarrinho(ProdutoCarrinho item) {
+  void removerItemCarrinho(ProdutoCarrinhoModel item) {
     cart.remProdutos(item);
     cart.calcular();
     _carrinho.add(cart);
@@ -47,7 +47,7 @@ class CarrinhoBloc extends BlocBase {
   }
 
   /// Logic for product removed from shopping cart.
-  void adicionarCarrinho(Carrinho thisCart) {
+  void adicionarCarrinho(CarrinhoModel thisCart) {
     cart = thisCart;
     _carrinho.add(cart);
     return;

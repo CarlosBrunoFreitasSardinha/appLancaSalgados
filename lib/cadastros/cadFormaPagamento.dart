@@ -19,7 +19,7 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
   Firestore bd = Firestore.instance;
   final _controller = StreamController<QuerySnapshot>.broadcast();
   String _mensagemErro = "", colection = "formaPagamento";
-  List<FormaPagamento> options = [];
+  List<FormaPagamentoModel> options = [];
   int id;
   var selectedItem;
 
@@ -126,7 +126,7 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
             List<DropdownMenuItem> currencyItems = [];
             for (int i = 0; i < snapshot.data.documents.length; i++) {
               DocumentSnapshot snap = snapshot.data.documents[i];
-              options.add(FormaPagamento.fromJson(snap.data));
+              options.add(FormaPagamentoModel.fromJson(snap.data));
 
               currencyItems.add(
                 DropdownMenuItem(

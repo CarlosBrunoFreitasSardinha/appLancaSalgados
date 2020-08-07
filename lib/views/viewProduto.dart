@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 class ViewProduto extends StatefulWidget {
-  final Produto produto;
+  final ProdutoModel produto;
 
   ViewProduto(this.produto);
 
@@ -24,14 +24,14 @@ class ViewProduto extends StatefulWidget {
 
 class _ViewProdutoState extends State<ViewProduto> {
   final streamCarrinho = AppModel.to.bloc<CarrinhoBloc>();
-  Carrinho carrinho = Carrinho();
-  ProdutoCarrinho produtoCarrinho = ProdutoCarrinho();
+  CarrinhoModel carrinho = CarrinhoModel();
+  ProdutoCarrinhoModel produtoCarrinho = ProdutoCarrinhoModel();
   bool isInitial = true;
   String coletionPai, documentPai, subColection, subDocument;
 
 
   _initilizer() {
-    produtoCarrinho = ProdutoCarrinho.fromJson(widget.produto.toJson());
+    produtoCarrinho = ProdutoCarrinhoModel.fromJson(widget.produto.toJson());
     coletionPai = "carrinho";
     documentPai = AppModel.to.bloc<UserBloc>().usuario.uidUser != null
         ? AppModel.to.bloc<UserBloc>().usuario.uidUser
@@ -46,7 +46,7 @@ class _ViewProdutoState extends State<ViewProduto> {
 
     if (snapshot.data != null) {
       Map<String, dynamic> dados = snapshot.data;
-      carrinho = Carrinho.fromJson(dados);
+      carrinho = CarrinhoModel.fromJson(dados);
     }
   }
 

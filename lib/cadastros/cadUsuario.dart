@@ -24,7 +24,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   TextEditingController _controllerSenha =
       TextEditingController(text: "1234567");
   String _mensagemErro = "";
-  Usuario usuario = Usuario();
+  UsuarioModel usuario = UsuarioModel();
 
   validarCampos(_controllerNome, _controllerEmail, _controllerSenha) {
     String nome = _controllerNome.text;
@@ -77,7 +77,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
     }
   }
 
-  _cadastrarUsuario(Usuario user) {
+  _cadastrarUsuario(UsuarioModel user) {
     FirebaseAuth auth = FirebaseAuth.instance;
     auth
         .createUserWithEmailAndPassword(email: user.email, password: user.senha)

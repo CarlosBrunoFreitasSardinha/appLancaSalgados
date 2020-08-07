@@ -9,11 +9,11 @@ class CarrinhoAppBarIcon extends StatelessWidget {
     final carrinhoService = AppModel.to.bloc<CarrinhoBloc>();
     return StreamBuilder(
       stream: carrinhoService.cartStream,
-      initialData: Carrinho(),
+      initialData: CarrinhoModel(),
       builder: (context, snapshot) {
         int count = 0;
         if (snapshot.hasData) {
-          if (snapshot.data is Carrinho) {
+          if (snapshot.data is CarrinhoModel) {
             count = snapshot.data.produtos.length;
           }
         }

@@ -34,8 +34,8 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   var selectedItem;
   File _image;
   final picker = ImagePicker();
-  Produto produto = Produto();
-  List<CategoriaProduto> options = [];
+  ProdutoModel produto = ProdutoModel();
+  List<CategoriaProdutoModel> options = [];
   bool isCad = true;
 
   Future _recuperarImagem(String urlImg) async {
@@ -214,7 +214,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
             List<DropdownMenuItem> currencyItems = [];
             for (int i = 0; i < snapshot.data.documents.length; i++) {
               DocumentSnapshot snap = snapshot.data.documents[i];
-              options.add(CategoriaProduto.fromJson({
+              options.add(CategoriaProdutoModel.fromJson({
                 'idCategoria': snap.data["idCategoria"],
                 'descricao': snap.data["descricao"]
               }));
