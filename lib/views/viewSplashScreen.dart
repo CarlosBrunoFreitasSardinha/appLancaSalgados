@@ -10,6 +10,11 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
+Future<void> recuperarUser() async {
+  await UserService.recuperaDadosUsuarioLogado();
+  return;
+}
+
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
@@ -19,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    UserService.recuperaDadosUsuarioLogado();
+    recuperarUser();
 
     controller = AnimationController(
       duration: Duration(seconds: 1),
