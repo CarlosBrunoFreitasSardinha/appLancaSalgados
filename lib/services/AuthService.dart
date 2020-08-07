@@ -1,9 +1,12 @@
 import 'dart:async';
 
-import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/CarrinhoBloc.dart';
+import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/bloc/appBloc.dart';
+import 'package:applancasalgados/models/CarrinhoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/models/usuarioModel.dart';
+import 'package:applancasalgados/services/UserService.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -49,9 +52,27 @@ class AuthService extends BlocBase {
     try {
       AuthResult authResult = await _auth.signInWithEmailAndPassword(
           email: user.email, password: user.senha);
+
       FirebaseUser firebaseUser = authResult?.user;
 
       if (firebaseUser != null) {
+        await UserService.recuperaDadosUsuarioLogado();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<bool> estaLogado() async {
+    try {
+      FirebaseAuth auth = FirebaseAuth.instance;
+      FirebaseUser firebaseUser = await auth.currentUser();
+
+      if (firebaseUser != null) {
+        UserService.recuperaDadosUsuarioLogado();
         return true;
       } else {
         return false;
@@ -64,7 +85,8 @@ class AuthService extends BlocBase {
   static Future<void> deslogar() async {
     await _auth.signOut();
     AppModel.to.bloc<AppBloc>().isLogged = false;
-    AppModel.to.bloc<UserFirebase>().usuario = Usuario();
+    AppModel.to.bloc<UserBloc>().userAddition.add(Usuario());
+    AppModel.to.bloc<CarrinhoBloc>().cartAddition.add(Carrinho());
     return;
   }
 }

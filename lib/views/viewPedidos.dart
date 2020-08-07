@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/PedidoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
@@ -20,10 +20,10 @@ class ViewPedidos extends StatefulWidget {
 class _ViewPedidosState extends State<ViewPedidos>
     with SingleTickerProviderStateMixin {
   Firestore bd = Firestore.instance;
-  final UsuarioLogado = AppModel.to.bloc<UserFirebase>();
+  final UsuarioLogado = AppModel.to.bloc<UserBloc>();
 
   String coletionPai = "pedidos",
-      documentPai = AppModel.to.bloc<UserFirebase>().usuario.uidUser,
+      documentPai = AppModel.to.bloc<UserBloc>().usuario.uidUser,
       subColection = "pedidos";
 
   String stts_saiu = "Saiu Para Entrega",

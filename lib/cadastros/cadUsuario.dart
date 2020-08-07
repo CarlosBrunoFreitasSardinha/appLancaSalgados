@@ -1,5 +1,5 @@
 import 'package:applancasalgados/RouteGenerator.dart';
-import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/models/usuarioModel.dart';
@@ -84,7 +84,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
         .then((firebaseUser) async {
           usuario.uidUser = firebaseUser.user.uid;
       BdService.cadastrarDados("usuarios", usuario.uidUser, usuario.toJson());
-      AppModel.to.bloc<UserFirebase>().usuario = usuario;
+      AppModel.to.bloc<UserBloc>().usuario = usuario;
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
           arguments: 0);
     }).catchError((onError) {

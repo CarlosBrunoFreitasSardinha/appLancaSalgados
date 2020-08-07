@@ -1,7 +1,7 @@
+import 'package:applancasalgados/bloc/CarrinhoBloc.dart';
 import 'package:applancasalgados/models/CarrinhoModel.dart';
 import 'package:applancasalgados/models/ProdutoCarrinhoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/services/CarrinhoService.dart';
 import 'package:applancasalgados/services/UtilService.dart';
 import 'package:applancasalgados/stateLess/CustomListItemTwo.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +15,7 @@ class pagCarrinhoStream extends StatefulWidget {
 
 class _pagCarrinhoStreamState extends State<pagCarrinhoStream> {
   Carrinho cart;
-  final CartShip = AppModel.to.bloc<CarrinhoService>();
+  final CartShip = AppModel.to.bloc<CarrinhoBloc>();
 
   @override
   void initState() {
@@ -50,7 +50,7 @@ class _pagCarrinhoStreamState extends State<pagCarrinhoStream> {
                                     style: Theme.of(context).textTheme.subhead),
                                 trailing: Text(cart.total.toString() + " €",
                                     style:
-                                        Theme.of(context).textTheme.headline),
+                                    Theme.of(context).textTheme.headline),
                               ),
                             ),
                             Card(

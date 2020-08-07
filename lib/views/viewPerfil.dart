@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
@@ -40,7 +40,7 @@ class _ViewPerfilState extends State<ViewPerfil> {
     StorageReference pastaRaiz = storage.ref();
     StorageReference arquivo = pastaRaiz
         .child("perfil")
-        .child(AppModel.to.bloc<UserFirebase>().usuario.uidUser + ".jpg");
+        .child(AppModel.to.bloc<UserBloc>().usuario.uidUser + ".jpg");
     arquivo.putFile(_image);
     StorageUploadTask task = arquivo.putFile(_image);
     task.events.listen((event) {
@@ -66,7 +66,7 @@ class _ViewPerfilState extends State<ViewPerfil> {
     String url = await snapshot.ref.getDownloadURL();
     setState(() {
       AppModel.to
-          .bloc<UserFirebase>()
+          .bloc<UserBloc>()
           .usuario
           .urlPerfil = url;
     });
@@ -77,7 +77,8 @@ class _ViewPerfilState extends State<ViewPerfil> {
     Map<String, dynamic> json;
     json["urlPerfil"] = url;
     BdService.alterarDados(
-        colection, AppModel.to.bloc<UserFirebase>()
+        colection, AppModel.to
+        .bloc<UserBloc>()
         .usuario
         .uidUser, json);
   }
@@ -88,7 +89,10 @@ class _ViewPerfilState extends State<ViewPerfil> {
     json["foneContato1"] = _controllerNumber.text;
     json["endereco"] = _controllerEndereco.text;
     BdService.alterarDados(
-        colection, AppModel.to.bloc<UserFirebase>().usuario.uidUser, json);
+        colection, AppModel.to
+        .bloc<UserBloc>()
+        .usuario
+        .uidUser, json);
   }
 
   Future _recuperarImagem(String urlImg) async {
@@ -107,15 +111,15 @@ class _ViewPerfilState extends State<ViewPerfil> {
 
     setState(() {
       _controllerNome.text = AppModel.to
-          .bloc<UserFirebase>()
+          .bloc<UserBloc>()
           .usuario
           .nome;
       _controllerNumber.text = AppModel.to
-          .bloc<UserFirebase>()
+          .bloc<UserBloc>()
           .usuario
           .foneContato1;
       _controllerEndereco.text = AppModel.to
-          .bloc<UserFirebase>()
+          .bloc<UserBloc>()
           .usuario
           .endereco;
     });
@@ -153,11 +157,11 @@ class _ViewPerfilState extends State<ViewPerfil> {
                     radius: 100,
                     backgroundColor: Colors.grey,
                     backgroundImage: AppModel.to
-                        .bloc<UserFirebase>()
+                        .bloc<UserBloc>()
                         .usuario
                         .urlPerfil != null
                         ? NetworkImage(AppModel.to
-                        .bloc<UserFirebase>()
+                        .bloc<UserBloc>()
                         .usuario
                         .urlPerfil)
                         : null,

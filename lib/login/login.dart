@@ -40,9 +40,9 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> _logarUsuario(Usuario user) async {
-    if (await AuthService.logar(user))
-        Navigator.pop(context);
-      else {
+    if (await AuthService.logar(user)) {
+      Navigator.pop(context);
+    } else {
         setState(() {
           _mensagemErro =
               "Erro ao efetuar Login, verifique as informações e tente Novamente";

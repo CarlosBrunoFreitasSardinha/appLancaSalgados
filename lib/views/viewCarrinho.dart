@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:applancasalgados/RouteGenerator.dart';
-import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/CarrinhoBloc.dart';
+import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/CarrinhoModel.dart';
 import 'package:applancasalgados/models/PedidoModel.dart';
@@ -21,12 +22,12 @@ class ViewCarrinho extends StatefulWidget {
 class _ViewCarrinhoState extends State<ViewCarrinho>
     with SingleTickerProviderStateMixin {
   Firestore bd = Firestore.instance;
+
+  final cartShip = AppModel.to.bloc<CarrinhoBloc>();
   Carrinho carrinho = Carrinho();
   ProdutoCarrinho _ultimaTarefaRemovida = ProdutoCarrinho();
   String coletionPai = "carrinho",
-      documentPai = AppModel.to
-          .bloc<UserFirebase>()
-          .usuario
+      documentPai = AppModel.to.bloc<UserBloc>().usuario
           .uidUser,
       subDocument = "ativo",
       subColection = "carrinho",
@@ -51,15 +52,7 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
     }
   }
 
-  Future<Carrinho> _listenerCarrinho() async {
-    DocumentSnapshot snapshot = await BdService.recuperarItemsColecaoGenerica(
-        coletionPai, documentPai, subColection, subDocument);
 
-    if (snapshot.data != null) {
-      Map<String, dynamic> dados = snapshot.data;
-      return Carrinho.fromJson(dados);
-    }
-  }
 
   _deleteItem(int index) {
     _ultimaTarefaRemovida = carrinho.produtos[index];
@@ -103,13 +96,13 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
     );
   }
 
-  Future _adicionarPedido() {
+  Future<void> _adicionarPedido() {
     if (AppModel.to
         .bloc<AppBloc>()
         .isLogged && carrinho.produtos.length != 0) {
       Pedido pedido = Pedido();
       pedido.usuario = AppModel.to
-          .bloc<UserFirebase>()
+          .bloc<UserBloc>()
           .usuario;
       pedido.carrinho = carrinho;
       pedido.enderecoEntrega = pedido.usuario.endereco;
@@ -142,39 +135,42 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
   }
 
   Widget _criarItemLista(context, index) {
-    return CustomListItemTwo(
-      thumbnail: GestureDetector(
-        child: Hero(
-          tag: carrinho.produtos[index].idProduto,
-          child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Image.network(
-                carrinho.produtos[index].urlImg,
-                fit: BoxFit.cover,
-              )),
+    return Padding(
+      padding: EdgeInsets.all(3),
+      child: CustomListItemTwo(
+        thumbnail: GestureDetector(
+          child: Hero(
+            tag: carrinho.produtos[index].idProduto,
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Image.network(
+                  carrinho.produtos[index].urlImg,
+                  fit: BoxFit.cover,
+                )),
+          ),
+          onTap: () {
+            Navigator.pushNamed(context, RouteGenerator.PRODUTO,
+                arguments: carrinho.produtos[index]);
+          },
         ),
-        onTap: () {
-          Navigator.pushNamed(context, RouteGenerator.PRODUTO,
-              arguments: carrinho.produtos[index]);
-        },
-      ),
-      title: carrinho.produtos[index].titulo,
-      subtitle: carrinho.produtos[index].descricao,
-      preco: UtilService.moeda(carrinho.produtos[index].preco),
-      quantidade: carrinho.produtos[index].quantidade.toString(),
-      subTotal: UtilService.moeda(carrinho.produtos[index].subtotal),
-      color: Colors.white,
-      radius: 5,
-      icone: PopupMenuButton<String>(
-        onSelected: _escolhaMenuItem,
-        itemBuilder: (context) {
-          return _itensMenu.map((String item) {
-            return PopupMenuItem<String>(
-              value: item + '-' + index.toString(),
-              child: Text(item),
-            );
-          }).toList();
-        },
+        title: carrinho.produtos[index].titulo,
+        subtitle: carrinho.produtos[index].descricao,
+        preco: UtilService.moeda(carrinho.produtos[index].preco),
+        quantidade: carrinho.produtos[index].quantidade.toString(),
+        subTotal: UtilService.moeda(carrinho.produtos[index].subtotal),
+        color: Colors.white,
+        radius: 5,
+        icone: PopupMenuButton<String>(
+          onSelected: _escolhaMenuItem,
+          itemBuilder: (context) {
+            return _itensMenu.map((String item) {
+              return PopupMenuItem<String>(
+                value: item + '-' + index.toString(),
+                child: Text(item),
+              );
+            }).toList();
+          },
+        ),
       ),
     );
   }
@@ -184,8 +180,8 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
     var resultante = AppModel.to
         .bloc<AppBloc>()
         .isLogged
-        ? FutureBuilder(
-        future: _listenerCarrinho(),
+        ? StreamBuilder(
+        stream: cartShip.cartStream,
         builder: (BuildContext context, AsyncSnapshot<Carrinho> snapshot) {
           List<Widget> children;
           if (snapshot.hasData) {
@@ -229,11 +225,11 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
                                   color: Colors.white,
                                   onPressed: () {},
                                 ),
-                                          Text('Fechar Carrinho',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 19.0,
-                                                  color: Colors.white)),
+                                Text('Fechar Carrinho',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 19.0,
+                                        color: Colors.white)),
                               ],
                             ),
                           )),

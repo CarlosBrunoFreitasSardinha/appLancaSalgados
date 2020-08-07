@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:applancasalgados/RouteGenerator.dart';
-import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/FormaPagamentoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
@@ -92,7 +92,7 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
   }
 
   _verificarUsuarioLogado() {
-    if (!AppModel.to.bloc<UserFirebase>().usuario.isAdm) {
+    if (!AppModel.to.bloc<UserBloc>().usuario.isAdm) {
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
           arguments: 0);
     }

@@ -1,4 +1,4 @@
-import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/CarrinhoModel.dart';
 import 'package:applancasalgados/models/usuarioModel.dart';
 import 'package:applancasalgados/services/UtilService.dart';
@@ -14,7 +14,7 @@ class Pedido {
   String _formaPagamento;
   String _enderecoEntrega;
   double _trocoPara = 0;
-  String _tituloPedido = AppModel.to.bloc<UserFirebase>().usuario.nome +
+  String _tituloPedido = AppModel.to.bloc<UserBloc>().usuario.nome +
       " _ " +
       UtilService.formatarData(DateTime.now());
   String _dataPedido = Timestamp.now().toString();

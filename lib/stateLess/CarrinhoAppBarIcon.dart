@@ -1,12 +1,12 @@
+import 'package:applancasalgados/bloc/CarrinhoBloc.dart';
 import 'package:applancasalgados/models/CarrinhoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/services/CarrinhoService.dart';
 import 'package:flutter/material.dart';
 
 class CarrinhoAppBarIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final carrinhoService = AppModel.to.bloc<CarrinhoService>();
+    final carrinhoService = AppModel.to.bloc<CarrinhoBloc>();
     return StreamBuilder(
       stream: carrinhoService.cartStream,
       initialData: Carrinho(),

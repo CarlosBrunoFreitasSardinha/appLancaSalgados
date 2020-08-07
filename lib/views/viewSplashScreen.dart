@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:applancasalgados/RouteGenerator.dart';
-import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
-import 'package:applancasalgados/bloc/appBloc.dart';
-import 'package:applancasalgados/models/appModel.dart';
+import 'package:applancasalgados/services/UserService.dart';
 import 'package:flutter/material.dart';
 
 
@@ -21,8 +19,7 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    AppModel.to.bloc<AppBloc>().recuperaUsuarioLogado();
-    AppModel.to.bloc<UserFirebase>().recuperaDadosUsuarioLogado();
+    UserService.recuperaDadosUsuarioLogado();
 
     controller = AnimationController(
       duration: Duration(seconds: 1),

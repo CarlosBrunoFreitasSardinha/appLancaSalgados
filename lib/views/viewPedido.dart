@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:applancasalgados/RouteGenerator.dart';
-import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/FormaPagamentoModel.dart';
 import 'package:applancasalgados/models/PedidoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
@@ -28,7 +28,7 @@ class _ViewPedidoState extends State<ViewPedido>
   ScrollController _scrollControllerMensagens = ScrollController();
   final _controller = StreamController<QuerySnapshot>.broadcast();
   TextEditingController _controllerEndereco = TextEditingController(
-      text: AppModel.to.bloc<UserFirebase>().usuario.endereco);
+      text: AppModel.to.bloc<UserBloc>().usuario.endereco);
   TextEditingController _controllerTroco = TextEditingController();
   String bdCarrinho = "carrinho";
   var selectedItem;
@@ -36,7 +36,10 @@ class _ViewPedidoState extends State<ViewPedido>
 
   _initilizer() {
     coletionPai = "pedidos";
-    documentPai = AppModel.to.bloc<UserFirebase>().usuario.uidUser;
+    documentPai = AppModel.to
+        .bloc<UserBloc>()
+        .usuario
+        .uidUser;
     subColection = "pedidos";
     _controllerEndereco.text = widget.pedido.enderecoEntrega;
     selectedItem = widget.pedido.formaPagamento;

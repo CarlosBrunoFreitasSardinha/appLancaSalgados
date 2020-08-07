@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/CategoriaProdutoModel.dart';
 import 'package:applancasalgados/models/ProdutoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
@@ -180,7 +180,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   }
 
   _verificarUsuarioLogado() {
-    if (!AppModel.to.bloc<UserFirebase>().usuario.isAdm) {
+    if (!AppModel.to.bloc<UserBloc>().usuario.isAdm) {
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
           arguments: 0);
     }

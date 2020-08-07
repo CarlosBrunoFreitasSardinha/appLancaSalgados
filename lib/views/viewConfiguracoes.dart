@@ -1,4 +1,4 @@
-import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +11,7 @@ class Configuracoes extends StatefulWidget {
 
 class _ConfiguracoesState extends State<Configuracoes> {
   _verificarUsuarioLogado() async {
-    if (!AppModel.to.bloc<UserFirebase>().usuario.isAdm) {
+    if (!AppModel.to.bloc<UserBloc>().usuario.isAdm) {
       Navigator.pushReplacementNamed(context, RouteGenerator.LOGIN);
     }
   }

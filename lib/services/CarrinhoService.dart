@@ -1,64 +1,51 @@
-import 'dart:async';
-
+import 'package:applancasalgados/bloc/CarrinhoBloc.dart';
+import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/CarrinhoModel.dart';
-import 'package:applancasalgados/models/ProdutoCarrinhoModel.dart';
-import 'package:bloc_pattern/bloc_pattern.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:applancasalgados/models/appModel.dart';
+import 'package:applancasalgados/services/BdService.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class CarrinhoService extends BlocBase {
-  static const String TAG = "CarrinhoServiceBloc";
+class CarrinhoService {
+  static Future<void> futureCarrinho() async {
+    final streamCarrinho = AppModel.to.bloc<CarrinhoBloc>();
 
-  Carrinho cart = Carrinho();
+    print("VALORRRR  " + AppModel.to.bloc<UserBloc>().usuario.uidUser);
+    DocumentSnapshot snapshot = await BdService.recuperarItemsColecaoGenerica(
+        "carrinho",
+        AppModel.to.bloc<UserBloc>().usuario.uidUser,
+        "carrinho",
+        "ativo");
 
-  /// Sinks
-  Sink<ProdutoCarrinho> get addition => itemAdditionController.sink;
-  final itemAdditionController = StreamController<ProdutoCarrinho>();
+    if (snapshot.data != null) {
+      Map<String, dynamic> dados = snapshot.data;
+      Carrinho cart = Carrinho.fromJson(dados);
+      streamCarrinho.cartAddition.add(cart);
+    }
 
-  Sink<ProdutoCarrinho> get substraction => itemSubtractionController.sink;
-  final itemSubtractionController = StreamController<ProdutoCarrinho>();
-
-  /// Streams
-  Stream<Carrinho> get cartStream => _cart.stream;
-
-  final _cart = BehaviorSubject<Carrinho>();
-
-  CarrinhoService() {
-    itemAdditionController.stream.listen(handleItemAdd);
-    itemSubtractionController.stream.listen(handleItemRem);
-  }
-
-  ///
-  /// Logic for product added to shopping cart.
-  ///
-  void handleItemAdd(ProdutoCarrinho item) {
-//    Logger(TAG).info("Add product to the shopping cart");
-    cart.addProdutos(item);
-    cart.calcular();
-    _cart.add(cart);
     return;
   }
 
-  ///
-  /// Logic for product removed from shopping cart.
-  ///
-  void handleItemRem(ProdutoCarrinho item) {
-//    Logger(TAG).info("Remove product from the shopping cart");
-    cart.remProdutos(item);
-    cart.calcular();
-    _cart.add(cart);
-    return;
-  }
-
-  ///
-  /// Clears the shopping cart
-  ///
-  void clearCart() {
-    cart.limpar();
-  }
-
-  @override
-  void dispose() {
-    itemAdditionController.close();
-    itemSubtractionController.close();
+  static Future updateCart({Carrinho cart}) async {
+    if (cart?.fechado) {
+      await Firestore.instance
+          .collection('carrinho')
+          .document(AppModel.to
+          .bloc<UserBloc>()
+          .usuario
+          .uidUser)
+          .collection('carrinho')
+          .document('ativo')
+          .setData(cart.toJson());
+    } else {
+      await Firestore.instance
+          .collection('carrinho')
+          .document(AppModel.to
+          .bloc<UserBloc>()
+          .usuario
+          .uidUser)
+          .collection('carrinho')
+          .document('ativo')
+          .setData({});
+    }
   }
 }

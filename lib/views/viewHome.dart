@@ -1,16 +1,16 @@
 import 'package:applancasalgados/RouteGenerator.dart';
-import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/appModel.dart';
+import 'package:applancasalgados/models/usuarioModel.dart';
 import 'package:applancasalgados/services/AuthService.dart';
+import 'package:applancasalgados/services/UtilService.dart';
 import 'package:applancasalgados/stateLess/CarrinhoAppBarIcon.dart';
 import 'package:applancasalgados/views/viewCardapio.dart';
 import 'package:applancasalgados/views/viewCarrinho.dart';
 import 'package:applancasalgados/views/viewDestaques.dart';
 import 'package:applancasalgados/views/viewPedidos.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 
 class Home extends StatefulWidget {
   final int opcao;
@@ -24,7 +24,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   TabController _tabController;
   List<String> _itensMenu = ["Login"];
-  final UsuarioLogado = AppModel.to.bloc<UserFirebase>();
+  final UsuarioLogado = AppModel.to.bloc<UserBloc>();
 
   _escolhaMenuItem(String itemEscolhido) {
     switch (itemEscolhido) {
@@ -42,12 +42,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           Navigator.pushNamed(context, RouteGenerator.LOGIN);
         break;
       case "Sair":
-        if (AppModel.to
-            .bloc<AppBloc>()
-            .isLogged) {
+        if (AppModel.to.bloc<AppBloc>().isLogged) {
           AuthService.deslogar();
           print(AppModel.to
-              .bloc<UserFirebase>()
+              .bloc<UserBloc>()
               .usuario
               .toString());
           print(AppModel.to.bloc<AppBloc>().toString());
@@ -55,7 +53,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         break;
     }
   }
-
 
   @override
   void initState() {
@@ -112,24 +109,32 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   tabs: [
                     Tab(icon: Icon(Icons.home)),
                     Tab(icon: Icon(Icons.restaurant_menu)),
-                    Tab(child: futureCarrinho,),
+                    Tab(
+                      child: futureCarrinho,
+                    ),
                     Tab(icon: Icon(Icons.storage)),
                   ],
                 ),
                 actions: <Widget>[
-                  StreamBuilder<Object>(
-                    stream: FirebaseAuth.instance.onAuthStateChanged,
+                  StreamBuilder<Usuario>(
+                    stream: UsuarioLogado.userLogged,
                     builder: (BuildContext context, snapshot) {
                       if (snapshot.hasData) {
-                        if (UsuarioLogado.usuario
-                            .isAdm) { // logged in using email and password
-                          _itensMenu =
-                          ["Configurações", "Perfil", "Pag. de Testes", "Sair"];
-                        } else { // logged in using other providers
-                          _itensMenu = ["Perfil", "Sair"];
+                        if (UtilService.stringNotIsNull(
+                            snapshot.data.uidUser)) {
+                          if (snapshot.data.isAdm) {
+                            _itensMenu = [
+                              "Configurações",
+                              "Perfil",
+                              "Pag. de Testes",
+                              "Sair"
+                            ];
+                          } else {
+                            _itensMenu = ["Perfil", "Sair"];
+                          }
+                        } else {
+                          _itensMenu = ["Login"];
                         }
-                      } else {
-                        _itensMenu = ["Login"];
                       }
                       return PopupMenuButton<String>(
                         onSelected: _escolhaMenuItem,

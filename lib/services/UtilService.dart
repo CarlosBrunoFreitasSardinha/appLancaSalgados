@@ -16,4 +16,14 @@ class UtilService {
         ' ' + menorQueDez(date.hour) +
         ':' + menorQueDez(date.minute);
   }
+
+  static bool stringIsNull(String str) {
+    if (str == null || str.replaceAll(' ', '') == '') return true;
+    return false;
+  }
+
+  static bool stringNotIsNull(String str) {
+    if (str == null || str.replaceAll(' ', '') == '') return false;
+    return true;
+  }
 }

@@ -1,12 +1,12 @@
 import 'package:applancasalgados/RouteGenerator.dart';
-import 'package:applancasalgados/bloc/UserFireBaseBloc.dart';
+import 'package:applancasalgados/bloc/CarrinhoBloc.dart';
+import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/CarrinhoModel.dart';
 import 'package:applancasalgados/models/ProdutoCarrinhoModel.dart';
 import 'package:applancasalgados/models/ProdutoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
-import 'package:applancasalgados/services/CarrinhoService.dart';
 import 'package:applancasalgados/services/UtilService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,7 +23,7 @@ class ViewProduto extends StatefulWidget {
 }
 
 class _ViewProdutoState extends State<ViewProduto> {
-  final streamCarrinho = AppModel.to.bloc<CarrinhoService>();
+  final streamCarrinho = AppModel.to.bloc<CarrinhoBloc>();
   Carrinho carrinho = Carrinho();
   ProdutoCarrinho produtoCarrinho = ProdutoCarrinho();
   bool isInitial = true;
@@ -33,8 +33,8 @@ class _ViewProdutoState extends State<ViewProduto> {
   _initilizer() {
     produtoCarrinho = ProdutoCarrinho.fromJson(widget.produto.toJson());
     coletionPai = "carrinho";
-    documentPai = AppModel.to.bloc<UserFirebase>().usuario.uidUser != null
-        ? AppModel.to.bloc<UserFirebase>().usuario.uidUser
+    documentPai = AppModel.to.bloc<UserBloc>().usuario.uidUser != null
+        ? AppModel.to.bloc<UserBloc>().usuario.uidUser
         : "";
     subColection = "carrinho";
     subDocument = "ativo";
