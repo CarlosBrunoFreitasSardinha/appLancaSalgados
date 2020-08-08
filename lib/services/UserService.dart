@@ -1,5 +1,4 @@
 import 'package:applancasalgados/bloc/UserBloc.dart';
-import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/models/usuarioModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,7 +24,7 @@ class UserService {
           .bloc<UserBloc>()
           .userAddition
           .add(UsuarioModel.fromJson(json));
-      AppModel.to.bloc<AppBloc>().isLogged = true;
+      AppModel.to.bloc<UserBloc>().isLogged = true;
     }
   }
 

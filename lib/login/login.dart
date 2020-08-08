@@ -1,5 +1,5 @@
 import 'package:applancasalgados/RouteGenerator.dart';
-import 'package:applancasalgados/bloc/appBloc.dart';
+import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/models/usuarioModel.dart';
 import 'package:applancasalgados/services/AuthService.dart';
@@ -17,6 +17,7 @@ class _LoginState extends State<Login> {
       TextEditingController(text: "1234567");
   String _mensagemErro = "";
   UsuarioModel usuario = UsuarioModel();
+  bool visualizarSenha = true;
 
   validarCampos(_controllerEmail, _controllerSenha) {
     String email = _controllerEmail.text;
@@ -52,9 +53,7 @@ class _LoginState extends State<Login> {
   }
 
   _verificarUsuarioLogado() {
-    if (AppModel.to
-        .bloc<AppBloc>()
-        .isLogged) {
+    if (AppModel.to.bloc<UserBloc>().isLogged) {
       Navigator.pop(context);
     }
   }
@@ -70,7 +69,10 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-          decoration: BoxDecoration(color: Color(0xff5c3838)),
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('imagens/background.jpg'),
+                  fit: BoxFit.cover)),
           padding: EdgeInsets.all(16),
           child: Center(
             child: SingleChildScrollView(
@@ -89,48 +91,78 @@ class _LoginState extends State<Login> {
 
                   //email
                   Padding(
-                    padding: EdgeInsets.all(8),
-                    child: TextField(
-                      controller: _controllerEmail,
-                      keyboardType: TextInputType.emailAddress,
-                      style: TextStyle(fontSize: 20),
-                      decoration: InputDecoration(
-                          contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                          hintText: "Email",
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10))),
+                    padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+                    child: Material(
+                      elevation: 7,
+                      borderRadius: BorderRadius.circular(10),
+                      child: TextFormField(
+                        controller: _controllerEmail,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            hintText: "Enter Email",
+                            contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                            hintStyle: TextStyle(color: Colors.grey[400],
+                                fontSize: 20),
+                            filled: true,
+                            fillColor: Colors.white,
+                            prefixIcon: Padding(
+                                padding: EdgeInsets.only(left: 12, right: 25),
+                                child: Icon(Icons.person_outline,)
+                            )),
+                      ),
                     ),
                   ),
 
                   //senha
                   Padding(
-                    padding: EdgeInsets.only(left: 8, right: 8),
-                    child: TextField(
-                      controller: _controllerSenha,
-                      obscureText: true,
-                      keyboardType: TextInputType.text,
-                      style: TextStyle(fontSize: 20),
-                      decoration: InputDecoration(
-                          contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                          hintText: "Senha",
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10))),
+                    padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+                    child: Material(
+                      elevation: 7,
+                      borderRadius: BorderRadius.circular(10),
+                      child: TextFormField(
+                        controller: _controllerSenha,
+                        obscureText: visualizarSenha,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            hintText: "Enter Senha",
+                            contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                            hintStyle: TextStyle(color: Colors.grey[400],
+                                fontSize: 20),
+                            filled: true,
+                            fillColor: Colors.white,
+                            suffixIcon: Padding(
+                                padding: EdgeInsets.only(left: 12, right: 12),
+                                child: IconButton(icon: Icon(
+                                  Icons.help_outline,
+                                  color: Colors.grey[400],
+                                ),
+                                    onPressed: () {
+                                      setState(() {
+                                        visualizarSenha = !visualizarSenha;
+                                      });
+                                    })),
+                            prefixIcon: Padding(
+                                padding: EdgeInsets.only(left: 12, right: 25),
+                                child: Icon(
+                                  Icons.lock_outline,
+                                ))),
+                      ),
                     ),
                   ),
 
                   //botao
                   Padding(
-                    padding: EdgeInsets.all(8),
+                    padding: EdgeInsets.fromLTRB(8, 8, 8, 16),
                     child: RaisedButton(
                         child: Text(
                           "Entrar",
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
-                        color: Color(0xffd19c3c),
+                        color: Theme
+                            .of(context)
+                            .accentColor,
                         padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),

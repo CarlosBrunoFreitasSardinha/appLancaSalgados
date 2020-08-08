@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:applancasalgados/bloc/CarrinhoBloc.dart';
 import 'package:applancasalgados/bloc/UserBloc.dart';
-import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/CarrinhoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/models/usuarioModel.dart';
@@ -10,6 +9,8 @@ import 'package:applancasalgados/services/UserService.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'CarrinhoService.dart';
 
 class AuthService extends BlocBase {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -57,6 +58,7 @@ class AuthService extends BlocBase {
 
       if (firebaseUser != null) {
         await UserService.recuperaDadosUsuarioLogado();
+        CarrinhoService.futureCarrinho();
         return true;
       } else {
         return false;
@@ -73,6 +75,7 @@ class AuthService extends BlocBase {
 
       if (firebaseUser != null) {
         UserService.recuperaDadosUsuarioLogado();
+        CarrinhoService.futureCarrinho();
         return true;
       } else {
         return false;
@@ -84,7 +87,7 @@ class AuthService extends BlocBase {
 
   static Future<void> deslogar() async {
     await _auth.signOut();
-    AppModel.to.bloc<AppBloc>().isLogged = false;
+    AppModel.to.bloc<UserBloc>().isLogged = false;
     AppModel.to.bloc<UserBloc>().userAddition.add(UsuarioModel());
     AppModel.to.bloc<CarrinhoBloc>().cartAddition.add(CarrinhoModel());
     return;

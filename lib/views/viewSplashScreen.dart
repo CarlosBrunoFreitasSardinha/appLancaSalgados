@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:applancasalgados/RouteGenerator.dart';
+import 'package:applancasalgados/services/CarrinhoService.dart';
 import 'package:applancasalgados/services/UserService.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,7 @@ class ViewSplashScreen extends StatefulWidget {
 
 Future<void> recuperarUser() async {
   await UserService.recuperaDadosUsuarioLogado();
+  CarrinhoService.futureCarrinho();
   return;
 }
 

@@ -1,7 +1,6 @@
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/CarrinhoBloc.dart';
 import 'package:applancasalgados/bloc/UserBloc.dart';
-import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/CarrinhoModel.dart';
 import 'package:applancasalgados/models/ProdutoCarrinhoModel.dart';
 import 'package:applancasalgados/models/ProdutoModel.dart';
@@ -51,9 +50,7 @@ class _ViewProdutoState extends State<ViewProduto> {
   }
 
   Future _adicionarAoCarrinho() {
-    if (AppModel.to
-        .bloc<AppBloc>()
-        .isLogged) {
+    if (AppModel.to.bloc<UserBloc>().isLogged) {
       streamCarrinho.addition.add(produtoCarrinho);
       carrinho.addProdutos(produtoCarrinho);
       isInitial

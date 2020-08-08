@@ -1,6 +1,5 @@
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/UserBloc.dart';
-import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/models/usuarioModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
@@ -99,9 +98,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   }
 
   Future _verificarUsuarioLogado() async {
-    if (AppModel.to
-        .bloc<AppBloc>()
-        .isLogged) {
+    if (AppModel.to.bloc<UserBloc>().isLogged) {
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
           arguments: 0);
     }

@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:applancasalgados/bloc/UserBloc.dart';
-import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
+import 'package:applancasalgados/services/NumberFormatService.dart';
+import 'package:applancasalgados/services/UserService.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../RouteGenerator.dart';
@@ -19,11 +21,14 @@ class _ViewPerfilState extends State<ViewPerfil> {
   TextEditingController _controllerNome = TextEditingController();
   TextEditingController _controllerNumber = TextEditingController();
   TextEditingController _controllerEndereco = TextEditingController();
-  String imagem = "";
-  String colection = "usuario";
+  String urlImagemRecuperada = "";
+  String colection = "usuarios";
+  String document = AppModel.to.bloc<UserBloc>().usuario.uidUser;
   bool _upload = false;
   File _image;
   final picker = ImagePicker();
+  final blocUsuarioLogado = AppModel.to.bloc<UserBloc>();
+  final _mobileFormatter = NumberTextInputFormatterService();
 
   Future getImage(bool i) async {
     final pickedFile = await picker.getImage(source: i ? ImageSource.camera: ImageSource.gallery);
@@ -64,35 +69,26 @@ class _ViewPerfilState extends State<ViewPerfil> {
 
   Future _recuperarUrlImagem(StorageTaskSnapshot snapshot) async{
     String url = await snapshot.ref.getDownloadURL();
-    setState(() {
-      AppModel.to
-          .bloc<UserBloc>()
-          .usuario
-          .urlPerfil = url;
-    });
+    urlImagemRecuperada = url;
     _atualizarUrlImagemFirestore(url);
   }
 
   Future _atualizarUrlImagemFirestore(String url){
-    Map<String, dynamic> json;
+    Map<String, dynamic> json = Map<String, dynamic>();
     json["urlPerfil"] = url;
-    BdService.alterarDados(
-        colection, AppModel.to
-        .bloc<UserBloc>()
-        .usuario
-        .uidUser, json);
+    BdService.alterarDados(colection, document, json);
+    UserService.recuperaDadosUsuarioLogado();
   }
 
-  Future _atualizarDadosFirestore() {
-    Map<String, dynamic> json;
+  Future<void> _atualizarDadosFirestore() async {
+    Map<String, dynamic> json = Map<String, dynamic>();
     json["nome"] = _controllerNome.text;
     json["foneContato1"] = _controllerNumber.text;
     json["endereco"] = _controllerEndereco.text;
-    BdService.alterarDados(
-        colection, AppModel.to
-        .bloc<UserBloc>()
-        .usuario
-        .uidUser, json);
+    json["urlPerfil"] = urlImagemRecuperada;
+    BdService.alterarDados(colection, document, json);
+    UserService.recuperaDadosUsuarioLogado();
+    return;
   }
 
   Future _recuperarImagem(String urlImg) async {
@@ -110,25 +106,14 @@ class _ViewPerfilState extends State<ViewPerfil> {
     _verificarUsuarioLogado();
 
     setState(() {
-      _controllerNome.text = AppModel.to
-          .bloc<UserBloc>()
-          .usuario
-          .nome;
-      _controllerNumber.text = AppModel.to
-          .bloc<UserBloc>()
-          .usuario
-          .foneContato1;
-      _controllerEndereco.text = AppModel.to
-          .bloc<UserBloc>()
-          .usuario
-          .endereco;
+      _controllerNome.text = blocUsuarioLogado.usuario.nome;
+      _controllerNumber.text = blocUsuarioLogado.usuario.foneContato1;
+      _controllerEndereco.text = blocUsuarioLogado.usuario.endereco;
     });
   }
 
   _verificarUsuarioLogado() {
-    if (!AppModel.to
-        .bloc<AppBloc>()
-        .isLogged) {
+    if (!blocUsuarioLogado.isLogged) {
       Navigator.pushReplacementNamed(context, RouteGenerator.LOGIN);
     }
   }
@@ -156,14 +141,9 @@ class _ViewPerfilState extends State<ViewPerfil> {
                       : CircleAvatar(
                     radius: 100,
                     backgroundColor: Colors.grey,
-                    backgroundImage: AppModel.to
-                        .bloc<UserBloc>()
-                        .usuario
-                        .urlPerfil != null
-                        ? NetworkImage(AppModel.to
-                        .bloc<UserBloc>()
-                        .usuario
-                        .urlPerfil)
+                    backgroundImage:
+                    blocUsuarioLogado.usuario.urlPerfil != null
+                        ? NetworkImage(blocUsuarioLogado.usuario.urlPerfil)
                         : null,
                   ),
                   Row(
@@ -192,7 +172,13 @@ class _ViewPerfilState extends State<ViewPerfil> {
                       style: TextStyle(fontSize: 20),
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                          prefixIcon: Padding(
+                              padding: EdgeInsets.only(left: 12, right: 25),
+                              child: Icon(
+                                Icons.person_outline,
+                              )),
                           hintText: "Nome",
+                          labelText: "Nome",
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
@@ -207,10 +193,21 @@ class _ViewPerfilState extends State<ViewPerfil> {
                       controller: _controllerNumber,
                       autofocus: true,
                       keyboardType: TextInputType.phone,
+                      maxLength: 15,
                       style: TextStyle(fontSize: 20),
+                      inputFormatters: <TextInputFormatter>[
+                        WhitelistingTextInputFormatter.digitsOnly,
+                        _mobileFormatter,
+                      ],
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                          prefixIcon: Padding(
+                              padding: EdgeInsets.only(left: 12, right: 25),
+                              child: Icon(
+                                Icons.phone,
+                              )),
                           hintText: "Telefone(Whatsapp)",
+                          labelText: "Telefone(Whatsapp)",
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
@@ -222,12 +219,20 @@ class _ViewPerfilState extends State<ViewPerfil> {
                   Padding(
                     padding: EdgeInsets.all(8),
                     child: TextField(
+                      maxLines: 3,
+                      maxLength: 60,
+                      keyboardType: TextInputType.multiline,
                       controller: _controllerEndereco,
-                      keyboardType: TextInputType.text,
                       style: TextStyle(fontSize: 20),
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                          prefixIcon: Padding(
+                              padding: EdgeInsets.only(left: 12, right: 25),
+                              child: Icon(
+                                Icons.home,
+                              )),
                           hintText: "Endereço Ex(Bairro tal, Rua tal, Número tal)",
+                          labelText: "Endereço",
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(

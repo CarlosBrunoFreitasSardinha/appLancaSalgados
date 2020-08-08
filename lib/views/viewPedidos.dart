@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/PedidoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
+import 'package:applancasalgados/models/usuarioModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
 import 'package:applancasalgados/services/UtilService.dart';
 import 'package:applancasalgados/stateLess/CustomListItemOne.dart';
@@ -33,12 +34,7 @@ class _ViewPedidosState extends State<ViewPedidos>
   final _controller = StreamController<QuerySnapshot>.broadcast();
   ScrollController _scrollControllerMensagens = ScrollController();
 
-  List<String> _itensMenu = [
-    "Visualizar Pedido",
-    "Pedido Recebido",
-    "Saiu para Entrega",
-    "Pedido Entregue"
-  ];
+  List<String> _itensMenu = [];
 
   Future _alterarDadoPedido(String documentRef, Map<String, dynamic> json) {
     BdService.alterarItemColecaoGenerica(
@@ -141,35 +137,64 @@ class _ViewPedidosState extends State<ViewPedidos>
                                     preco: pedido.status,
                                     color: Colors.white,
                                     radius: 5,
-                                    icone: PopupMenuButton<String>(
-                                      onSelected: (item) {
-                                        switch (item) {
-                                          case "Visualizar Pedido":
-                                            Navigator.pushNamed(
-                                                context, RouteGenerator.PEDIDO,
-                                                arguments: pedido);
-                                            break;
-                                          case "Pedido Recebido":
-                                            _alterarDadoPedido(json.documentID,
-                                                {"status": stts_recebido});
-                                            break;
-                                          case "Saiu para Entrega":
-                                            _alterarDadoPedido(json.documentID,
-                                                {"status": stts_saiu});
-                                            break;
-                                          case "Pedido Entregue":
-                                            _alterarDadoPedido(json.documentID,
-                                                {"atendido": true});
-                                            break;
+                                    icone: StreamBuilder<UsuarioModel>(
+                                      stream: UsuarioLogado.userLogged,
+                                      builder:
+                                          (BuildContext context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          if (UtilService.stringNotIsNull(
+                                              snapshot.data.uidUser)) {
+                                            if (snapshot.data.isAdm) {
+                                              _itensMenu = [
+                                                "Visualizar Pedido",
+                                                "Pedido Recebido",
+                                                "Saiu para Entrega",
+                                                "Pedido Entregue"
+                                              ];
+                                            } else {
+                                              _itensMenu = [
+                                                "Visualizar Pedido",
+                                              ];
+                                            }
+                                          } else {
+                                            _itensMenu = [];
+                                          }
                                         }
-                                      },
-                                      itemBuilder: (context) {
-                                        return _itensMenu.map((String item) {
-                                          return PopupMenuItem<String>(
-                                            value: item,
-                                            child: Text(item),
-                                          );
-                                        }).toList();
+                                        return PopupMenuButton<String>(
+                                          onSelected: (item) {
+                                            switch (item) {
+                                              case "Visualizar Pedido":
+                                                Navigator.pushNamed(context,
+                                                    RouteGenerator.PEDIDO,
+                                                    arguments: pedido);
+                                                break;
+                                              case "Pedido Recebido":
+                                                _alterarDadoPedido(
+                                                    json.documentID,
+                                                    {"status": stts_recebido});
+                                                break;
+                                              case "Saiu para Entrega":
+                                                _alterarDadoPedido(
+                                                    json.documentID,
+                                                    {"status": stts_saiu});
+                                                break;
+                                              case "Pedido Entregue":
+                                                _alterarDadoPedido(
+                                                    json.documentID,
+                                                    {"atendido": true});
+                                                break;
+                                            }
+                                          },
+                                          itemBuilder: (context) {
+                                            return _itensMenu
+                                                .map((String item) {
+                                              return PopupMenuItem<String>(
+                                                value: item,
+                                                child: Text(item),
+                                              );
+                                            }).toList();
+                                          },
+                                        );
                                       },
                                     ),
                                   )));

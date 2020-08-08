@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/CarrinhoBloc.dart';
 import 'package:applancasalgados/bloc/UserBloc.dart';
-import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/CarrinhoModel.dart';
 import 'package:applancasalgados/models/PedidoModel.dart';
 import 'package:applancasalgados/models/ProdutoCarrinhoModel.dart';
@@ -22,6 +21,7 @@ class ViewCarrinho extends StatefulWidget {
 class _ViewCarrinhoState extends State<ViewCarrinho>
     with SingleTickerProviderStateMixin {
   Firestore bd = Firestore.instance;
+  final UsuarioLogado = AppModel.to.bloc<UserBloc>();
 
   final cartShip = AppModel.to.bloc<CarrinhoBloc>();
   CarrinhoModel carrinho = CarrinhoModel();
@@ -97,9 +97,7 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
   }
 
   Future<void> _adicionarPedido() {
-    if (AppModel.to
-        .bloc<AppBloc>()
-        .isLogged && carrinho.produtos.length != 0) {
+    if (AppModel.to.bloc<UserBloc>().isLogged && carrinho.produtos.length != 0) {
       PedidoModel pedido = PedidoModel();
       pedido.usuario = AppModel.to
           .bloc<UserBloc>()
@@ -178,7 +176,7 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
   @override
   Widget build(BuildContext context) {
     var resultante = AppModel.to
-        .bloc<AppBloc>()
+        .bloc<UserBloc>()
         .isLogged
         ? StreamBuilder(
         stream: cartShip.cartStream,

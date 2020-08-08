@@ -7,6 +7,7 @@ import 'package:rxdart/rxdart.dart';
 
 class UserBloc extends BlocBase {
   UsuarioModel usuario = UsuarioModel();
+  bool isLogged = false;
 
   /// Sinks
   Sink<UsuarioModel> get userAddition => userLoggedController.sink;
@@ -30,7 +31,7 @@ class UserBloc extends BlocBase {
 
   @override
   dispose() {
-    _User$.close();
+    userLoggedController.close();
     super.dispose();
   }
 }

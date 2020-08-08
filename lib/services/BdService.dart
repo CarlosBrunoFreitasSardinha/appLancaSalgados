@@ -14,9 +14,10 @@ class BdService {
     }
   }
 
-  static alterarDados(String colection, String document,
-      Map<String, dynamic> map) {
+  static Future<void> alterarDados(
+      String colection, String document, Map<String, dynamic> map) async {
     BdService.bd.collection(colection).document(document).updateData(map);
+    return;
   }
 
   static removerDados(String colection, String document) {

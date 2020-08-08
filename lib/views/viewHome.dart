@@ -39,11 +39,13 @@ class _ViewHomeState extends State<ViewHome>
         Navigator.pushNamed(context, RouteGenerator.TESTE);
         break;
       case "Login":
-        if (!AppModel.to.bloc<AppBloc>().isLogged)
+        if (!AppModel.to.bloc<UserBloc>().isLogged)
           Navigator.pushNamed(context, RouteGenerator.LOGIN);
         break;
       case "Sair":
-        if (AppModel.to.bloc<AppBloc>().isLogged) {
+        if (AppModel.to
+            .bloc<UserBloc>()
+            .isLogged) {
           AuthService.deslogar();
           print(AppModel.to
               .bloc<UserBloc>()

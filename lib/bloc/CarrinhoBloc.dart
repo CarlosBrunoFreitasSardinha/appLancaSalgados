@@ -62,5 +62,6 @@ class CarrinhoBloc extends BlocBase {
   void dispose() {
     itemAdditionController.close();
     itemSubtractionController.close();
+    cartAdditionController.close();
   }
 }

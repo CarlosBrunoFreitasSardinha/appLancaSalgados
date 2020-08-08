@@ -1,6 +1,9 @@
 import 'dart:async';
 
+import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/ProdutoModel.dart';
+import 'package:applancasalgados/models/appModel.dart';
+import 'package:applancasalgados/models/usuarioModel.dart';
 import 'package:applancasalgados/services/UtilService.dart';
 import 'package:applancasalgados/stateLess/CustomListItemOne.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,13 +19,11 @@ class Cardapio extends StatefulWidget {
 class _CardapioState extends State<Cardapio>
     with SingleTickerProviderStateMixin {
   Firestore bd = Firestore.instance;
+  final UsuarioLogado = AppModel.to.bloc<UserBloc>();
   final _controller = StreamController<QuerySnapshot>.broadcast();
   ScrollController _scrollControllerMensagens = ScrollController();
   String idReceptor, urlImagemEnviada;
-  List<String> _itensMenu = [
-    "Editar",
-    "Deletar",
-  ];
+  List<String> _itensMenu = [];
 
   _escolhaMenuItem(String itemEscolhido) {
     String i = itemEscolhido.split("-")[1];
@@ -131,18 +132,37 @@ class _CardapioState extends State<Cardapio>
                               preco: UtilService.moeda(produto.preco),
                               color: Colors.white,
                               radius: 5,
-                              icone: PopupMenuButton<String>(
-                                onSelected: _escolhaMenuItem,
-                                itemBuilder: (context) {
-                                  return _itensMenu.map((String item) {
-                                    return PopupMenuItem<String>(
-                                      value: item + '-' + json.documentID,
-                                      child: Text(item),
+                                icone: StreamBuilder<UsuarioModel>(
+                                  stream: UsuarioLogado.userLogged,
+                                  builder: (BuildContext context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      if (UtilService.stringNotIsNull(
+                                          snapshot.data.uidUser)) {
+                                        if (snapshot.data.isAdm) {
+                                          _itensMenu = [
+                                            "Editar",
+                                            "Deletar",
+                                          ];
+                                        } else {
+                                          return SizedBox();
+                                        }
+                                      } else {
+                                        return SizedBox();
+                                      }
+                                    }
+                                    return PopupMenuButton<String>(
+                                      onSelected: _escolhaMenuItem,
+                                      itemBuilder: (context) {
+                                        return _itensMenu.map((String item) {
+                                          return PopupMenuItem<String>(
+                                            value: item,
+                                            child: Text(item),
+                                          );
+                                        }).toList();
+                                      },
                                     );
-                                  }).toList();
-                                },
-                              ),
-                            )),
+                                  },
+                                ))),
                       );
                     }),
               );
