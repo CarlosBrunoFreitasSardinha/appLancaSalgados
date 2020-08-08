@@ -148,33 +148,36 @@ class _ViewPedidoState extends State<ViewPedido>
               );
             }
             return Padding(
-              padding: EdgeInsets.only(left: 5, right: 5, bottom: 2),
+              padding: EdgeInsets.all(8),
               child: Container(
-                padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(5))),
-                child: DropdownButton(
-                    underline: SizedBox(),
-                    items: currencyItems,
-                    onChanged: (currencyValue) {
-                      setState(() {
-                        selectedItem = currencyValue;
-                        widget.pedido.formaPagamento = currencyValue.toString();
-                      });
-                    },
-                    value: selectedItem,
-                    isExpanded: true,
-                    hint: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Text(
-                        "Selecione a Forma de Pagamento!",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xffd19c3c)),
-                      ),
-                    )),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(24, 4, 8, 4),
+                  child: DropdownButton(
+                      underline: SizedBox(),
+                      items: currencyItems,
+                      onChanged: (currencyValue) {
+                        setState(() {
+                          selectedItem = currencyValue;
+                          widget.pedido.formaPagamento =
+                              currencyValue.toString();
+                        });
+                      },
+                      value: selectedItem,
+                      isExpanded: true,
+                      hint: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Text(
+                          "Selecione a Forma de Pagamento!",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xffd19c3c)),
+                        ),
+                      )),
+                ),
               ),
             );
           }
@@ -222,10 +225,17 @@ class _ViewPedidoState extends State<ViewPedido>
                 padding: EdgeInsets.all(5),
                 child: TextField(
                   controller: _controllerEndereco,
+                  maxLines: 3,
+                  maxLength: 60,
                   keyboardType: TextInputType.text,
                   style: TextStyle(fontSize: 20),
                   decoration: InputDecoration(
                       contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                      prefixIcon: Padding(
+                          padding: EdgeInsets.only(left: 12, right: 25),
+                          child: Icon(
+                            Icons.home,
+                          )),
                       hintText: "Endereço de Entrega",
                       filled: true,
                       fillColor: Colors.white,

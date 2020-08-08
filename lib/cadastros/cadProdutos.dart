@@ -72,12 +72,10 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
     task.events.listen((event) {
       if (task.isInProgress) {
         print("progresso");
-        setState(() {
-        });
+        setState(() {});
       } else if (task.isSuccessful) {
         print("Sucesso");
-        setState(() {
-        });
+        setState(() {});
       }
     });
 
@@ -113,8 +111,8 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   }
 
   _cadastrarProduto() async {
-    int indice = int.parse(produto.idProduto)+1;
-    if(isCad){
+    int indice = int.parse(produto.idProduto) + 1;
+    if (isCad) {
       BdService.cadastrarDados("produtos", produto.idProduto, produto.toJson());
       BdService.alterarDados("indices", "produtos", {"id": indice.toString()});
       isCad = false;
@@ -133,13 +131,9 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
 
     if (titulo.length >= 3) {
-
       if (_urlImagemRecuperada.isNotEmpty) {
-
         if (preco >= 0) {
-
           if (selectedItem != null) {
-
             produto.titulo = titulo;
             produto.descricao = descricao;
             produto.preco = preco;
@@ -180,7 +174,10 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   }
 
   _verificarUsuarioLogado() {
-    if (!AppModel.to.bloc<UserBloc>().usuario.isAdm) {
+    if (!AppModel.to
+        .bloc<UserBloc>()
+        .usuario
+        .isAdm) {
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
           arguments: 0);
     }
@@ -209,7 +206,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
         // ignore: missing_return
         builder: (context, snapshot) {
           if (!snapshot.hasData)
-            const Text("Loading.....");
+            const Text("Carregando.....");
           else {
             List<DropdownMenuItem> currencyItems = [];
             for (int i = 0; i < snapshot.data.documents.length; i++) {
@@ -232,35 +229,42 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                 ),
               );
             }
-            return Container(
-              child: Padding(
-                padding: EdgeInsets.all(8),
-                child: DropdownButton(
-                  items: currencyItems,
-                  onChanged: (currencyValue) {
-                    final snackBar = SnackBar(
-                      content: Text(
-                        'Categoria $currencyValue, foi selecionada!',
-                        style: TextStyle(color: Color(0xffd19c3c)),
-                      ),
-                    );
-                    Scaffold.of(context).showSnackBar(snackBar);
-                    setState(() {
-                      selectedItem = currencyValue;
-                    });
-                  },
-                  value: selectedItem,
-                  isExpanded: true,
-                  hint: new Text(
-                    "Selecione uma Categoria!",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xffd19c3c)),
+            return Padding(padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(24, 4, 8, 4),
+                  child: DropdownButton(
+                    underline: SizedBox(),
+                    items: currencyItems,
+                    onChanged: (currencyValue) {
+                      final snackBar = SnackBar(
+                        content: Text(
+                          'Categoria $currencyValue, foi selecionada!',
+                          style:
+                          TextStyle(color: Color(0xffd19c3c)),
+                        ),
+                      );
+                      Scaffold.of(context).showSnackBar(snackBar);
+                      setState(() {
+                        selectedItem = currencyValue;
+                        _controllerTitulo.text = currencyValue;
+                      });
+                    },
+                    value: selectedItem,
+                    isExpanded: true,
+                    hint: new Text(
+                      "Nova Categoria!",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xffd19c3c)),
+                    ),
                   ),
                 ),
-              ),
-            );
+              ),);
           }
         });
 
@@ -269,7 +273,10 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
         title: Text("Cadastro Produtos"),
       ),
       body: Container(
-          decoration: BoxDecoration(color: Color(0xff5c3838)),
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('imagens/background.jpg'),
+                  fit: BoxFit.cover)),
           padding: EdgeInsets.all(16),
           child: Center(
             child: SingleChildScrollView(
@@ -279,23 +286,23 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                   //logo
                   _urlImagemRecuperada != null
                       ? ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: Image.network(
-                            _urlImagemRecuperada,
-                            loadingBuilder: (context, child, progress) {
-                              return progress == null
-                                  ? child
-                                  : LinearProgressIndicator(
-                                      backgroundColor: Colors.grey,
-                                    );
-                            },
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : CircleAvatar(
-                          radius: 100,
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.network(
+                      _urlImagemRecuperada,
+                      loadingBuilder: (context, child, progress) {
+                        return progress == null
+                            ? child
+                            : LinearProgressIndicator(
                           backgroundColor: Colors.grey,
-                        ),
+                        );
+                      },
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                      : CircleAvatar(
+                    radius: 100,
+                    backgroundColor: Colors.grey,
+                  ),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -304,12 +311,20 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                           onPressed: () {
                             _recuperarImagem("camera");
                           },
-                          child: Text("Câmera")),
+                          child: Row(children: <Widget>[
+                            Icon(Icons.camera_alt, color: Colors.white),
+                            Text("Câmera", style: TextStyle(
+                                color: Colors.white, fontSize: 20))
+                          ],)),
                       FlatButton(
                           onPressed: () {
                             _recuperarImagem("galeria");
                           },
-                          child: Text("Galeria")),
+                          child: Row(children: <Widget>[
+                            Icon(Icons.photo_library, color: Colors.white,),
+                            Text("Galeria", style: TextStyle(
+                                color: Colors.white, fontSize: 20))
+                          ],)),
                     ],
                   ),
 
@@ -318,14 +333,19 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
                   //titulo produto
                   Padding(
-                    padding: EdgeInsets.all(8),
+                    padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
                     child: TextField(
                       controller: _controllerTitulo,
                       keyboardType: TextInputType.text,
                       style: TextStyle(fontSize: 20),
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                          hintText: "Titulo",
+                          prefixIcon: Padding(
+                              padding: EdgeInsets.only(left: 12, right: 25),
+                              child: Icon(
+                                Icons.title,
+                              )),
+                          hintText: "Titulo do Produto",
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
@@ -335,12 +355,17 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
                   //preco
                   Padding(
-                    padding: EdgeInsets.all(8),
+                    padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
                     child: TextField(
                       controller: _controllerPreco,
                       keyboardType: TextInputType.number,
                       style: TextStyle(fontSize: 20),
                       decoration: InputDecoration(
+                          prefixIcon: Padding(
+                              padding: EdgeInsets.only(left: 12, right: 25),
+                              child: Icon(
+                                Icons.attach_money,
+                              )),
                           contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                           hintText: "Preço",
                           filled: true,
@@ -352,14 +377,19 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
                   //Tempo Medio de Preparo
                   Padding(
-                    padding: EdgeInsets.all(8),
+                    padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
                     child: TextField(
                       controller: _controllerTempPreparo,
                       keyboardType: TextInputType.text,
                       style: TextStyle(fontSize: 20),
                       decoration: InputDecoration(
+                          prefixIcon: Padding(
+                              padding: EdgeInsets.only(left: 12, right: 25),
+                              child: Icon(
+                                Icons.timer,
+                              )),
                           contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                          hintText: "Tempo Médio de Preparo(min)",
+                          hintText: "Tempo Preparo (min)",
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
@@ -369,12 +399,18 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
                   //Descricao
                   Padding(
-                    padding: EdgeInsets.all(8),
+                    padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
                     child: TextField(
                       controller: _controllerDescricao,
+                      maxLines: 3,
                       keyboardType: TextInputType.text,
                       style: TextStyle(fontSize: 20),
                       decoration: InputDecoration(
+                          prefixIcon: Padding(
+                              padding: EdgeInsets.only(left: 12, right: 25),
+                              child: Icon(
+                                Icons.description,
+                              )),
                           contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                           hintText: "Descrição",
                           filled: true,

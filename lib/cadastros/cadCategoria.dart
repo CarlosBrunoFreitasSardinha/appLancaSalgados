@@ -153,10 +153,16 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
                 ),
               );
             }
-            return Container(
-              child: Padding(
-                padding: EdgeInsets.all(8),
+            return Padding(
+              padding: EdgeInsets.all(8),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                child: Padding(
+                padding: EdgeInsets.fromLTRB(24, 4, 8, 4),
                 child: DropdownButton(
+                  underline: SizedBox(),
                   items: currencyItems,
                   onChanged: (currencyValue) {
                     final snackBar = SnackBar(
@@ -183,7 +189,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
                   ),
                 ),
               ),
-            );
+            ),);
           }
         });
 
@@ -212,7 +218,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
                   streamCategoria,
 
                   Padding(
-                    padding: EdgeInsets.all(8),
+                    padding: EdgeInsets.only(left: 8, right: 8),
                     child: TextField(
                       controller: _controllerTitulo,
                       keyboardType: TextInputType.text,
@@ -220,6 +226,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                           hintText: "Titulo",
+                          prefixIcon: Icon(Icons.title),
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
@@ -229,8 +236,10 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
 
                   //botao Cadastrar Atualizar
                   Padding(
-                    padding: EdgeInsets.only(top: 16, bottom: 10),
+                    padding: EdgeInsets.only(
+                        top: 16, bottom: 10, left: 8, right: 8),
                     child: RaisedButton(
+                        elevation: 8,
                         child: Text(
                           "Cadastrar/Atualizar",
                           style: TextStyle(color: Colors.white, fontSize: 20),
