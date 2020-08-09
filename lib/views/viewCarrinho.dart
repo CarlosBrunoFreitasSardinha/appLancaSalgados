@@ -128,8 +128,13 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _alterarCarrinho();
   }
 
   Widget _criarItemLista(context, index) {
