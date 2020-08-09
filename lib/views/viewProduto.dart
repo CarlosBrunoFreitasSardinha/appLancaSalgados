@@ -53,12 +53,6 @@ class _ViewProdutoState extends State<ViewProduto> {
     if (AppModel.to.bloc<UserBloc>().isLogged) {
       streamCarrinho.addition.add(produtoCarrinho);
       carrinho.addProdutos(produtoCarrinho);
-      isInitial
-          ? BdService.criarItemComIdColecaoGenerica(coletionPai, documentPai,
-          subColection, subDocument, carrinho.toJson())
-          : BdService.alterarItemColecaoGenerica(coletionPai, documentPai,
-          subColection, subDocument, carrinho.toJson());
-
       Navigator.pop(context);
     } else {
       showDialog(
@@ -74,7 +68,7 @@ class _ViewProdutoState extends State<ViewProduto> {
                 FlatButton(
                     onPressed: () =>
                         Navigator.pushNamed(context, RouteGenerator.LOGIN),
-                    child: Text("Efetuar login")),
+                    child: Text("Efetuar Login")),
               ],
             );
           });

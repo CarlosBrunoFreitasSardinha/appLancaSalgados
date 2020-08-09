@@ -26,12 +26,16 @@ class _CardapioState extends State<Cardapio>
   String idReceptor, urlImagemEnviada;
   List<String> _itensMenu = [];
 
-
   Stream<QuerySnapshot> _adicionarListenerProdutos() {
-    final stream = bd
-        .collection("produtos")
-        .orderBy("idCategoria", descending: false)
-        .snapshots();
+    final stream = UsuarioLogado.usuario.isAdm
+        ? bd
+            .collection("produtos")
+            .orderBy("idCategoria", descending: false)
+            .snapshots()
+        : bd
+            .collection("produtos")
+            .where("isOcult", isEqualTo: false)
+            .snapshots();
 
     stream.listen((dados) {
       _controller.add(dados);
@@ -40,14 +44,12 @@ class _CardapioState extends State<Cardapio>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _adicionarListenerProdutos();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _controller.close();
   }
@@ -99,29 +101,31 @@ class _CardapioState extends State<Cardapio>
                                   arguments: produto);
                             },
                             child: CustomListItemOne(
-                              thumbnail: GestureDetector(
-                                child: Hero(
-                                  tag: produto.idProduto,
-                                  child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(15),
-                                      child: Image.network(
-                                        produto.urlImg,
-                                        height: 100,
-                                        width: 100,
-                                        fit: BoxFit.cover,
-                                      )),
+                                thumbnail: GestureDetector(
+                                  child: Hero(
+                                    tag: produto.idProduto,
+                                    child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: Image.network(
+                                          produto.urlImg,
+                                          height: 100,
+                                          width: 100,
+                                          fit: BoxFit.cover,
+                                        )),
+                                  ),
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, RouteGenerator.PRODUTO,
+                                        arguments: produto);
+                                  },
                                 ),
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                      context, RouteGenerator.PRODUTO,
-                                      arguments: produto);
-                                },
-                              ),
-                              title: produto.titulo,
-                              subtitle: produto.descricao,
-                              preco: UtilService.moeda(produto.preco),
-                              color: Colors.white,
-                              radius: 5,
+                                title: produto.titulo,
+                                subtitle: produto.descricao,
+                                preco: UtilService.moeda(produto.preco),
+                                color: produto.isOcult
+                                    ? Colors.black26
+                                    : Colors.white,
+                                radius: 5,
                                 icone: StreamBuilder<UsuarioModel>(
                                   stream: UsuarioLogado.userLogged,
                                   builder: (BuildContext context, snapshot) {
@@ -131,7 +135,6 @@ class _CardapioState extends State<Cardapio>
                                         if (snapshot.data.isAdm) {
                                           _itensMenu = [
                                             "Editar",
-                                            "Ocultar",
                                             "Deletar",
                                           ];
                                         } else {
@@ -148,8 +151,6 @@ class _CardapioState extends State<Cardapio>
                                             Navigator.pushNamed(context,
                                                 RouteGenerator.CAD_PRODUTOS,
                                                 arguments: produto);
-                                            break;
-                                          case "Ocultar":
                                             break;
                                           case "Deletar":
                                             BdService.removerDados(

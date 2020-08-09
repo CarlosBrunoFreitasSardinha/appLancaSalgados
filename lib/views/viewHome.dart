@@ -1,6 +1,5 @@
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/UserBloc.dart';
-import 'package:applancasalgados/bloc/appBloc.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/models/usuarioModel.dart';
 import 'package:applancasalgados/services/AuthService.dart';
@@ -41,17 +40,12 @@ class _ViewHomeState extends State<ViewHome>
       case "Login":
         if (!AppModel.to.bloc<UserBloc>().isLogged)
           Navigator.pushNamed(context, RouteGenerator.LOGIN);
+        _tabController.index = 0;
         break;
       case "Sair":
-        if (AppModel.to
-            .bloc<UserBloc>()
-            .isLogged) {
+        if (AppModel.to.bloc<UserBloc>().isLogged) {
           AuthService.deslogar();
-          print(AppModel.to
-              .bloc<UserBloc>()
-              .usuario
-              .toString());
-          print(AppModel.to.bloc<AppBloc>().toString());
+          _tabController.index = 0;
         }
         break;
     }

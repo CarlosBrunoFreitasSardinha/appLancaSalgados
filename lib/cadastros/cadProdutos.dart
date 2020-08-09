@@ -300,14 +300,16 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                     borderRadius: BorderRadius.circular(15),
                     child: Image.network(
                       _urlImagemRecuperada,
-                      loadingBuilder: (context, child, progress) {
+                            height: 300,
+                            width: 300,
+                            loadingBuilder: (context, child, progress) {
                         return progress == null
                             ? child
                             : LinearProgressIndicator(
                           backgroundColor: Colors.grey,
                         );
                       },
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                     ),
                   )
                       : CircleAvatar(
@@ -316,9 +318,17 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                   ),
 
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       FlatButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                              side: BorderSide(color: Theme
+                                  .of(context)
+                                  .accentColor)),
+                          color: Theme
+                              .of(context)
+                              .accentColor,
                           onPressed: () {
                             _recuperarImagem("camera");
                           },
@@ -331,6 +341,14 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                             ],
                           )),
                       FlatButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                              side: BorderSide(color: Theme
+                                  .of(context)
+                                  .accentColor)),
+                          color: Theme
+                              .of(context)
+                              .accentColor,
                           onPressed: () {
                             _recuperarImagem("galeria");
                           },
@@ -438,6 +456,60 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10))),
                     ),
+                  ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      FlatButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                              side: BorderSide(color: Theme
+                                  .of(context)
+                                  .accentColor)),
+                          color: Theme
+                              .of(context)
+                              .accentColor,
+                          onPressed: () {
+                            setState(() {
+                              produto.isOcult = !produto.isOcult;
+                            });
+                          },
+                          child: Row(
+                            children: <Widget>[
+                              Text("Visibilidade: ",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20)),
+                              produto.isOcult ? Icon(Icons.visibility_off,
+                                  color: Colors.white) : Icon(Icons.visibility,
+                                  color: Colors.white),
+                            ],
+                          )),
+                      FlatButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                              side: BorderSide(color: Theme
+                                  .of(context)
+                                  .accentColor)),
+                          color: Theme
+                              .of(context)
+                              .accentColor,
+                          onPressed: () {
+                            setState(() {
+                              produto.isPromo = !produto.isPromo;
+                            });
+                          },
+                          child: Row(
+                            children: <Widget>[
+                              Text("Destaque: ",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20)),
+                              produto.isPromo ? Icon(Icons.star, color: Colors
+                                  .white) : Icon(Icons.star_border,
+                                  color: Colors.white),
+                            ],
+                          )),
+                    ],
                   ),
 
                   //botao

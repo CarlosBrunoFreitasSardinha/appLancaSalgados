@@ -7,6 +7,8 @@ class ProdutoModel {
 
   String _idCategoria;
   String _tempoPreparo;
+  bool _isPromo;
+  bool _isOcult;
 
   ProdutoModel();
 
@@ -21,6 +23,8 @@ class ProdutoModel {
 
     data['idCategoria'] = this.idCategoria;
     data['tempoPreparo'] = this.tempoPreparo;
+    data['isPromo'] = this.isPromo;
+    data['isOcult'] = this.isOcult;
     return data;
   }
 
@@ -34,6 +38,8 @@ class ProdutoModel {
 
     idCategoria = json['idCategoria'];
     tempoPreparo = json['tempoPreparo'];
+    isPromo = json['isPromo'];
+    isOcult = json['isOcult'];
   }
 
   // ignore: unnecessary_getters_setters
@@ -90,5 +96,17 @@ class ProdutoModel {
   // ignore: unnecessary_getters_setters
   set idCategoria(String value) {
     _idCategoria = value;
+  }
+
+  bool get isOcult => _isOcult;
+
+  set isOcult(bool value) {
+    _isOcult = value;
+  }
+
+  bool get isPromo => _isPromo;
+
+  set isPromo(bool value) {
+    _isPromo = value;
   }
 }
