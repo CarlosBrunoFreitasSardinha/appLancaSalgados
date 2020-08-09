@@ -71,7 +71,8 @@ class RouteGenerator{
       case CAD_CATEGORIA: return MaterialPageRoute(builder: (_) => CadastroCategoriaProdutos());
       case CAD_FORMAPAGAMENTO:
         return MaterialPageRoute(builder: (_) => CadastroFormaPagamento());
-      case CAD_PRODUTOS: return MaterialPageRoute(builder: (_) => CadastroProdutos());
+      case CAD_PRODUTOS:
+        return MaterialPageRoute(builder: (_) => CadastroProdutos(args));
 
       case CONFIG: return MaterialPageRoute(builder: (_) => Configuracoes());
 

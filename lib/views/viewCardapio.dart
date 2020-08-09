@@ -4,6 +4,7 @@ import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/ProdutoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/models/usuarioModel.dart';
+import 'package:applancasalgados/services/BdService.dart';
 import 'package:applancasalgados/services/UtilService.dart';
 import 'package:applancasalgados/stateLess/CustomListItemOne.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,17 +26,6 @@ class _CardapioState extends State<Cardapio>
   String idReceptor, urlImagemEnviada;
   List<String> _itensMenu = [];
 
-  _escolhaMenuItem(String itemEscolhido) {
-    String i = itemEscolhido.split("-")[1];
-    String item = itemEscolhido.split("-")[0];
-
-    switch (item) {
-      case "Editar":
-        break;
-      case "Deletar":
-        break;
-    }
-  }
 
   Stream<QuerySnapshot> _adicionarListenerProdutos() {
     final stream = bd
@@ -141,6 +131,7 @@ class _CardapioState extends State<Cardapio>
                                         if (snapshot.data.isAdm) {
                                           _itensMenu = [
                                             "Editar",
+                                            "Ocultar",
                                             "Deletar",
                                           ];
                                         } else {
@@ -151,7 +142,21 @@ class _CardapioState extends State<Cardapio>
                                       }
                                     }
                                     return PopupMenuButton<String>(
-                                      onSelected: _escolhaMenuItem,
+                                      onSelected: (itemEscolhido) {
+                                        switch (itemEscolhido) {
+                                          case "Editar":
+                                            Navigator.pushNamed(context,
+                                                RouteGenerator.CAD_PRODUTOS,
+                                                arguments: produto);
+                                            break;
+                                          case "Ocultar":
+                                            break;
+                                          case "Deletar":
+                                            BdService.removerDados(
+                                                "produtos", produto.idProduto);
+                                            break;
+                                        }
+                                      },
                                       itemBuilder: (context) {
                                         return _itensMenu.map((String item) {
                                           return PopupMenuItem<String>(

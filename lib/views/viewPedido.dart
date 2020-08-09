@@ -22,15 +22,12 @@ class ViewPedido extends StatefulWidget {
 
 class _ViewPedidoState extends State<ViewPedido>
     with SingleTickerProviderStateMixin {
-  Firestore bd = Firestore.instance;
   String coletionPai, documentPai, subColection, subDocument;
-  String strPedido = "pedidos";
   ScrollController _scrollControllerMensagens = ScrollController();
   final _controller = StreamController<QuerySnapshot>.broadcast();
   TextEditingController _controllerEndereco = TextEditingController(
       text: AppModel.to.bloc<UserBloc>().usuario.endereco);
   TextEditingController _controllerTroco = TextEditingController();
-  String bdCarrinho = "carrinho";
   var selectedItem;
   List<FormaPagamentoModel> options = [];
 
@@ -53,10 +50,10 @@ class _ViewPedidoState extends State<ViewPedido>
           _controllerTroco.text == "" ? 0 : double.parse(_controllerTroco.text);
 
       BdService.criarItemAutoIdColecaoGenerica(
-          strPedido, documentPai, strPedido, widget.pedido.toJson());
+          "pedidos", documentPai, "pedidos", widget.pedido.toJson());
       widget.pedido.carrinho.limpar();
-      BdService.criarItemComIdColecaoGenerica(bdCarrinho, documentPai,
-          bdCarrinho, "ativo", widget.pedido.carrinho.toJson());
+      BdService.criarItemComIdColecaoGenerica("carrinho", documentPai,
+          "carrinho", "ativo", widget.pedido.carrinho.toJson());
 
       Navigator.pop(context);
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
@@ -65,6 +62,7 @@ class _ViewPedidoState extends State<ViewPedido>
   }
 
   Stream<QuerySnapshot> _adicionarListenerConversas() {
+    Firestore bd = Firestore.instance;
     final stream = bd
         .collection("formaPagamento")
         .orderBy("id", descending: false)

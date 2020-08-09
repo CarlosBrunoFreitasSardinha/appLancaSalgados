@@ -6,7 +6,6 @@ import 'package:applancasalgados/models/CategoriaProdutoModel.dart';
 import 'package:applancasalgados/models/ProdutoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
-import 'package:applancasalgados/services/UtilService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +15,10 @@ import 'package:image_picker/image_picker.dart';
 import '../RouteGenerator.dart';
 
 class CadastroProdutos extends StatefulWidget {
+  final ProdutoModel produtoModel;
+
+  CadastroProdutos(this.produtoModel);
+
   @override
   _CadastroProdutosState createState() => _CadastroProdutosState();
 }
@@ -28,13 +31,12 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   TextEditingController _controllerTempPreparo = TextEditingController();
 
   final _controller = StreamController<QuerySnapshot>.broadcast();
-  Firestore bd = Firestore.instance;
   String _mensagemErro = "";
   String _categoria, _urlImagemRecuperada;
   var selectedItem;
   File _image;
   final picker = ImagePicker();
-  ProdutoModel produto = ProdutoModel();
+  ProdutoModel produto;
   List<CategoriaProdutoModel> options = [];
   bool isCad = true;
 
@@ -92,16 +94,25 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   }
 
   _atualizarUrlImagemFirestore(String url) {
-    bd.collection("produtos").document(_categoria).updateData({"urlImg": url});
+    BdService.alterarDados("produtos", _categoria, {"urlImg": url});
   }
 
   _obterIndice() async {
-    if (true) {
+    if (widget.produtoModel == null) {
+      produto = ProdutoModel();
       Map<String, dynamic> id =
           await BdService.recuperarUmObjeto("indices", "produtos");
       setState(() {
         produto.idProduto = id["id"];
       });
+    } else {
+      produto = widget.produtoModel;
+      _controllerTitulo.text = produto.titulo;
+      _controllerPreco.text = produto.preco.toString();
+      _controllerDescricao.text = produto.descricao;
+      _controllerTempPreparo.text = produto.tempoPreparo;
+      selectedItem = produto.idCategoria;
+      _urlImagemRecuperada = produto.urlImg;
     }
   }
 
@@ -112,23 +123,20 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
   _cadastrarProduto() async {
     int indice = int.parse(produto.idProduto) + 1;
-    if (isCad) {
+    if (widget.produtoModel == null) {
       BdService.cadastrarDados("produtos", produto.idProduto, produto.toJson());
       BdService.alterarDados("indices", "produtos", {"id": indice.toString()});
       isCad = false;
-    }
-    else {
-      BdService.alterarDados("produtos", produto.idCategoria, produto.toJson());
+    } else {
+      BdService.alterarDados("produtos", produto.idProduto, produto.toJson());
     }
   }
 
   validarCampos() {
     String titulo = _controllerTitulo.text;
     String descricao = _controllerDescricao.text;
-    double preco = double.parse(
-        UtilService.moeda(double.parse(_controllerPreco.text)));
+    double preco = double.parse(_controllerPreco.text);
     String temp = _controllerTempPreparo.text;
-
 
     if (titulo.length >= 3) {
       if (_urlImagemRecuperada.isNotEmpty) {
@@ -163,6 +171,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   }
 
   Stream<QuerySnapshot> _adicionarListenerConversas() {
+    Firestore bd = Firestore.instance;
     final stream = bd
         .collection("categoria")
         .orderBy("idCategoria", descending: false)
@@ -206,7 +215,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
         // ignore: missing_return
         builder: (context, snapshot) {
           if (!snapshot.hasData)
-            const Text("Carregando.....");
+            Text("Carregando...");
           else {
             List<DropdownMenuItem> currencyItems = [];
             for (int i = 0; i < snapshot.data.documents.length; i++) {
@@ -214,7 +223,8 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
               options.add(CategoriaProdutoModel.fromJson({
                 'idCategoria': snap.data["idCategoria"],
                 'descricao': snap.data["descricao"]
-              }));
+              })
+              );
 
               currencyItems.add(
                 DropdownMenuItem(
@@ -229,7 +239,8 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                 ),
               );
             }
-            return Padding(padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+            return Padding(
+              padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
               child: Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -243,8 +254,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                       final snackBar = SnackBar(
                         content: Text(
                           'Categoria $currencyValue, foi selecionada!',
-                          style:
-                          TextStyle(color: Color(0xffd19c3c)),
+                          style: TextStyle(color: Color(0xffd19c3c)),
                         ),
                       );
                       Scaffold.of(context).showSnackBar(snackBar);
@@ -264,7 +274,8 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                     ),
                   ),
                 ),
-              ),);
+              ),
+            );
           }
         });
 
@@ -311,20 +322,29 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                           onPressed: () {
                             _recuperarImagem("camera");
                           },
-                          child: Row(children: <Widget>[
-                            Icon(Icons.camera_alt, color: Colors.white),
-                            Text("Câmera", style: TextStyle(
-                                color: Colors.white, fontSize: 20))
-                          ],)),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(Icons.camera_alt, color: Colors.white),
+                              Text("Câmera",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20))
+                            ],
+                          )),
                       FlatButton(
                           onPressed: () {
                             _recuperarImagem("galeria");
                           },
-                          child: Row(children: <Widget>[
-                            Icon(Icons.photo_library, color: Colors.white,),
-                            Text("Galeria", style: TextStyle(
-                                color: Colors.white, fontSize: 20))
-                          ],)),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.photo_library,
+                                color: Colors.white,
+                              ),
+                              Text("Galeria",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20))
+                            ],
+                          )),
                     ],
                   ),
 
