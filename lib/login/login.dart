@@ -97,6 +97,7 @@ class _LoginState extends State<Login> {
                       borderRadius: BorderRadius.circular(10),
                       child: TextFormField(
                         controller: _controllerEmail,
+                        style: TextStyle(fontSize: 20),
                         decoration: InputDecoration(
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10)),
@@ -122,6 +123,7 @@ class _LoginState extends State<Login> {
                       borderRadius: BorderRadius.circular(10),
                       child: TextFormField(
                         controller: _controllerSenha,
+                        style: TextStyle(fontSize: 20),
                         obscureText: visualizarSenha,
                         decoration: InputDecoration(
                             border: OutlineInputBorder(

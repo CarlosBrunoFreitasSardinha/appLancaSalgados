@@ -7,8 +7,8 @@ class ProdutoModel {
 
   String _idCategoria;
   String _tempoPreparo;
-  bool _isPromo;
-  bool _isOcult;
+  bool _isPromo = false;
+  bool _isOcult = false;
 
   ProdutoModel();
 

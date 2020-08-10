@@ -60,11 +60,16 @@ class CarrinhoModel {
       data[i.toString()] = p.toJson();
       i++;
     });
-    return {"total": this.total.toStringAsFixed(2), "produtos": data};
+    return {
+      "total": this.total.toStringAsFixed(2),
+      "produtos": data,
+      "fechado": fechado
+    };
   }
 
   CarrinhoModel.fromJson(Map<String, dynamic> json) {
     total = double.parse(json["total"]);
+    fechado = json["fechado"];
 
     json["produtos"].forEach((key, value) {
       ProdutoCarrinhoModel item = ProdutoCarrinhoModel.fromJson(value);

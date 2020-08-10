@@ -3,8 +3,10 @@ import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/models/usuarioModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
+import 'package:applancasalgados/services/NumberFormatService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CadastroUsuario extends StatefulWidget {
   @override
@@ -24,12 +26,18 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
       TextEditingController(text: "1234567");
   String _mensagemErro = "";
   UsuarioModel usuario = UsuarioModel();
+  bool visualizarSenha = true;
+  final _mobileFormatter = NumberTextInputFormatterService();
 
   validarCampos(_controllerNome, _controllerEmail, _controllerSenha) {
     String nome = _controllerNome.text;
     String email = _controllerEmail.text;
     String senha = _controllerSenha.text;
-    String fone = _controllerFone.text;
+    String fone = _controllerFone.text
+        .replaceAll("(", "")
+        .replaceAll(")", "")
+        .replaceAll(" ", "")
+        .replaceAll("-", "");
     String endereco = _controllerEndereco.text;
 
     if (nome.length >= 3) {
@@ -44,21 +52,18 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
               usuario.endereco = endereco;
 
 
-              _cadastrarUsuario(usuario);
-            }
-            else {
+//              _cadastrarUsuario(usuario);
+            } else {
               setState(() {
                 _mensagemErro =
                 " Endereço deve ser conter pelo menos 6 caracteres ";
               });
             }
-          }
-          else {
+          } else {
             setState(() {
               _mensagemErro = " Um Numero telefonico deve ser informado ";
             });
           }
-
         } else {
           setState(() {
             _mensagemErro = " Senha deve ser conter pelo menos 6 caracteres ";
@@ -144,6 +149,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                       keyboardType: TextInputType.text,
                       style: TextStyle(fontSize: 20),
                       decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.person),
                           contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                           hintText: "Nome",
                           filled: true,
@@ -153,34 +159,56 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                     ),
                   ),
 
+
                   //email
                   Padding(
-                    padding: EdgeInsets.only(left: 8, right: 8),
-                    child: TextField(
-                      controller: _controllerEmail,
-                      keyboardType: TextInputType.emailAddress,
-                      style: TextStyle(fontSize: 20),
-                      decoration: InputDecoration(
-                          contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                          hintText: "Email",
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10))),
+                    padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+                    child: Material(
+                      elevation: 7,
+                      borderRadius: BorderRadius.circular(10),
+                      child: TextFormField(
+                        controller: _controllerEmail,
+                        style: TextStyle(fontSize: 20),
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            hintText: "Enter Email",
+                            contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                            hintStyle: TextStyle(color: Colors.grey[400],
+                                fontSize: 20),
+                            filled: true,
+                            fillColor: Colors.white,
+                            prefixIcon: Padding(
+                                padding: EdgeInsets.only(left: 12, right: 25),
+                                child: Icon(Icons.person_outline,)
+                            )),
+                      ),
                     ),
                   ),
 
-                  //Fone
+
+                  //Contato
                   Padding(
                     padding: EdgeInsets.all(8),
                     child: TextField(
                       controller: _controllerFone,
                       autofocus: true,
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.phone,
+                      maxLength: 15,
                       style: TextStyle(fontSize: 20),
+                      inputFormatters: <TextInputFormatter>[
+                        WhitelistingTextInputFormatter.digitsOnly,
+                        _mobileFormatter,
+                      ],
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                          hintText: "Telefone(whatsapp)",
+                          prefixIcon: Padding(
+                              padding: EdgeInsets.only(left: 12, right: 25),
+                              child: Icon(
+                                Icons.phone,
+                              )),
+                          hintText: "Telefone(Whatsapp)",
+                          counterStyle: TextStyle(color: Colors.white),
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
@@ -194,13 +222,17 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                     child: TextField(
                       controller: _controllerEndereco,
                       autofocus: true,
+                      maxLines: 3,
+                      maxLength: 60,
                       keyboardType: TextInputType.text,
                       style: TextStyle(fontSize: 20),
                       decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.home),
                           contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                           hintText: "Endereço",
                           filled: true,
                           fillColor: Colors.white,
+                          counterStyle: TextStyle(color: Colors.white),
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10))),
                     ),
@@ -208,19 +240,40 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
 
                   //senha
                   Padding(
-                    padding: EdgeInsets.all(8),
-                    child: TextField(
-                      controller: _controllerSenha,
-                      obscureText: true,
-                      keyboardType: TextInputType.text,
-                      style: TextStyle(fontSize: 20),
-                      decoration: InputDecoration(
-                          contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                          hintText: "Senha",
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10))),
+                    padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+                    child: Material(
+                      elevation: 7,
+                      borderRadius: BorderRadius.circular(10),
+                      child: TextFormField(
+                        controller: _controllerSenha,
+                        style: TextStyle(fontSize: 20),
+                        obscureText: visualizarSenha,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            hintText: "Enter Senha",
+                            contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                            hintStyle: TextStyle(color: Colors.grey[400],
+                                fontSize: 20),
+                            filled: true,
+                            fillColor: Colors.white,
+                            suffixIcon: Padding(
+                                padding: EdgeInsets.only(left: 12, right: 12),
+                                child: IconButton(icon: Icon(
+                                  Icons.help_outline,
+                                  color: Colors.grey[400],
+                                ),
+                                    onPressed: () {
+                                      setState(() {
+                                        visualizarSenha = !visualizarSenha;
+                                      });
+                                    })),
+                            prefixIcon: Padding(
+                                padding: EdgeInsets.only(left: 12, right: 25),
+                                child: Icon(
+                                  Icons.lock_outline,
+                                ))),
+                      ),
                     ),
                   ),
 

@@ -4,6 +4,7 @@ import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/FormaPagamentoModel.dart';
 import 'package:applancasalgados/models/PedidoModel.dart';
+import 'package:applancasalgados/models/ProdutoCarrinhoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
 import 'package:applancasalgados/services/UtilService.dart';
@@ -23,23 +24,21 @@ class ViewPedido extends StatefulWidget {
 class _ViewPedidoState extends State<ViewPedido>
     with SingleTickerProviderStateMixin {
   String coletionPai, documentPai, subColection, subDocument;
-  ScrollController _scrollControllerMensagens = ScrollController();
   final _controller = StreamController<QuerySnapshot>.broadcast();
   TextEditingController _controllerEndereco = TextEditingController(
       text: AppModel.to.bloc<UserBloc>().usuario.endereco);
   TextEditingController _controllerTroco = TextEditingController();
   var selectedItem;
   List<FormaPagamentoModel> options = [];
+  List<DropdownMenuItem> currencyItems = [];
 
   _initilizer() {
     coletionPai = "pedidos";
-    documentPai = AppModel.to
-        .bloc<UserBloc>()
-        .usuario
-        .uidUser;
+    documentPai = AppModel.to.bloc<UserBloc>().usuario.uidUser;
     subColection = "pedidos";
     _controllerEndereco.text = widget.pedido.enderecoEntrega;
     selectedItem = widget.pedido.formaPagamento;
+    _controllerTroco.text = widget.pedido.trocoPara.toString();
   }
 
   Future _salvarPedido() {
@@ -47,7 +46,9 @@ class _ViewPedidoState extends State<ViewPedido>
         widget.pedido.formaPagamento.isNotEmpty) {
       widget.pedido.carrinho.fecharPedido();
       widget.pedido.trocoPara =
-          _controllerTroco.text == "" ? 0 : double.parse(_controllerTroco.text);
+      _controllerTroco.text == ""
+          ? 0
+          : double.parse(_controllerTroco.text.replaceAll(',', '.'));
 
       BdService.criarItemAutoIdColecaoGenerica(
           "pedidos", documentPai, "pedidos", widget.pedido.toJson());
@@ -61,16 +62,32 @@ class _ViewPedidoState extends State<ViewPedido>
     }
   }
 
-  Stream<QuerySnapshot> _adicionarListenerConversas() {
+  Future<List<FormaPagamentoModel>> adicionarListenerFormaPagamento() async {
     Firestore bd = Firestore.instance;
-    final stream = bd
+    QuerySnapshot querySnapshot = await bd
         .collection("formaPagamento")
-        .orderBy("id", descending: false)
-        .snapshots();
+        .orderBy("id", descending: false).getDocuments();
 
-    stream.listen((dados) {
-      _controller.add(dados);
-    });
+    for (int i = 0; i < querySnapshot.documents.length; i++) {
+      DocumentSnapshot snap = querySnapshot.documents[i];
+      options.add(FormaPagamentoModel.fromJson(snap.data));
+
+      currencyItems.add(
+        DropdownMenuItem(
+          child: Text(
+            snap.data["descricao"],
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xffd19c3c)),
+          ),
+          value: "${snap.data["descricao"]}",
+        ),
+      );
+      setState(() {
+        currencyItems;
+      });
+    }
   }
 
   @override
@@ -78,128 +95,28 @@ class _ViewPedidoState extends State<ViewPedido>
     // TODO: implement initState
     super.initState();
     _initilizer();
-    _adicionarListenerConversas();
+    adicionarListenerFormaPagamento();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    _controller.close();
   }
 
   @override
   Widget build(BuildContext context) {
-    var stream = Expanded(
-      child: ListView.builder(
-          controller: _scrollControllerMensagens,
-          itemCount: widget.pedido.carrinho.produtos.length,
-          itemBuilder: (context, indice) {
-            String valores = UtilService.moeda(
-                    widget.pedido.carrinho.produtos[indice].preco) +
-                " X " +
-                widget.pedido.carrinho.produtos[indice].quantidade.toString() +
-                " = " +
-                UtilService.moeda(
-                    widget.pedido.carrinho.produtos[indice].subtotal);
-
-            return Padding(
-                padding: EdgeInsets.all(3),
-                child: GestureDetector(
-                    onTap: () {
-//                      Navigator.pushNamed( context, RouteGenerator.PRODUTO, arguments: produto);
-                    },
-                    child: CustomListItemOne(
-                      title: widget.pedido.carrinho.produtos[indice].titulo,
-                      subtitle:
-                          widget.pedido.carrinho.produtos[indice].descricao,
-                      preco: valores,
-                      color: Colors.white,
-                      radius: 5,
-                    )));
-          }),
-    );
-
-    var streamCategoria = StreamBuilder<QuerySnapshot>(
-        stream: _controller.stream,
-        // ignore: missing_return
-        builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            const Text("Carregando...");
-          else {
-            List<DropdownMenuItem> currencyItems = [];
-            for (int i = 0; i < snapshot.data.documents.length; i++) {
-              DocumentSnapshot snap = snapshot.data.documents[i];
-              options.add(FormaPagamentoModel.fromJson(snap.data));
-
-              currencyItems.add(
-                DropdownMenuItem(
-                  child: Text(
-                    snap.data["descricao"],
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xffd19c3c)),
-                  ),
-                  value: "${snap.data["descricao"]}",
-                ),
-              );
-            }
-            return Padding(
-              padding: EdgeInsets.all(8),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(5))),
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(24, 4, 8, 4),
-                  child: DropdownButton(
-                      underline: SizedBox(),
-                      items: currencyItems,
-                      onChanged: (currencyValue) {
-                        setState(() {
-                          selectedItem = currencyValue;
-                          widget.pedido.formaPagamento =
-                              currencyValue.toString();
-                        });
-                      },
-                      value: selectedItem,
-                      isExpanded: true,
-                      hint: Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Text(
-                          "Selecione a Forma de Pagamento!",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xffd19c3c)),
-                        ),
-                      )),
-                ),
-              ),
-            );
-          }
-        });
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: <Widget>[
-            CircleAvatar(
-                maxRadius: 20,
-                backgroundColor: Colors.grey,
-                backgroundImage: widget.pedido.usuario.urlPerfil != null
-                    ? NetworkImage(widget.pedido.usuario.urlPerfil)
-                    : null),
-            Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text(widget.pedido.usuario.nome),
-            )
-          ],
-        ),
+        title: Text("Pedido"),
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,
+        height: MediaQuery
+            .of(context)
+            .size
+            .height,
         decoration: BoxDecoration(
             image: DecorationImage(
                 image: AssetImage("imagens/background.jpg"),
@@ -207,126 +124,244 @@ class _ViewPedidoState extends State<ViewPedido>
         child: SafeArea(
             child: Container(
           padding: EdgeInsets.all(8),
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(16),
-                child: Text(
-                  "Endereço de Entrega",
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(5),
-                child: TextField(
-                  controller: _controllerEndereco,
-                  maxLines: 3,
-                  maxLength: 60,
-                  keyboardType: TextInputType.text,
-                  style: TextStyle(fontSize: 20),
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                      prefixIcon: Padding(
-                          padding: EdgeInsets.only(left: 12, right: 25),
-                          child: Icon(
-                            Icons.home,
-                          )),
-                      hintText: "Endereço de Entrega",
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5))),
-                ),
-              ),
-              streamCategoria,
-              selectedItem == "Dinheiro"
-                  ? Padding(
-                padding: EdgeInsets.all(5),
-                child: TextField(
-                  controller: _controllerTroco,
-                  keyboardType: TextInputType.text,
-                  style: TextStyle(fontSize: 20),
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                      hintText: "Troco Para: ",
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5))),
-                ),
-              )
-                  : SizedBox(),
-              Padding(
-                padding: EdgeInsets.all(16),
-                child: Text(
-                  "Produtos",
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              stream,
-              Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    border: Border.all(width: 1, color: Colors.grey),
-                    color: Colors.white),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    FlatButton(
-                      padding: EdgeInsets.all(0),
-                      child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              border: Border.all(width: 1, color: Colors.grey),
-                              color: Color(0xffd19c3c)),
-                          child: Padding(
-                            padding: EdgeInsets.only(right: 8),
-                            child: Row(
-                              children: <Widget>[
-                                IconButton(
-                                  icon: Icon(Icons.restaurant),
-                                  color: Colors.white,
-                                  onPressed: () {},
-                                ),
-                                Text('Finalizar Pedido',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 19.0,
-                                        color: Colors.white)),
-                              ],
-                            ),
-                          )),
-                      onPressed: () {
-                        _salvarPedido();
-//                    Navigator.pop(context);
-                      },
+                    SizedBox(
+                      height: 15,
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(15),
-                      child: Text(
-                        "Total: " + UtilService.moeda(widget.pedido.carrinho
-                            .total),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20.0,
-                          color: Colors.black,
+
+                    //dados Pessoais do cliente
+                    Card(
+                      child: ListTile(
+                        title: Text(
+                          "Cliente: " + widget.pedido.usuario.nome,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Color(0xffd19c3c)),
+                        ),
+                        subtitle: Padding(
+                          padding: EdgeInsets.only(bottom: 5, left: 24),
+                          child: Text(
+                            "Telefone: " + widget.pedido.usuario.foneContato1,
+                            style: TextStyle(
+                                fontSize: 18.0,
+                                color: Color(0xff006400),
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ),
                     ),
+
+                    //Espacamento entre dados cliente e endereco
+                    SizedBox(
+                      height: 8,
+                    ),
+
+                    //textField endereco de entrega
+                    Padding(
+                      padding: EdgeInsets.all(5),
+                      child: TextField(
+                        enabled: !widget.pedido.carrinho.fechado,
+                        controller: _controllerEndereco,
+                        maxLines: 3,
+                        maxLength: 60,
+                        keyboardType: TextInputType.text,
+                        style: TextStyle(fontSize: 20),
+                        decoration: InputDecoration(
+                            contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                            prefixIcon: Padding(
+                                padding: EdgeInsets.only(left: 12, right: 25),
+                                child: Icon(
+                                  Icons.home,
+                                )),
+                            hintText: "Endereço de Entrega",
+                            counterStyle: TextStyle(color: Colors.white),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5))),
+                      ),
+                    ),
+
+                    //forma de pagamento
+                    Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                        child:
+                        !widget.pedido.carrinho.fechado
+                            ? Padding(padding: EdgeInsets.fromLTRB(24, 4, 8, 4),
+                          child: DropdownButton(
+                              underline: SizedBox(),
+                              items: currencyItems,
+                              onChanged: (currencyValue) {
+                                setState(() {
+                                  selectedItem = currencyValue;
+                                  widget.pedido.formaPagamento =
+                                      currencyValue.toString();
+                                });
+                              },
+                              value: selectedItem,
+                              isExpanded: true,
+                              hint: Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Text(
+                                  "Selecione a Forma de Pagamento!",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xffd19c3c)),
+                                ),
+                              )),)
+
+                            : Padding(
+                          padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
+                          child: Text(
+                            selectedItem,
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Theme
+                                    .of(context)
+                                    .accentColor,
+                                fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.left,),),
+                      ),
+                    ),
+                    //forma pagamento se dinheiro
+                    selectedItem == "Dinheiro"
+                        ? Padding(
+                      padding: EdgeInsets.all(5),
+                      child: TextField(
+                        enabled: !widget.pedido.carrinho.fechado,
+                        controller: _controllerTroco,
+                        keyboardType: TextInputType.text,
+                        style: TextStyle(fontSize: 20),
+                        decoration: InputDecoration(
+                            contentPadding:
+                            EdgeInsets.fromLTRB(24, 16, 32, 16),
+                            hintText: "Troco Para: ",
+                            prefix: Text("R\$ "),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5))),
+                      ),
+                    )
+                        : SizedBox(),
+
+                    //listagem de produtos
+                    Padding(padding: EdgeInsets.only(bottom: 15, top: 5),
+                      child: Card(
+                        child: ExpansionTile(
+                            backgroundColor: Colors.grey[200],
+                            title: Padding(
+                              padding: EdgeInsets.fromLTRB(8, 16, 16, 16),
+                              child: Text(
+                                "Produtos",
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: Theme
+                                        .of(context)
+                                        .accentColor,
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            children: getProdutos()),
+                      ),),
+                    Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          border: Border.all(width: 1, color: Colors.grey[300]),
+                          color: Colors.white),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+
+                          !widget.pedido.carrinho.fechado
+                              ? FlatButton(
+                            padding: EdgeInsets.all(0),
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                    border:
+                                    Border.all(width: 1, color: Colors.grey),
+                                    color: Color(0xffd19c3c)),
+                                child: Padding(
+                                  padding: EdgeInsets.only(right: 8),
+                                  child: Row(
+                                    children: <Widget>[
+                                      IconButton(
+                                        icon: Icon(Icons.restaurant),
+                                        color: Colors.white,
+                                        onPressed: () {},
+                                      ),
+                                      Text('Finalizar Pedido',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 19.0,
+                                              color: Colors.white)),
+                                    ],
+                                  ),
+                                )),
+                            onPressed: () {
+                              _salvarPedido();
+                              //                    Navigator.pop(context);
+                            },
+                          )
+                              : SizedBox()
+                          ,
+                          Padding(
+                            padding: EdgeInsets.all(15),
+                            child: Text(
+                              "Total: " +
+                                  UtilService.moeda(
+                                      widget.pedido.carrinho.total),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20.0,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                   ],
                 ),
-              )
-            ],
           ),
         )),
       ),
     );
+  }
+
+  List<Widget> getProdutos() {
+    List<Widget> list = [];
+
+    for (ProdutoCarrinhoModel p in widget.pedido.carrinho.produtos) {
+      String valores = UtilService.moeda(p.preco) +
+          " X " +
+          p.quantidade.toString() +
+          " = " +
+          UtilService.moeda(p.subtotal);
+      list.add(Padding(
+          padding: EdgeInsets.all(3),
+          child: CustomListItemOne(
+            title: p.titulo,
+            subtitle: p.descricao,
+            preco: valores,
+            color: Colors.white,
+            radius: 5,
+          )));
+    }
+    return list;
   }
 }

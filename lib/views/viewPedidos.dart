@@ -28,8 +28,8 @@ class _ViewPedidosState extends State<ViewPedidos>
       subColection = "pedidos";
 
   String stts_saiu = "Saiu Para Entrega",
-      stts_recebido = "Pedido Recebido",
-      stts_EmPreparacao = "Pedido Recebido";
+      stts_recebido = "Recebido",
+      stts_EmPreparacao = "Recebido";
 
   final _controller = StreamController<QuerySnapshot>.broadcast();
   ScrollController _scrollControllerMensagens = ScrollController();
@@ -129,7 +129,9 @@ class _ViewPedidosState extends State<ViewPedidos>
                               padding: EdgeInsets.all(3),
                               child: GestureDetector(
                                   onTap: () {
-//                      Navigator.pushNamed( context, RouteGenerator.PRODUTO, arguments: produto);
+                                    Navigator.pushNamed(
+                                        context, RouteGenerator.PEDIDO,
+                                        arguments: pedido);
                                   },
                                   child: CustomListItemOne(
                                     title: pedido.tituloPedido,
@@ -146,15 +148,12 @@ class _ViewPedidosState extends State<ViewPedidos>
                                               snapshot.data.uidUser)) {
                                             if (snapshot.data.isAdm) {
                                               _itensMenu = [
-                                                "Visualizar Pedido",
-                                                "Pedido Recebido",
+                                                "Recebido",
                                                 "Saiu para Entrega",
-                                                "Pedido Entregue"
+                                                "Entregue"
                                               ];
                                             } else {
-                                              _itensMenu = [
-                                                "Visualizar Pedido",
-                                              ];
+                                              _itensMenu = [];
                                             }
                                           } else {
                                             _itensMenu = [];
@@ -163,12 +162,7 @@ class _ViewPedidosState extends State<ViewPedidos>
                                         return PopupMenuButton<String>(
                                           onSelected: (item) {
                                             switch (item) {
-                                              case "Visualizar Pedido":
-                                                Navigator.pushNamed(context,
-                                                    RouteGenerator.PEDIDO,
-                                                    arguments: pedido);
-                                                break;
-                                              case "Pedido Recebido":
+                                              case "Recebido":
                                                 _alterarDadoPedido(
                                                     json.documentID,
                                                     {"status": stts_recebido});
@@ -178,7 +172,7 @@ class _ViewPedidosState extends State<ViewPedidos>
                                                     json.documentID,
                                                     {"status": stts_saiu});
                                                 break;
-                                              case "Pedido Entregue":
+                                              case "Entregue":
                                                 _alterarDadoPedido(
                                                     json.documentID,
                                                     {"atendido": true});
@@ -207,20 +201,6 @@ class _ViewPedidosState extends State<ViewPedidos>
       },
     );
 
-    var streamResultanteLogged = StreamBuilder<FirebaseUser>(
-      stream: FirebaseAuth.instance.onAuthStateChanged,
-      // ignore: missing_return
-      builder: (BuildContext context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data
-              .isEmailVerified) { // logged in using email and password
-            return stream;
-          }
-        } else { //NotLogged }
-          return listaPedidosVazia();
-        }
-      },
-    );
 
     return Scaffold(
       body: Container(
