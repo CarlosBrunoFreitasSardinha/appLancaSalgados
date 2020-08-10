@@ -3,9 +3,10 @@ import 'dart:io';
 import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
+import 'package:applancasalgados/services/ImageService.dart';
 import 'package:applancasalgados/services/NumberFormatService.dart';
 import 'package:applancasalgados/services/UserService.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:applancasalgados/services/UtilService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -36,48 +37,23 @@ class _ViewPerfilState extends State<ViewPerfil> {
     setState(() {
       _image = File(pickedFile.path);
       _upload = true;
-      if(_image != null) _uploadImagem();
     });
+    if (_image != null) {
+      urlImagemRecuperada = await ImageService.insertImage(
+          File(pickedFile.path), "perfil", blocUsuarioLogado.usuario.uidUser);
+      _atualizarUrlImagemFirestore(urlImagemRecuperada);
+    }
   }
 
-  Future _uploadImagem(){
-    FirebaseStorage storage = FirebaseStorage.instance;
-    StorageReference pastaRaiz = storage.ref();
-    StorageReference arquivo = pastaRaiz
-        .child("perfil")
-        .child(AppModel.to.bloc<UserBloc>().usuario.uidUser + ".jpg");
-    arquivo.putFile(_image);
-    StorageUploadTask task = arquivo.putFile(_image);
-    task.events.listen((event) {
-      if (task.isInProgress){
-        print("progresso");
-        setState(() {
-          _upload = true;
-        });
-      }
-      else if (task.isSuccessful){
-        print("Sucesso");
-        setState(() {
-          _upload = false;
-        });
-      }
-    });
-    task.onComplete.then((StorageTaskSnapshot snapshot) async{
-      _recuperarUrlImagem(snapshot);
-    });
-  }
-
-  Future _recuperarUrlImagem(StorageTaskSnapshot snapshot) async{
-    String url = await snapshot.ref.getDownloadURL();
-    urlImagemRecuperada = url;
-    _atualizarUrlImagemFirestore(url);
-  }
-
-  Future _atualizarUrlImagemFirestore(String url){
+  Future _atualizarUrlImagemFirestore(String url) async {
     Map<String, dynamic> json = Map<String, dynamic>();
     json["urlPerfil"] = url;
     BdService.alterarDados(colection, document, json);
-    UserService.recuperaDadosUsuarioLogado();
+    blocUsuarioLogado.usuario.urlPerfil = url;
+    setState(() {
+      blocUsuarioLogado.usuario;
+      _upload = false;
+    });
   }
 
   Future<void> _atualizarDadosFirestore() async {
@@ -107,7 +83,8 @@ class _ViewPerfilState extends State<ViewPerfil> {
 
     setState(() {
       _controllerNome.text = blocUsuarioLogado.usuario.nome;
-      _controllerNumber.text = blocUsuarioLogado.usuario.foneContato1;
+      _controllerNumber.text = UtilService.formatarNumberFone(
+          blocUsuarioLogado.usuario.foneContato1);
       _controllerEndereco.text = blocUsuarioLogado.usuario.endereco;
     });
   }
