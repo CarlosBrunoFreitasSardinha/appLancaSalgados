@@ -24,7 +24,6 @@ class ViewPedido extends StatefulWidget {
 class _ViewPedidoState extends State<ViewPedido>
     with SingleTickerProviderStateMixin {
   String coletionPai, documentPai, subColection, subDocument;
-  final _controller = StreamController<QuerySnapshot>.broadcast();
   TextEditingController _controllerEndereco = TextEditingController(
       text: AppModel.to.bloc<UserBloc>().usuario.endereco);
   TextEditingController _controllerTroco = TextEditingController();
@@ -42,8 +41,10 @@ class _ViewPedidoState extends State<ViewPedido>
   }
 
   Future _salvarPedido() {
-    if (_controllerEndereco.text.isNotEmpty &&
-        widget.pedido.formaPagamento.isNotEmpty) {
+    // ignore: null_aware_in_logical_operator
+    if (_controllerEndereco.text?.isNotEmpty &&
+        // ignore: null_aware_in_logical_operator
+        widget.pedido.formaPagamento?.isNotEmpty) {
       widget.pedido.carrinho.fecharPedido();
       widget.pedido.trocoPara =
       _controllerTroco.text == ""
@@ -234,7 +235,8 @@ class _ViewPedidoState extends State<ViewPedido>
                             textAlign: TextAlign.left,),),
                       ),
                     ),
-                    //forma pagamento se dinheiro
+
+                //forma pagamento se dinheiro
                     selectedItem == "Dinheiro"
                         ? Padding(
                       padding: EdgeInsets.all(5),

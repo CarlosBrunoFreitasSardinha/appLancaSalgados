@@ -40,15 +40,14 @@ class _ViewHomeState extends State<ViewHome>
       case "Login":
         if (!AppModel.to.bloc<UserBloc>().isLogged)
           Navigator.pushNamed(context, RouteGenerator.LOGIN);
-        _tabController.index = 0;
         break;
       case "Sair":
         if (AppModel.to.bloc<UserBloc>().isLogged) {
           AuthService.deslogar();
-          _tabController.index = 0;
         }
         break;
     }
+    _tabController.index = 0;
   }
 
   @override
