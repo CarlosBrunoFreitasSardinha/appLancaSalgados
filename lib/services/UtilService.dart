@@ -39,4 +39,22 @@ class UtilService {
     if (str == null || str.replaceAll(' ', '') == '') return false;
     return true;
   }
+
+  static coverterListStringInMap(List<String> lista) {
+    final Map<String, dynamic> map = new Map<String, dynamic>();
+    int i = 0;
+    lista.forEach((p) {
+      map[i.toString()] = p.toString();
+      i++;
+    });
+    return map;
+  }
+
+  static coverterMapInListString(Map<String, dynamic> map) {
+    final List<String> lista = [];
+    map.forEach((key, value) {
+      lista.add(value);
+    });
+    return lista;
+  }
 }

@@ -1,3 +1,5 @@
+import 'package:applancasalgados/services/UtilService.dart';
+
 class ProdutoModel {
   String _idProduto;
   String _titulo;
@@ -9,6 +11,8 @@ class ProdutoModel {
   String _tempoPreparo;
   bool _isPromo = false;
   bool _isOcult = false;
+
+  List<String> _galeria = ["", "", ""];
 
   ProdutoModel();
 
@@ -25,6 +29,8 @@ class ProdutoModel {
     data['tempoPreparo'] = this.tempoPreparo;
     data['isPromo'] = this.isPromo;
     data['isOcult'] = this.isOcult;
+
+    data['galeria'] = UtilService.coverterListStringInMap(this.galeria);
     return data;
   }
 
@@ -40,6 +46,7 @@ class ProdutoModel {
     tempoPreparo = json['tempoPreparo'];
     isPromo = json['isPromo'];
     isOcult = json['isOcult'];
+    galeria = UtilService.coverterMapInListString(json['galeria']);
   }
 
   // ignore: unnecessary_getters_setters
@@ -108,5 +115,11 @@ class ProdutoModel {
 
   set isPromo(bool value) {
     _isPromo = value;
+  }
+
+  List<String> get galeria => _galeria;
+
+  set galeria(List<String> value) {
+    _galeria = value;
   }
 }

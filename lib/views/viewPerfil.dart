@@ -97,7 +97,6 @@ class _ViewPerfilState extends State<ViewPerfil> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _recuperaDadosUsuario();
   }

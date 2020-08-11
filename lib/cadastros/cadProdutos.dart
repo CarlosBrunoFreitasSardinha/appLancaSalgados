@@ -6,10 +6,10 @@ import 'package:applancasalgados/models/CategoriaProdutoModel.dart';
 import 'package:applancasalgados/models/ProdutoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
+import 'package:applancasalgados/services/ImageService.dart';
+import 'package:applancasalgados/services/UtilService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../RouteGenerator.dart';
@@ -31,74 +31,136 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   TextEditingController _controllerTempPreparo = TextEditingController();
 
   final _controller = StreamController<QuerySnapshot>.broadcast();
-  String _mensagemErro = "";
-  String _categoria, _urlImagemRecuperada;
-  var selectedItem;
-  File _image;
+  final blocUsuarioLogado = AppModel.to.bloc<UserBloc>();
   final picker = ImagePicker();
-  ProdutoModel produto;
-  List<CategoriaProdutoModel> options = [];
-  bool isCad = true;
 
-  Future _recuperarImagem(String urlImg) async {
-    switch (urlImg) {
-      case "camera":
-        getImage(true);
-        break;
-      case "galeria":
-        getImage(false);
-        break;
+  var selectedItem;
+
+  ProdutoModel produto;
+
+  List<CategoriaProdutoModel> options = [];
+  List<bool> imagensUlpoding = [false, false, false];
+
+  String _mensagemErro = "";
+  String _urlImagemRecuperada = "";
+
+  bool isCad;
+  bool isImgPrincipal = false;
+  bool salvado = false;
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    File image = File(pickedFile.path);
+    if (image != null) {
+      setState(() {
+        isImgPrincipal = true;
+      });
+      String url = await ImageService.insertImage(File(pickedFile.path),
+          "produtos", Timestamp.now().toString().replaceAll(" ", ""));
+      setState(() {
+        _urlImagemRecuperada = url;
+        isImgPrincipal = false;
+      });
     }
   }
 
-  Future getImage(bool i) async {
-    final pickedFile = await picker.getImage(
-        source: i ? ImageSource.camera : ImageSource.gallery);
+  Future _onAddImageGaleriaClick(int index) async {
+    PickedFile pickedFile = await picker.getImage(source: ImageSource.gallery);
+    File imageFile = File(pickedFile.path);
+    if (pickedFile != null) {
+      setState(() {
+        imagensUlpoding[index] = true;
+      });
+      getFileImageGaleria(index, imageFile);
+      if (!isCad)
+        BdService.alterarDados("produtos", produto.idProduto,
+            {"galeria": UtilService.coverterListStringInMap(produto.galeria)});
+    }
+  }
 
+  void getFileImageGaleria(int index, File file) async {
+    String url = await ImageService.insertImage(File(file.path), "produtos",
+        Timestamp.now().toString().replaceAll(" ", ""));
     setState(() {
-      _image = File(pickedFile.path);
-      if (_image != null) _uploadImagem();
+      produto.galeria[index] = url;
+      imagensUlpoding[index] = false;
     });
+    if (!isCad)
+      BdService.alterarDados("produtos", produto.idProduto, {"urlImg": url});
   }
 
-  Future _uploadImagem() async {
-    FirebaseStorage storage = FirebaseStorage.instance;
-
-    StorageReference pastaRaiz = storage.ref();
-    StorageReference arquivo = pastaRaiz
-        .child("produtos")
-        .child(Timestamp.now().toString().replaceAll(" ", "") + ".jpg");
-    arquivo.putFile(_image);
-    StorageUploadTask task = arquivo.putFile(_image);
-
-    task.events.listen((event) {
-      if (task.isInProgress) {
-        print("progresso");
-        setState(() {});
-      } else if (task.isSuccessful) {
-        print("Sucesso");
-        setState(() {});
-      }
-    });
-
-    task.onComplete.then((StorageTaskSnapshot snapshot) async {
-      _recuperarUrlImagem(snapshot);
-    });
+  Widget buildGridView() {
+    return GridView.count(
+      shrinkWrap: true,
+      crossAxisCount: 3,
+      childAspectRatio: 1,
+      children: List.generate(produto.galeria.length, (index) {
+        if (produto.galeria[index].isNotEmpty) {
+          return Card(
+            clipBehavior: Clip.antiAlias,
+            child: Stack(
+              children: <Widget>[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.network(
+                    produto.galeria[index],
+                    height: 250,
+                    width: 250,
+                    loadingBuilder: (context, child, progress) {
+                      return progress == null
+                          ? child
+                          : Center(
+                              child: CircularProgressIndicator(
+                                backgroundColor: Theme.of(context).accentColor,
+                              ),
+                            );
+                    },
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                Positioned(
+                  right: 5,
+                  top: 5,
+                  child: InkWell(
+                    child: Icon(
+                      Icons.remove_circle,
+                      size: 20,
+                      color: Colors.red,
+                    ),
+                    onTap: () {
+                      setState(() {
+                        ImageService.deleteImage(produto.galeria[index]);
+                        produto.galeria[index] = "";
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        } else {
+          return Card(
+            child: !imagensUlpoding[index]
+                ? IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () => _onAddImageGaleriaClick(index),
+                  )
+                : Center(
+                    child: SizedBox(
+                      height: 25,
+                      width: 25,
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+          );
+        }
+      }),
+    );
   }
 
-  Future _recuperarUrlImagem(StorageTaskSnapshot snapshot) async {
-    String url = await snapshot.ref.getDownloadURL();
-    setState(() {
-      _urlImagemRecuperada = url;
-    });
-  }
-
-  _atualizarUrlImagemFirestore(String url) {
-    BdService.alterarDados("produtos", _categoria, {"urlImg": url});
-  }
-
-  _obterIndice() async {
-    if (widget.produtoModel == null) {
+  _informacoesDoProduto() async {
+    isCad = widget.produtoModel == null;
+    if (isCad) {
       produto = ProdutoModel();
       Map<String, dynamic> id =
           await BdService.recuperarUmObjeto("indices", "produtos");
@@ -107,10 +169,12 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
       });
     } else {
       produto = widget.produtoModel;
+
       _controllerTitulo.text = produto.titulo;
       _controllerPreco.text = produto.preco.toString();
       _controllerDescricao.text = produto.descricao;
       _controllerTempPreparo.text = produto.tempoPreparo;
+
       selectedItem = produto.idCategoria;
       _urlImagemRecuperada = produto.urlImg;
     }
@@ -118,24 +182,24 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
   _salvar() {
     _cadastrarProduto();
+    salvado = true;
     Navigator.pop(context);
   }
 
   _cadastrarProduto() async {
     int indice = int.parse(produto.idProduto) + 1;
-    if (widget.produtoModel == null) {
+    if (isCad) {
       BdService.cadastrarDados("produtos", produto.idProduto, produto.toJson());
       BdService.alterarDados("indices", "produtos", {"id": indice.toString()});
-      isCad = false;
     } else {
       BdService.alterarDados("produtos", produto.idProduto, produto.toJson());
     }
   }
 
   validarCampos() {
+    double preco = double.parse(_controllerPreco.text);
     String titulo = _controllerTitulo.text;
     String descricao = _controllerDescricao.text;
-    double preco = double.parse(_controllerPreco.text);
     String temp = _controllerTempPreparo.text;
 
     if (titulo.length >= 3) {
@@ -170,7 +234,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
     _controllerTempPreparo.clear();
   }
 
-  Stream<QuerySnapshot> _adicionarListenerConversas() {
+  Stream<QuerySnapshot> _adicionarListenerCategoria() {
     Firestore bd = Firestore.instance;
     final stream = bd
         .collection("categoria")
@@ -183,10 +247,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   }
 
   _verificarUsuarioLogado() {
-    if (!AppModel.to
-        .bloc<UserBloc>()
-        .usuario
-        .isAdm) {
+    if (!blocUsuarioLogado.usuario.isAdm) {
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
           arguments: 0);
     }
@@ -194,18 +255,22 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    _obterIndice();
     super.initState();
+    _informacoesDoProduto();
     _verificarUsuarioLogado();
-    _adicionarListenerConversas();
+    _adicionarListenerCategoria();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _controller.close();
+    if (!salvado) {
+      produto.galeria.forEach((element) {
+        ImageService.deleteImage(element);
+      });
+      ImageService.deleteImage(produto.urlImg);
+    }
   }
 
   @override
@@ -223,8 +288,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
               options.add(CategoriaProdutoModel.fromJson({
                 'idCategoria': snap.data["idCategoria"],
                 'descricao': snap.data["descricao"]
-              })
-              );
+              }));
 
               currencyItems.add(
                 DropdownMenuItem(
@@ -260,12 +324,11 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                       Scaffold.of(context).showSnackBar(snackBar);
                       setState(() {
                         selectedItem = currencyValue;
-                        _controllerTitulo.text = currencyValue;
                       });
                     },
                     value: selectedItem,
                     isExpanded: true,
-                    hint: new Text(
+                    hint: Text(
                       "Nova Categoria!",
                       style: TextStyle(
                           fontSize: 20,
@@ -295,75 +358,75 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   //logo
-                  _urlImagemRecuperada != null
-                      ? ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Image.network(
-                      _urlImagemRecuperada,
-                            height: 300,
-                            width: 300,
-                            loadingBuilder: (context, child, progress) {
-                        return progress == null
-                            ? child
-                            : LinearProgressIndicator(
-                          backgroundColor: Colors.grey,
-                        );
-                      },
-                      fit: BoxFit.contain,
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+                    child: _urlImagemRecuperada != ""
+                        ? Card(
+                      child: Stack(
+                        children: <Widget>[
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: Image.network(
+                              _urlImagemRecuperada,
+                              loadingBuilder: (context, child, progress) {
+                                return progress == null
+                                    ? child
+                                    : Center(
+                                  child: LinearProgressIndicator(),
+                                );
+                              },
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned(
+                            right: 5,
+                            top: 5,
+                            child: InkWell(
+                              child: Icon(
+                                Icons.remove_circle,
+                                size: 20,
+                                color: Colors.red,
+                              ),
+                              onTap: () {
+                                ImageService.deleteImage(produto.urlImg);
+                                setState(() {
+                                  produto.urlImg = "";
+                                  _urlImagemRecuperada = "";
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                        : Card(
+                      child: !isImgPrincipal
+                          ? SizedBox(
+                        height: 250,
+                        width: 250,
+                        child: IconButton(
+                          icon: Icon(Icons.add),
+                          onPressed: () => getImage(),
+                        ),
+                      )
+                          : SizedBox(
+                        height: 250,
+                        width: 250,
+                        child: Center(
+                          child: SizedBox(
+                            height: 25,
+                            width: 25,
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      ),
                     ),
-                  )
-                      : CircleAvatar(
-                    radius: 100,
-                    backgroundColor: Colors.grey,
                   ),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      FlatButton(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
-                              side: BorderSide(color: Theme
-                                  .of(context)
-                                  .accentColor)),
-                          color: Theme
-                              .of(context)
-                              .accentColor,
-                          onPressed: () {
-                            _recuperarImagem("camera");
-                          },
-                          child: Row(
-                            children: <Widget>[
-                              Icon(Icons.camera_alt, color: Colors.white),
-                              Text("Câmera",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 20))
-                            ],
-                          )),
-                      FlatButton(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
-                              side: BorderSide(color: Theme
-                                  .of(context)
-                                  .accentColor)),
-                          color: Theme
-                              .of(context)
-                              .accentColor,
-                          onPressed: () {
-                            _recuperarImagem("galeria");
-                          },
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.photo_library,
-                                color: Colors.white,
-                              ),
-                              Text("Galeria",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 20))
-                            ],
-                          )),
-                    ],
+                  //Galeria de Imagens
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+                    child: buildGridView(),
                   ),
 
                   //categoria
@@ -464,9 +527,10 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                       FlatButton(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18.0),
-                              side: BorderSide(color: Theme
-                                  .of(context)
-                                  .accentColor)),
+                              side: BorderSide(
+                                  color: Theme
+                                      .of(context)
+                                      .accentColor)),
                           color: Theme
                               .of(context)
                               .accentColor,
@@ -480,17 +544,19 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                               Text("Visibilidade: ",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 20)),
-                              produto.isOcult ? Icon(Icons.visibility_off,
-                                  color: Colors.white) : Icon(Icons.visibility,
-                                  color: Colors.white),
+                              produto.isOcult
+                                  ? Icon(Icons.visibility_off,
+                                  color: Colors.white)
+                                  : Icon(Icons.visibility, color: Colors.white),
                             ],
                           )),
                       FlatButton(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18.0),
-                              side: BorderSide(color: Theme
-                                  .of(context)
-                                  .accentColor)),
+                              side: BorderSide(
+                                  color: Theme
+                                      .of(context)
+                                      .accentColor)),
                           color: Theme
                               .of(context)
                               .accentColor,
@@ -504,8 +570,9 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                               Text("Destaque: ",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 20)),
-                              produto.isPromo ? Icon(Icons.star, color: Colors
-                                  .white) : Icon(Icons.star_border,
+                              produto.isPromo
+                                  ? Icon(Icons.star, color: Colors.white)
+                                  : Icon(Icons.star_border,
                                   color: Colors.white),
                             ],
                           )),
