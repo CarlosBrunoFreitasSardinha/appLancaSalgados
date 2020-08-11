@@ -106,58 +106,55 @@ class _DestaquesState extends State<Destaques>
 
                     return
                     GestureDetector(
-                      child: Hero(
-                        tag: produto.idProduto,
-                        child: AnimatedContainer(
-                            duration: Duration(milliseconds: 500),
-                            curve: Curves.easeOutQuint,
-                            margin:
-                            EdgeInsets.only(top: top, bottom: 25, right: 30),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(produto.urlImg),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Colors.black87,
-                                      blurRadius: blur,
-                                      offset: Offset(offset, offset)
-                                  )
-                                ]),
-                            child: Container(
-                              child: Column(
-                                children: <Widget>[
-                                  Flexible(child:
-                                  Align(
-                                      alignment: Alignment.topCenter,
-                                      child:
-                                      Padding(
-                                        padding: EdgeInsets.all(8),
-                                        child: Text(produto.titulo,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontSize: 38,
-                                                color: Colors.white,
-                                                backgroundColor: Colors.black38)),
-                                      )
-                                  )
-                                  ),
-
-                                  Flexible(child: Align(
-                                      alignment: Alignment.bottomCenter,
-                                          child: Text(
-                                              UtilService.moeda(produto.preco),
-                                              textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontSize: 40,
-                                              color: Color(0xffd19c3c),
-                                              backgroundColor: Colors.black54))))
-                                ],
+                      child: AnimatedContainer(
+                          duration: Duration(milliseconds: 500),
+                          curve: Curves.easeOutQuint,
+                          margin:
+                          EdgeInsets.only(top: top, bottom: 25, right: 30),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: NetworkImage(produto.urlImg),
                               ),
-                            )),
-                      ),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.black87,
+                                    blurRadius: blur,
+                                    offset: Offset(offset, offset)
+                                )
+                              ]),
+                          child: Container(
+                            child: Column(
+                              children: <Widget>[
+                                Flexible(child:
+                                Align(
+                                    alignment: Alignment.topCenter,
+                                    child:
+                                    Padding(
+                                      padding: EdgeInsets.all(8),
+                                      child: Text(produto.titulo,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 38,
+                                              color: Colors.white,
+                                              backgroundColor: Colors.black38)),
+                                    )
+                                )
+                                ),
+
+                                Flexible(child: Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Text(
+                                        UtilService.moeda(produto.preco),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 40,
+                                            color: Color(0xffd19c3c),
+                                            backgroundColor: Colors.black54))))
+                              ],
+                            ),
+                          )),
                       onTap: () {
                         Navigator.pushNamed(
                             context, RouteGenerator.PRODUTO,

@@ -23,11 +23,14 @@ class ViewPedido extends StatefulWidget {
 
 class _ViewPedidoState extends State<ViewPedido>
     with SingleTickerProviderStateMixin {
-  String coletionPai, documentPai, subColection, subDocument;
   TextEditingController _controllerEndereco = TextEditingController(
       text: AppModel.to.bloc<UserBloc>().usuario.endereco);
   TextEditingController _controllerTroco = TextEditingController();
+
+  String coletionPai, documentPai, subColection, subDocument;
+
   var selectedItem;
+
   List<FormaPagamentoModel> options = [];
   List<DropdownMenuItem> currencyItems = [];
 
@@ -36,30 +39,54 @@ class _ViewPedidoState extends State<ViewPedido>
     documentPai = AppModel.to.bloc<UserBloc>().usuario.uidUser;
     subColection = "pedidos";
     _controllerEndereco.text = widget.pedido.enderecoEntrega;
-    selectedItem = widget.pedido.formaPagamento;
     _controllerTroco.text = widget.pedido.trocoPara.toString();
+    if (widget.pedido.formaPagamento != "")
+      selectedItem = widget.pedido.formaPagamento;
   }
 
   Future _salvarPedido() {
-    // ignore: null_aware_in_logical_operator
-    if (_controllerEndereco.text?.isNotEmpty &&
-        // ignore: null_aware_in_logical_operator
-        widget.pedido.formaPagamento?.isNotEmpty) {
       widget.pedido.carrinho.fecharPedido();
-      widget.pedido.trocoPara =
-      _controllerTroco.text == ""
+
+      widget.pedido.trocoPara = _controllerTroco.text == ""
           ? 0
           : double.parse(_controllerTroco.text.replaceAll(',', '.'));
 
       BdService.criarItemAutoIdColecaoGenerica(
           "pedidos", documentPai, "pedidos", widget.pedido.toJson());
+
       widget.pedido.carrinho.limpar();
+
       BdService.criarItemComIdColecaoGenerica("carrinho", documentPai,
           "carrinho", "ativo", widget.pedido.carrinho.toJson());
 
       Navigator.pop(context);
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
           arguments: 3);
+  }
+
+  verificaPedido() {
+    if (UtilService.stringNotIsNull(_controllerEndereco.text)) {
+      if (UtilService.stringNotIsNull(widget.pedido.formaPagamento)) {
+        _salvarPedido();
+      }
+      else {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text("A Forma de Pagamento Não Foi Informada!"),
+              );
+            });
+      }
+    }
+    else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("O Endereço Não Foi Informado!"),
+            );
+          });
     }
   }
 
@@ -259,7 +286,8 @@ class _ViewPedidoState extends State<ViewPedido>
                         : SizedBox(),
 
                     //listagem de produtos
-                    Padding(padding: EdgeInsets.only(bottom: 15, top: 5),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 15, top: 5),
                       child: Card(
                         child: ExpansionTile(
                             backgroundColor: Colors.grey[200],
@@ -277,7 +305,8 @@ class _ViewPedidoState extends State<ViewPedido>
                               ),
                             ),
                             children: getProdutos()),
-                      ),),
+                      ),
+                    ),
                     Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -286,16 +315,15 @@ class _ViewPedidoState extends State<ViewPedido>
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-
                           !widget.pedido.carrinho.fechado
                               ? FlatButton(
                             padding: EdgeInsets.all(0),
                             child: Container(
                                 decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                    border:
-                                    Border.all(width: 1, color: Colors.grey),
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0)),
+                                    border: Border.all(
+                                        width: 1, color: Colors.grey),
                                     color: Color(0xffd19c3c)),
                                 child: Padding(
                                   padding: EdgeInsets.only(right: 8),
@@ -315,12 +343,11 @@ class _ViewPedidoState extends State<ViewPedido>
                                   ),
                                 )),
                             onPressed: () {
-                              _salvarPedido();
+                              verificaPedido();
                               //                    Navigator.pop(context);
                             },
                           )
-                              : SizedBox()
-                          ,
+                              : SizedBox(),
                           Padding(
                             padding: EdgeInsets.all(15),
                             child: Text(

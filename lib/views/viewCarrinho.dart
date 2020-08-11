@@ -21,14 +21,13 @@ class ViewCarrinho extends StatefulWidget {
 class _ViewCarrinhoState extends State<ViewCarrinho>
     with SingleTickerProviderStateMixin {
   Firestore bd = Firestore.instance;
-  final UsuarioLogado = AppModel.to.bloc<UserBloc>();
+  final blocUsuario = AppModel.to.bloc<UserBloc>();
 
   final cartShip = AppModel.to.bloc<CarrinhoBloc>();
   CarrinhoModel carrinho = CarrinhoModel();
   ProdutoCarrinhoModel _ultimaTarefaRemovida = ProdutoCarrinhoModel();
   String coletionPai = "carrinho",
-      documentPai = AppModel.to.bloc<UserBloc>().usuario
-          .uidUser,
+      documentPai = AppModel.to.bloc<UserBloc>().usuario.uidUser,
       subDocument = "ativo",
       subColection = "carrinho",
       strPedido = "pedidos";
@@ -51,8 +50,6 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
         break;
     }
   }
-
-
 
   _deleteItem(int index) {
     _ultimaTarefaRemovida = carrinho.produtos[index];
@@ -81,7 +78,8 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
 
   Future _alterarCarrinho() =>
       BdService.alterarItemColecaoGenerica(
-        coletionPai, documentPai, subColection, subDocument, carrinho.toJson());
+          coletionPai, documentPai, subColection, subDocument,
+          carrinho.toJson());
 
   Widget carrinhoVazio() {
     return Center(
@@ -97,14 +95,27 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
   }
 
   Future<void> _adicionarPedido() {
-    if (AppModel.to.bloc<UserBloc>().isLogged && carrinho.produtos.length != 0) {
-      PedidoModel pedido = PedidoModel();
-      pedido.usuario = AppModel.to
-          .bloc<UserBloc>()
-          .usuario;
-      pedido.carrinho = carrinho;
-      pedido.enderecoEntrega = pedido.usuario.endereco;
-      Navigator.pushNamed(context, RouteGenerator.PEDIDO, arguments: pedido);
+    if (AppModel.to
+        .bloc<UserBloc>()
+        .isLogged) {
+      if (carrinho.produtos.length != 0) {
+        PedidoModel pedido = PedidoModel();
+        pedido.usuario = AppModel.to
+            .bloc<UserBloc>()
+            .usuario;
+        pedido.carrinho = carrinho;
+        pedido.enderecoEntrega = pedido.usuario.endereco;
+        Navigator.pushNamed(context, RouteGenerator.PEDIDO, arguments: pedido);
+      }
+      else {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text("O carrinho esta vazio!"),
+              );
+            });
+      }
     } else {
       showDialog(
           context: context,
@@ -188,112 +199,112 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
             builder:
                 (BuildContext context, AsyncSnapshot<CarrinhoModel> snapshot) {
               List<Widget> children;
-          if (snapshot.hasData) {
-            carrinho = snapshot.data;
+              if (snapshot.hasData) {
+                carrinho = snapshot.data;
 
-            children = <Widget>[
-              carrinho.produtos.length > 0
-                  ? Expanded(
-                child: ListView.builder(
-                    itemCount: carrinho.produtos.length,
-                    itemBuilder: (context, index) {
-                      return _criarItemLista(context, index);
-                    }),
-              )
-                  : carrinhoVazio(),
-              carrinho.produtos.length > 0
-                  ? Container(
-                decoration: BoxDecoration(
-                    borderRadius:
-                    BorderRadius.all(Radius.circular(10.0)),
-                    border: Border.all(width: 1, color: Colors.grey),
-                    color: Colors.white),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    FlatButton(
-                      padding: EdgeInsets.all(0),
-                      child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(10.0)),
-                              border: Border.all(
-                                  width: 1, color: Colors.grey),
-                              color: Color(0xffd19c3c)),
-                          child: Padding(
-                            padding: EdgeInsets.only(right: 8),
-                            child: Row(
-                              children: <Widget>[
-                                IconButton(
-                                  icon: Icon(Icons.restaurant),
-                                  color: Colors.white,
-                                  onPressed: () {},
+                children = <Widget>[
+                  carrinho.produtos.length > 0
+                      ? Expanded(
+                    child: ListView.builder(
+                        itemCount: carrinho.produtos.length,
+                        itemBuilder: (context, index) {
+                          return _criarItemLista(context, index);
+                        }),
+                  )
+                      : carrinhoVazio(),
+                  carrinho.produtos.length > 0
+                      ? Container(
+                    decoration: BoxDecoration(
+                        borderRadius:
+                        BorderRadius.all(Radius.circular(10.0)),
+                        border: Border.all(width: 1, color: Colors.grey),
+                        color: Colors.white),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        FlatButton(
+                          padding: EdgeInsets.all(0),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(10.0)),
+                                  border: Border.all(
+                                      width: 1, color: Colors.grey),
+                                  color: Color(0xffd19c3c)),
+                              child: Padding(
+                                padding: EdgeInsets.only(right: 8),
+                                child: Row(
+                                  children: <Widget>[
+                                    IconButton(
+                                      icon: Icon(Icons.restaurant),
+                                      color: Colors.white,
+                                      onPressed: () {},
+                                    ),
+                                    Text('Fechar Carrinho',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 19.0,
+                                            color: Colors.white)),
+                                  ],
                                 ),
-                                Text('Fechar Carrinho',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 19.0,
-                                        color: Colors.white)),
-                              ],
-                            ),
-                          )),
-                      onPressed: () {
-                        _adicionarPedido();
+                              )),
+                          onPressed: () {
+                            _adicionarPedido();
 //                    Navigator.pop(context);
-                      },
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(15),
-                      child: Text(
-                        "Total: " + UtilService.moeda(carrinho.total),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20.0,
-                          color: Colors.black,
+                          },
                         ),
-                      ),
+                        Padding(
+                          padding: EdgeInsets.all(15),
+                          child: Text(
+                            "Total: " + UtilService.moeda(carrinho.total),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20.0,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  )
+                      : Center()
+                ];
+              } else if (snapshot.hasError) {
+                children = <Widget>[carrinhoVazio()];
+              } else {
+                children = <Widget>[
+                  SizedBox(
+                    child: CircularProgressIndicator(),
+                    width: 60,
+                    height: 60,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Text(
+                      'Carrendo os Dados...',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.white),
+                    ),
+                  )
+                ];
+              }
+              return Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage("imagens/background.jpg"),
+                        fit: BoxFit.cover)),
+                child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: children,
+                  ),
                 ),
-              )
-                  : Center()
-            ];
-          } else if (snapshot.hasError) {
-            children = <Widget>[carrinhoVazio()];
-          } else {
-            children = <Widget>[
-              SizedBox(
-                child: CircularProgressIndicator(),
-                width: 60,
-                height: 60,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 16),
-                child: Text(
-                  'Carrendo os Dados...',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: Colors.white),
-                ),
-              )
-            ];
-          }
-          return Container(
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage("imagens/background.jpg"),
-                    fit: BoxFit.cover)),
-            child: Padding(
-              padding: EdgeInsets.all(8),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: children,
-              ),
-            ),
-          );
-        })
+              );
+            })
         : Container(
       decoration: BoxDecoration(
           image: DecorationImage(

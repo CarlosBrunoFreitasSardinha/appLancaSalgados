@@ -42,6 +42,7 @@ class CarrinhoModel {
   void limpar() {
     produtos = [];
     total = 0;
+    fechado = false;
   }
 
   void fecharPedido(){

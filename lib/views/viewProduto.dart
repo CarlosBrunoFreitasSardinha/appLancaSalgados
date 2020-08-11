@@ -7,6 +7,7 @@ import 'package:applancasalgados/models/ProdutoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
 import 'package:applancasalgados/services/UtilService.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,8 @@ class _ViewProdutoState extends State<ViewProduto> {
   ProdutoCarrinhoModel produtoCarrinho = ProdutoCarrinhoModel();
   bool isInitial = true;
   String coletionPai, documentPai, subColection, subDocument;
-
+  int _current = 0;
+  List<Widget> imageSliders;
 
   _initilizer() {
     produtoCarrinho = ProdutoCarrinhoModel.fromJson(widget.produto.toJson());
@@ -37,6 +39,33 @@ class _ViewProdutoState extends State<ViewProduto> {
         : "";
     subColection = "carrinho";
     subDocument = "ativo";
+
+    List<String> fullGaleria = widget.produto.galeria;
+    fullGaleria.insert(0, widget.produto.urlImg);
+    fullGaleria.removeWhere((element) => element == "");
+
+    imageSliders = fullGaleria
+        .map((item) => Container(
+              child: Container(
+                margin: EdgeInsets.all(5.0),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.network(
+                      item,
+                      width: 350,
+                      height: 300,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, progress) {
+                        return progress == null
+                            ? child
+                            : Center(
+                                child: LinearProgressIndicator(),
+                              );
+                      },
+                    )),
+              ),
+            ))
+        .toList();
   }
 
   _listenerCarrinho() async {
@@ -123,34 +152,35 @@ class _ViewProdutoState extends State<ViewProduto> {
             child: Column(
               children: <Widget>[
                 //imagem do produto
-                Container(
+                CarouselSlider(
+                  items: imageSliders,
+                  options: CarouselOptions(
+                      autoPlay: true,
+                      enlargeCenterPage: true,
+                      aspectRatio: 2.0,
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          _current = index;
+                        });
+                      }),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: widget.produto.galeria.map((url) {
+                    int index = widget.produto.galeria.indexOf(url);
+                    return Container(
+                      width: 8.0,
+                      height: 8.0,
+                      margin: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 2.0),
                   decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black45.withOpacity(0.7),
-                        spreadRadius: 40,
-                        blurRadius: 100,
-                        offset: Offset(0, 0),
-                      )
-                    ],
+                    shape: BoxShape.circle,
+                    color: _current == index
+                        ? Color.fromRGBO(0, 0, 0, 0.9)
+                        : Color.fromRGBO(0, 0, 0, 0.4),
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 24, bottom: 10),
-                    child: Hero(
-                      tag: widget.produto.idProduto,
-                      child: GestureDetector(
-                        child: ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: Image.network(
-                              widget.produto.urlImg,
-                              width: 290,
-                              height: 290,
-                              fit: BoxFit.cover,
-                            )),
-                        onTap: () => Navigator.pop(context),
-                      ),
-                    ),
-                  ),
+                    );
+                  }).toList(),
                 ),
 
                 //container dados produto
@@ -160,8 +190,7 @@ class _ViewProdutoState extends State<ViewProduto> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
                           Padding(
-                            padding:
-                            EdgeInsets.only(
+                            padding: EdgeInsets.only(
                                 left: 16, top: 16, bottom: 16, right: 8),
                             child: Text(
                               widget.produto.titulo,
@@ -172,11 +201,10 @@ class _ViewProdutoState extends State<ViewProduto> {
                             ),
                           ),
                           Padding(
-                            padding:
-                            EdgeInsets.only(left: 16, right: 8),
+                            padding: EdgeInsets.only(left: 16, right: 8),
                             child: Text(widget.produto.descricao,
-                                style: TextStyle(
-                                    fontSize: 20.0, color: Colors.grey)),
+                                style: TextStyle(fontSize: 20.0,
+                                    color: Colors.grey)),
                           ),
                           Padding(
                               padding: EdgeInsets.all(16),
@@ -194,13 +222,11 @@ class _ViewProdutoState extends State<ViewProduto> {
                               Padding(
                                 padding: EdgeInsets.all(10),
                                 child: Container(
-                                  decoration:
-                                  BoxDecoration(
+                                  decoration: BoxDecoration(
                                       borderRadius:
                                       BorderRadius.all(Radius.circular(10.0)),
                                       border: Border.all(
-                                          width: 1, color: Colors.grey)
-                                  ),
+                                          width: 1, color: Colors.grey)),
                                   child: Row(
                                     children: <Widget>[
                                       IconButton(
@@ -234,7 +260,8 @@ class _ViewProdutoState extends State<ViewProduto> {
                                     padding: EdgeInsets.all(0),
                                     child: Container(
                                         decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(
+                                            borderRadius:
+                                            BorderRadius.all(
                                                 Radius.circular(10.0)),
                                             border: Border.all(
                                                 width: 1, color: Colors.grey),
@@ -251,9 +278,8 @@ class _ViewProdutoState extends State<ViewProduto> {
                                               ),
                                               Text(
                                                   'Adicionar ${UtilService
-                                                      .moeda(
-                                                      produtoCarrinho
-                                                          .subtotal)}',
+                                                      .moeda(produtoCarrinho
+                                                      .subtotal)}',
                                                   style: TextStyle(
                                                       fontWeight: FontWeight
                                                           .w500,
@@ -272,11 +298,9 @@ class _ViewProdutoState extends State<ViewProduto> {
                           )
                         ],
                       ),
-                    )
-                ),
+                    )),
               ],
-            )
-        ),
+            )),
       ),
     );
   }

@@ -77,7 +77,7 @@ class RouteGenerator{
       case CONFIG: return MaterialPageRoute(builder: (_) => Configuracoes());
 
       case TESTE:
-        return MaterialPageRoute(builder: (_) => pagCarrinhoStream());
+        return MaterialPageRoute(builder: (_) => CarouselDemo());
 
       default: _erroRota();
     }

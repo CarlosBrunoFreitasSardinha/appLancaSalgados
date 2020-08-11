@@ -11,7 +11,7 @@ class PedidoModel {
   UsuarioModel _usuario;
   bool _atendido = false;
   String _status = "Solicitado";
-  String _formaPagamento;
+  String _formaPagamento = "";
   String _enderecoEntrega;
   double _trocoPara = 0;
   String _tituloPedido = AppModel.to.bloc<UserBloc>().usuario.nome +
@@ -104,5 +104,10 @@ class PedidoModel {
 
   set trocoPara(double value) {
     _trocoPara = value;
+  }
+
+  @override
+  String toString() {
+    return 'PedidoModel{_carrinho: $_carrinho, _usuario: $_usuario, _atendido: $_atendido, _status: $_status, _formaPagamento: $_formaPagamento, _enderecoEntrega: $_enderecoEntrega, _trocoPara: $_trocoPara, _tituloPedido: $_tituloPedido, _dataPedido: $_dataPedido}';
   }
 }
