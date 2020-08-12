@@ -1,4 +1,5 @@
 import 'package:applancasalgados/models/ProdutoModel.dart';
+import 'package:applancasalgados/services/UtilService.dart';
 
 class ProdutoCarrinhoModel extends ProdutoModel {
   int _quantidade;
@@ -18,6 +19,7 @@ class ProdutoCarrinhoModel extends ProdutoModel {
     data['descricao'] = this.descricao;
     data['idCategoria'] = this.idCategoria;
     data['tempoPreparo'] = this.tempoPreparo;
+    data['galeria'] = UtilService.coverterListStringInMap(this.galeria);
 
     data['quantidade'] = this._quantidade;
     data['subtotal'] = this._subtotal;
@@ -33,6 +35,7 @@ class ProdutoCarrinhoModel extends ProdutoModel {
     descricao = json['descricao'];
     idCategoria = json['idCategoria'];
     tempoPreparo = json['tempoPreparo'];
+    galeria = UtilService.coverterMapInListString(json['galeria']);
 
     quantidade = json['quantidade'] != null ? json['quantidade'] : 1;
     subtotal = json['subtotal'] != null ? json['subtotal']+0.0 : preco;

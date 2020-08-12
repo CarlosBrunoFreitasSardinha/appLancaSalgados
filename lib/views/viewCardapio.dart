@@ -130,6 +130,7 @@ class _CardapioState extends State<Cardapio>
                               case "Deletar":
                                 BdService.removerDados(
                                     "produtos", produtoModel.idProduto);
+                                listaDeProdutos.remove(produtoModel);
                                 break;
                             }
                           },

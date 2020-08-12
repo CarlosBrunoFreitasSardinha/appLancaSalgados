@@ -24,25 +24,33 @@ class ViewProduto extends StatefulWidget {
 
 class _ViewProdutoState extends State<ViewProduto> {
   final streamCarrinho = AppModel.to.bloc<CarrinhoBloc>();
+  final streamUsuario = AppModel.to.bloc<UserBloc>();
   CarrinhoModel carrinho = CarrinhoModel();
   ProdutoCarrinhoModel produtoCarrinho = ProdutoCarrinhoModel();
-  bool isInitial = true;
+
+  List<Widget> imageSliders;
+  List<String> fullGaleria = [];
+
   String coletionPai, documentPai, subColection, subDocument;
   int _current = 0;
-  List<Widget> imageSliders;
 
   _initilizer() {
     produtoCarrinho = ProdutoCarrinhoModel.fromJson(widget.produto.toJson());
     coletionPai = "carrinho";
-    documentPai = AppModel.to.bloc<UserBloc>().usuario.uidUser != null
-        ? AppModel.to.bloc<UserBloc>().usuario.uidUser
+    documentPai = streamUsuario.usuario.uidUser != null
+        ? streamUsuario.usuario.uidUser
         : "";
     subColection = "carrinho";
     subDocument = "ativo";
 
-    List<String> fullGaleria = widget.produto.galeria;
-    fullGaleria.insert(0, widget.produto.urlImg);
-    fullGaleria.removeWhere((element) => element == "");
+    if (UtilService.stringNotIsNull(widget.produto.urlImg)) {
+      fullGaleria.add(widget.produto?.urlImg);
+    }
+    widget.produto.galeria.forEach((element) {
+      if (UtilService.stringNotIsNull(element.toString())) {
+        fullGaleria.add(element.toString());
+      }
+    });
 
     imageSliders = fullGaleria
         .map((item) => Container(
@@ -89,7 +97,7 @@ class _ViewProdutoState extends State<ViewProduto> {
           builder: (context) {
             return AlertDialog(
               title:
-              Text("Para adicionar ao Carrinho é necessário efetuar Login"),
+                  Text("Para adicionar ao Carrinho é necessário efetuar Login"),
               actions: <Widget>[
                 FlatButton(
                     onPressed: () => Navigator.pop(context),
@@ -110,7 +118,7 @@ class _ViewProdutoState extends State<ViewProduto> {
     super.initState();
     _initilizer();
     _listenerCarrinho();
-    timeDilation = 3;
+    timeDilation = 2;
   }
 
   @override
@@ -166,8 +174,8 @@ class _ViewProdutoState extends State<ViewProduto> {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: widget.produto.galeria.map((url) {
-                    int index = widget.produto.galeria.indexOf(url);
+                  children: fullGaleria.map((url) {
+                    int index = fullGaleria.indexOf(url);
                     return Container(
                       width: 8.0,
                       height: 8.0,
