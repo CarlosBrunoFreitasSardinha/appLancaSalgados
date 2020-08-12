@@ -58,7 +58,7 @@ class _ViewPedidosState extends State<ViewPedidos>
         .uidUser)
         .collection("pedidos")
         .where("atendido", isEqualTo: false)
-        .orderBy("dataPedido", descending: true)
+        .orderBy("dataPedido", descending: false)
         .snapshots();
 
     stream.listen((dados) {
@@ -173,9 +173,11 @@ class _ViewPedidosState extends State<ViewPedidos>
                                             break;
                                           case "Entregue":
                                             _alterarDadoPedido(
-                                                json.documentID,
-                                                {"atendido": true});
-                                            break;
+                                                json.documentID, {
+                                                  "status": "Entregue",
+                                                  "atendido": true
+                                                });
+                                                break;
                                         }
                                       },
                                       itemBuilder: (context) {

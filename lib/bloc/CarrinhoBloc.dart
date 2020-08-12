@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/CarrinhoModel.dart';
 import 'package:applancasalgados/models/ProdutoCarrinhoModel.dart';
+import 'package:applancasalgados/models/appModel.dart';
+import 'package:applancasalgados/services/BdService.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -35,6 +38,7 @@ class CarrinhoBloc extends BlocBase {
     cart.addProdutos(item);
     cart.calcular();
     _carrinho.add(cart);
+    alterarCarrinho();
     return;
   }
 
@@ -43,6 +47,7 @@ class CarrinhoBloc extends BlocBase {
     cart.remProdutos(item);
     cart.calcular();
     _carrinho.add(cart);
+    alterarCarrinho();
     return;
   }
 
@@ -57,6 +62,13 @@ class CarrinhoBloc extends BlocBase {
   void clearCart() {
     cart.limpar();
   }
+
+  alterarCarrinho() => BdService.criarItemComIdColecaoGenerica(
+      "carrinho",
+      AppModel.to.bloc<UserBloc>().usuario.uidUser,
+      "carrinho",
+      "ativo",
+      cart.toJson());
 
   @override
   void dispose() {

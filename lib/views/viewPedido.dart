@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:applancasalgados/RouteGenerator.dart';
+import 'package:applancasalgados/bloc/CarrinhoBloc.dart';
 import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/FormaPagamentoModel.dart';
 import 'package:applancasalgados/models/PedidoModel.dart';
@@ -23,11 +24,11 @@ class ViewPedido extends StatefulWidget {
 
 class _ViewPedidoState extends State<ViewPedido>
     with SingleTickerProviderStateMixin {
-  TextEditingController _controllerEndereco = TextEditingController(
-      text: AppModel.to.bloc<UserBloc>().usuario.endereco);
-  TextEditingController _controllerTroco = TextEditingController();
+  final blocUsuario = AppModel.to.bloc<UserBloc>();
+  final blocCarrinho = AppModel.to.bloc<CarrinhoBloc>();
 
-  String coletionPai, documentPai, subColection, subDocument;
+  TextEditingController _controllerEndereco = TextEditingController();
+  TextEditingController _controllerTroco = TextEditingController();
 
   var selectedItem;
 
@@ -35,28 +36,30 @@ class _ViewPedidoState extends State<ViewPedido>
   List<DropdownMenuItem> currencyItems = [];
 
   _initilizer() {
-    coletionPai = "pedidos";
-    documentPai = AppModel.to.bloc<UserBloc>().usuario.uidUser;
-    subColection = "pedidos";
     _controllerEndereco.text = widget.pedido.enderecoEntrega;
     _controllerTroco.text = widget.pedido.trocoPara.toString();
     if (widget.pedido.formaPagamento != "")
       selectedItem = widget.pedido.formaPagamento;
   }
 
-  Future _salvarPedido() {
+  _salvarPedido() async {
       widget.pedido.carrinho.fecharPedido();
+      blocCarrinho.cart.fecharPedido();
 
       widget.pedido.trocoPara = _controllerTroco.text == ""
           ? 0
           : double.parse(_controllerTroco.text.replaceAll(',', '.'));
 
       BdService.criarItemAutoIdColecaoGenerica(
-          "pedidos", documentPai, "pedidos", widget.pedido.toJson());
+          "pedidos", blocUsuario.usuario.uidUser, "pedidos",
+          widget.pedido.toJson());
 
       widget.pedido.carrinho.limpar();
+      blocCarrinho.cart.limpar();
 
-      BdService.criarItemComIdColecaoGenerica("carrinho", documentPai,
+
+      BdService.criarItemComIdColecaoGenerica(
+          "carrinho", blocUsuario.usuario.uidUser,
           "carrinho", "ativo", widget.pedido.carrinho.toJson());
 
       Navigator.pop(context);
@@ -116,6 +119,7 @@ class _ViewPedidoState extends State<ViewPedido>
         currencyItems;
       });
     }
+    return options;
   }
 
   @override

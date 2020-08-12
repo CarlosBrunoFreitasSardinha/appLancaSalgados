@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/CarrinhoBloc.dart';
 import 'package:applancasalgados/bloc/UserBloc.dart';
@@ -7,10 +5,8 @@ import 'package:applancasalgados/models/CarrinhoModel.dart';
 import 'package:applancasalgados/models/PedidoModel.dart';
 import 'package:applancasalgados/models/ProdutoCarrinhoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/services/BdService.dart';
 import 'package:applancasalgados/services/UtilService.dart';
 import 'package:applancasalgados/stateLess/CustomListItemTwo.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ViewCarrinho extends StatefulWidget {
@@ -20,12 +16,11 @@ class ViewCarrinho extends StatefulWidget {
 
 class _ViewCarrinhoState extends State<ViewCarrinho>
     with SingleTickerProviderStateMixin {
-  Firestore bd = Firestore.instance;
   final blocUsuario = AppModel.to.bloc<UserBloc>();
-
   final cartShip = AppModel.to.bloc<CarrinhoBloc>();
-  CarrinhoModel carrinho = CarrinhoModel();
+
   ProdutoCarrinhoModel _ultimaTarefaRemovida = ProdutoCarrinhoModel();
+
   String coletionPai = "carrinho",
       documentPai = AppModel.to.bloc<UserBloc>().usuario.uidUser,
       subDocument = "ativo",
@@ -46,18 +41,16 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
         break;
       case "Editar":
         Navigator.pushNamed(context, RouteGenerator.PRODUTO,
-            arguments: carrinho.produtos[i]);
+            arguments: cartShip.cart.produtos[i]);
         break;
     }
   }
 
   _deleteItem(int index) {
-    _ultimaTarefaRemovida = carrinho.produtos[index];
+    _ultimaTarefaRemovida = cartShip.cart.produtos[index];
     setState(() {
-      carrinho.produtos.removeAt(index);
-      carrinho.calcular();
+      cartShip.substraction.add(_ultimaTarefaRemovida);
     });
-    _alterarCarrinho();
 
     //snackbar
     final snackbar = SnackBar(
@@ -67,19 +60,13 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
           label: "Desfazer",
           onPressed: () {
             setState(() {
-              carrinho.produtos.insert(index, _ultimaTarefaRemovida);
-              carrinho.calcular();
+              cartShip.addition.add(_ultimaTarefaRemovida);
             });
-            _alterarCarrinho();
           }),
     );
     Scaffold.of(context).showSnackBar(snackbar);
   }
 
-  Future _alterarCarrinho() =>
-      BdService.alterarItemColecaoGenerica(
-          coletionPai, documentPai, subColection, subDocument,
-          carrinho.toJson());
 
   Widget carrinhoVazio() {
     return Center(
@@ -94,16 +81,12 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
     );
   }
 
-  Future<void> _adicionarPedido() {
-    if (AppModel.to
-        .bloc<UserBloc>()
-        .isLogged) {
-      if (carrinho.produtos.length != 0) {
+  _adicionarPedido() async {
+    if (blocUsuario.isLogged) {
+      if (cartShip.cart.produtos.length != 0) {
         PedidoModel pedido = PedidoModel();
-        pedido.usuario = AppModel.to
-            .bloc<UserBloc>()
-            .usuario;
-        pedido.carrinho = carrinho;
+        pedido.usuario = blocUsuario.usuario;
+        pedido.carrinho = cartShip.cart;
         pedido.enderecoEntrega = pedido.usuario.endereco;
         Navigator.pushNamed(context, RouteGenerator.PEDIDO, arguments: pedido);
       }
@@ -145,7 +128,6 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
   @override
   void dispose() {
     super.dispose();
-    _alterarCarrinho();
   }
 
   Widget _criarItemLista(context, index) {
@@ -154,24 +136,24 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
       child: CustomListItemTwo(
         thumbnail: GestureDetector(
           child: Hero(
-            tag: carrinho.produtos[index].idProduto,
+            tag: cartShip.cart.produtos[index].idProduto,
             child: ClipRRect(
                 borderRadius: BorderRadius.circular(15),
                 child: Image.network(
-                  carrinho.produtos[index].urlImg,
+                  cartShip.cart.produtos[index].urlImg,
                   fit: BoxFit.cover,
                 )),
           ),
           onTap: () {
             Navigator.pushNamed(context, RouteGenerator.PRODUTO,
-                arguments: carrinho.produtos[index]);
+                arguments: cartShip.cart.produtos[index]);
           },
         ),
-        title: carrinho.produtos[index].titulo,
-        subtitle: carrinho.produtos[index].descricao,
-        preco: UtilService.moeda(carrinho.produtos[index].preco),
-        quantidade: carrinho.produtos[index].quantidade.toString(),
-        subTotal: UtilService.moeda(carrinho.produtos[index].subtotal),
+        title: cartShip.cart.produtos[index].titulo,
+        subtitle: cartShip.cart.produtos[index].descricao,
+        preco: UtilService.moeda(cartShip.cart.produtos[index].preco),
+        quantidade: cartShip.cart.produtos[index].quantidade.toString(),
+        subTotal: UtilService.moeda(cartShip.cart.produtos[index].subtotal),
         color: Colors.white,
         radius: 5,
         icone: PopupMenuButton<String>(
@@ -191,28 +173,25 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
 
   @override
   Widget build(BuildContext context) {
-    var resultante = AppModel.to
-        .bloc<UserBloc>()
-        .isLogged
+    var resultante = blocUsuario.isLogged
         ? StreamBuilder(
         stream: cartShip.cartStream,
             builder:
                 (BuildContext context, AsyncSnapshot<CarrinhoModel> snapshot) {
               List<Widget> children;
               if (snapshot.hasData) {
-                carrinho = snapshot.data;
 
                 children = <Widget>[
-                  carrinho.produtos.length > 0
+                  snapshot.data.produtos.length > 0
                       ? Expanded(
                     child: ListView.builder(
-                        itemCount: carrinho.produtos.length,
+                        itemCount: snapshot.data.produtos.length,
                         itemBuilder: (context, index) {
                           return _criarItemLista(context, index);
                         }),
                   )
                       : carrinhoVazio(),
-                  carrinho.produtos.length > 0
+                  snapshot.data.produtos.length > 0
                       ? Container(
                     decoration: BoxDecoration(
                         borderRadius:
@@ -256,7 +235,7 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
                         Padding(
                           padding: EdgeInsets.all(15),
                           child: Text(
-                            "Total: " + UtilService.moeda(carrinho.total),
+                            "Total: " + UtilService.moeda(snapshot.data.total),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20.0,
