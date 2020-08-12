@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:applancasalgados/models/ProdutoModel.dart';
-import 'package:applancasalgados/services/UtilService.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-import '../RouteGenerator.dart';
 
 class Destaques extends StatefulWidget {
   @override
@@ -14,11 +12,11 @@ class Destaques extends StatefulWidget {
 
 class _DestaquesState extends State<Destaques>
     with SingleTickerProviderStateMixin {
-  final PageController ctrl = PageController(viewportFraction: 0.9, initialPage: 0);
   final Firestore bd = Firestore.instance;
   final _controller = StreamController<QuerySnapshot>.broadcast();
-  int currentPage = 0;
-  int totalPage = 0;
+  List<Widget> imageSliders;
+  List<String> fullGaleria = [];
+  int _current = 0;
 
   Stream<QuerySnapshot> _listarListenerProdutos({String tag = 'promo'}) {
     final stream = bd
@@ -35,32 +33,8 @@ class _DestaquesState extends State<Destaques>
   void initState() {
     // TODO: implement initState
     super.initState();
-
     _listarListenerProdutos();
 
-    ctrl.addListener(() {
-      int next = ctrl.page.round();
-
-      if (currentPage != next) {
-        setState(() {
-          currentPage = next;
-        });
-      }
-    });
-
-//    Timer.periodic(Duration(seconds: 4), (Timer timer) {
-//      if (currentPage < totalPage) {
-//        currentPage++;
-//      } else {
-//        currentPage = 0;
-//      }
-//
-//      ctrl.animateToPage(
-//        currentPage,
-//        duration: Duration(seconds: 1),
-//        curve: Curves.easeIn,
-//      );
-//    });
   }
 
   @override
@@ -87,81 +61,71 @@ class _DestaquesState extends State<Destaques>
             if (snapshot.hasError) {
               return Expanded(child: Text("Erro ao carregar os dados!"));
             } else {
-              return PageView.builder(
-                  controller: ctrl,
-                  itemCount: querySnapshot.documents.length,
-                  // ignore: missing_return
-                  itemBuilder: (context, indice) {
-                  totalPage = querySnapshot.documents.length;
+              fullGaleria.clear();
+              List<DocumentSnapshot> produtos =
+                  querySnapshot.documents.toList();
+              for (DocumentSnapshot documentSnapshot in produtos) {
+                ProdutoModel produto =
+                    ProdutoModel.fromJson(documentSnapshot.data);
+                fullGaleria.add(produto.urlImg);
+              }
 
-                    List<DocumentSnapshot> produtos = querySnapshot.documents.toList();
-                    bool active = indice == currentPage;
-
-                    ProdutoModel produto =
-                        ProdutoModel.fromJson(produtos[indice].data);
-
-                    final double blur = active ? 30 : 0;
-                    final double offset = active ? 20 : 0;
-                    final double top = active ? 50 : 150;
-
-                    return
-                    GestureDetector(
-                      child: AnimatedContainer(
-                          duration: Duration(milliseconds: 500),
-                          curve: Curves.easeOutQuint,
-                          margin:
-                          EdgeInsets.only(top: top, bottom: 25, right: 30),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              image: DecorationImage(
+              imageSliders = fullGaleria
+                  .map((item) => Container(
+                        child: Container(
+                          margin: EdgeInsets.all(5.0),
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: Image.network(
+                                item,
                                 fit: BoxFit.cover,
-                                image: NetworkImage(produto.urlImg),
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.black87,
-                                    blurRadius: blur,
-                                    offset: Offset(offset, offset)
-                                )
-                              ]),
-                          child: Container(
-                            child: Column(
-                              children: <Widget>[
-                                Flexible(child:
-                                Align(
-                                    alignment: Alignment.topCenter,
-                                    child:
-                                    Padding(
-                                      padding: EdgeInsets.all(8),
-                                      child: Text(produto.titulo,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontSize: 38,
-                                              color: Colors.white,
-                                              backgroundColor: Colors.black38)),
-                                    )
-                                )
-                                ),
-
-                                Flexible(child: Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Text(
-                                        UtilService.moeda(produto.preco),
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 40,
-                                            color: Color(0xffd19c3c),
-                                            backgroundColor: Colors.black54))))
-                              ],
-                            ),
-                          )),
-                      onTap: () {
-                        Navigator.pushNamed(
-                            context, RouteGenerator.PRODUTO,
-                            arguments: produto);
-                      },
-                    );
-                  });
+                                loadingBuilder: (context, child, progress) {
+                                  return progress == null
+                                      ? child
+                                      : Center(
+                                          child: LinearProgressIndicator(),
+                                        );
+                                },
+                              )),
+                        ),
+                      ))
+                  .toList();
+              return Column(
+                children: <Widget>[
+                  //imagem do produto
+                  Expanded(
+                      child: CarouselSlider(
+                    items: imageSliders,
+                    options: CarouselOptions(
+                        autoPlay: true,
+                        height: MediaQuery.of(context).size.height * 0.9,
+                        enlargeCenterPage: true,
+                        onPageChanged: (index, reason) {
+                          setState(() {
+                            _current = index;
+                          });
+                        }),
+                  )),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: fullGaleria.map((url) {
+                      int index = fullGaleria.indexOf(url);
+                      return Container(
+                        width: 8.0,
+                        height: 8.0,
+                        margin: EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 2.0),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _current == index
+                              ? Color.fromRGBO(0, 0, 0, 0.9)
+                              : Color.fromRGBO(0, 0, 0, 0.4),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              );
             }
             break;
         }
@@ -176,7 +140,7 @@ class _DestaquesState extends State<Destaques>
                 image: AssetImage("imagens/background.jpg"),
                 fit: BoxFit.cover)
         ),
-        child: stream,
+        child: SafeArea(child: stream),
       ),
     );
   }

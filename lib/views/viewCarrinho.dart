@@ -219,8 +219,8 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
                                       color: Colors.white,
                                       onPressed: () {},
                                     ),
-                                    Text('Fechar Carrinho',
-                                        style: TextStyle(
+                                          Text('Fechar',
+                                              style: TextStyle(
                                             fontWeight: FontWeight.w500,
                                             fontSize: 19.0,
                                             color: Colors.white)),

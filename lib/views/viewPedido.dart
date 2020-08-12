@@ -338,8 +338,8 @@ class _ViewPedidoState extends State<ViewPedido>
                                         color: Colors.white,
                                         onPressed: () {},
                                       ),
-                                      Text('Finalizar Pedido',
-                                          style: TextStyle(
+                                        Text('Finalizar',
+                                            style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                               fontSize: 19.0,
                                               color: Colors.white)),
