@@ -29,7 +29,10 @@ class _ConfiguracoesState extends State<Configuracoes> {
       appBar: AppBar(title: Text("Configurações"),),
 
       body: Container(
-        decoration: BoxDecoration(color: Color(0xff5c3838)),
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('imagens/background.jpg'),
+                fit: BoxFit.cover)),
         padding: EdgeInsets.all(16),
         child: Center(
           child: SingleChildScrollView(
@@ -41,9 +44,9 @@ class _ConfiguracoesState extends State<Configuracoes> {
                     padding: EdgeInsets.only(bottom: 32),
                     child: Image.asset(
                       "imagens/logo.png",
-                      width: 200,
-                      height: 150,
-                    ),
+                  width: 250,
+                  height: 200,
+                ),
                   ),
 
                   Padding(

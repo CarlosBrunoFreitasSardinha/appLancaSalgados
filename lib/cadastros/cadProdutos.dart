@@ -215,13 +215,13 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
             _salvar();
           } else {
-            _mensagemErro = " Já existe uma Categoria com este titulo!";
+            _mensagemErro = " Selecione uma Categoria para o Produto!";
           }
         } else {
-          _mensagemErro = " Uma imagem deve ser selecionada!";
+          _mensagemErro = " Preço Inválido!";
         }
       } else {
-        _mensagemErro = " Já existe uma Categoria com este titulo!";
+        _mensagemErro = " Cadastre a imagem principal do Produto!";
       }
     } else {
       setState(() {

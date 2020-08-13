@@ -43,11 +43,11 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
       if (!isRepeat) {
         _salvar();
       } else {
-        _mensagemErro = " Já existe uma Categoria com este titulo!";
+        _mensagemErro = " Já existe uma Forma de Pagamento com este titulo!";
       }
     } else {
       setState(() {
-        _mensagemErro = " Preencha o Titulo da Categoria do Produto !";
+        _mensagemErro = " Preencha o Titulo da Forma de Pagamento!";
       });
     }
     selectedItem = null;
@@ -185,7 +185,10 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
         title: Text("Cadastro de Forma de Pagamento"),
       ),
       body: Container(
-          decoration: BoxDecoration(color: Color(0xff5c3838)),
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('imagens/background.jpg'),
+                  fit: BoxFit.cover)),
           padding: EdgeInsets.all(16),
           child: Center(
             child: SingleChildScrollView(
@@ -197,8 +200,8 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
                     padding: EdgeInsets.only(bottom: 32),
                     child: Image.asset(
                       "imagens/logo.png",
-                      width: 200,
-                      height: 150,
+                      width: 250,
+                      height: 200,
                     ),
                   ),
 

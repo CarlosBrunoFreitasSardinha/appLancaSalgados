@@ -51,8 +51,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
               usuario.foneContato1 = fone;
               usuario.endereco = endereco;
 
-
-//              _cadastrarUsuario(usuario);
+              _cadastrarUsuario(usuario);
             } else {
               setState(() {
                 _mensagemErro =
