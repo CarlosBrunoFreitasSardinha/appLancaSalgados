@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/models/ProdutoModel.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,6 +17,7 @@ class _DestaquesState extends State<Destaques>
   final _controller = StreamController<QuerySnapshot>.broadcast();
   List<Widget> imageSliders;
   List<String> fullGaleria = [];
+  List<ProdutoModel> listaProdutos = [];
   int _current = 0;
 
   Stream<QuerySnapshot> _listarListenerProdutos({String tag = 'promo'}) {
@@ -62,11 +64,13 @@ class _DestaquesState extends State<Destaques>
               return Expanded(child: Text("Erro ao carregar os dados!"));
             } else {
               fullGaleria.clear();
+              listaProdutos.clear();
               List<DocumentSnapshot> produtos =
                   querySnapshot.documents.toList();
               for (DocumentSnapshot documentSnapshot in produtos) {
                 ProdutoModel produto =
                     ProdutoModel.fromJson(documentSnapshot.data);
+                listaProdutos.add(produto);
                 fullGaleria.add(produto.urlImg);
               }
 
@@ -74,19 +78,26 @@ class _DestaquesState extends State<Destaques>
                   .map((item) => Container(
                         child: Container(
                           margin: EdgeInsets.all(5.0),
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(15),
-                              child: Image.network(
-                                item,
-                                fit: BoxFit.cover,
-                                loadingBuilder: (context, child, progress) {
-                                  return progress == null
-                                      ? child
-                                      : Center(
-                                          child: LinearProgressIndicator(),
-                                        );
-                                },
-                              )),
+                          child: GestureDetector(
+                            onTap: () =>
+                                Navigator.pushNamed(
+                                    context, RouteGenerator.PRODUTO,
+                                    arguments: listaProdutos[fullGaleria
+                                        .indexOf(item)]),
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: Image.network(
+                                  item,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (context, child, progress) {
+                                    return progress == null
+                                        ? child
+                                        : Center(
+                                      child: LinearProgressIndicator(),
+                                    );
+                                  },
+                                )),
+                          ),
                         ),
                       ))
                   .toList();
@@ -95,17 +106,22 @@ class _DestaquesState extends State<Destaques>
                   //imagem do produto
                   Expanded(
                       child: CarouselSlider(
-                    items: imageSliders,
-                    options: CarouselOptions(
-                        autoPlay: true,
-                        height: MediaQuery.of(context).size.height * 0.9,
-                        enlargeCenterPage: true,
-                        onPageChanged: (index, reason) {
-                          setState(() {
-                            _current = index;
-                          });
-                        }),
-                  )),
+                        items: imageSliders,
+                        options: CarouselOptions(
+                            autoPlay: true,
+                            autoPlayAnimationDuration: Duration(
+                                milliseconds: 1500),
+                            height: MediaQuery
+                                .of(context)
+                                .size
+                                .height * 0.9,
+                            enlargeCenterPage: true,
+                            onPageChanged: (index, reason) {
+                              setState(() {
+                                _current = index;
+                              });
+                            }),
+                      )),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: fullGaleria.map((url) {
