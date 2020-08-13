@@ -1,14 +1,11 @@
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/CarrinhoBloc.dart';
 import 'package:applancasalgados/bloc/UserBloc.dart';
-import 'package:applancasalgados/models/CarrinhoModel.dart';
 import 'package:applancasalgados/models/ProdutoCarrinhoModel.dart';
 import 'package:applancasalgados/models/ProdutoModel.dart';
 import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/services/BdService.dart';
 import 'package:applancasalgados/services/UtilService.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -25,7 +22,7 @@ class ViewProduto extends StatefulWidget {
 class _ViewProdutoState extends State<ViewProduto> {
   final streamCarrinho = AppModel.to.bloc<CarrinhoBloc>();
   final streamUsuario = AppModel.to.bloc<UserBloc>();
-  CarrinhoModel carrinho = CarrinhoModel();
+
   ProdutoCarrinhoModel produtoCarrinho = ProdutoCarrinhoModel();
 
   List<Widget> imageSliders;
@@ -42,6 +39,12 @@ class _ViewProdutoState extends State<ViewProduto> {
         : "";
     subColection = "carrinho";
     subDocument = "ativo";
+
+    streamCarrinho.cart.produtos.forEach((element) {
+      if (element.idProduto == produtoCarrinho.idProduto) {
+        produtoCarrinho.quantidade = element.quantidade;
+      }
+    });
 
     if (UtilService.stringNotIsNull(widget.produto.urlImg)) {
       fullGaleria.add(widget.produto?.urlImg);
@@ -76,20 +79,11 @@ class _ViewProdutoState extends State<ViewProduto> {
         .toList();
   }
 
-  _listenerCarrinho() async {
-    DocumentSnapshot snapshot = await BdService.recuperarItemsColecaoGenerica(
-        coletionPai, documentPai, subColection, subDocument);
 
-    if (snapshot.data != null) {
-      Map<String, dynamic> dados = snapshot.data;
-      carrinho = CarrinhoModel.fromJson(dados);
-    }
-  }
 
   Future _adicionarAoCarrinho() {
     if (AppModel.to.bloc<UserBloc>().isLogged) {
       streamCarrinho.addition.add(produtoCarrinho);
-      carrinho.addProdutos(produtoCarrinho);
       Navigator.pop(context);
     } else {
       showDialog(
@@ -103,8 +97,11 @@ class _ViewProdutoState extends State<ViewProduto> {
                     onPressed: () => Navigator.pop(context),
                     child: Text("Cancelar")),
                 FlatButton(
-                    onPressed: () =>
-                        Navigator.pushNamed(context, RouteGenerator.LOGIN),
+                    onPressed: () {
+                      timeDilation = 1;
+                      Navigator.pushNamed(context, RouteGenerator.LOGIN);
+                      timeDilation = 2;
+                    },
                     child: Text("Efetuar Login")),
               ],
             );
@@ -117,7 +114,6 @@ class _ViewProdutoState extends State<ViewProduto> {
     // TODO: implement initState
     super.initState();
     _initilizer();
-    _listenerCarrinho();
     timeDilation = 2;
   }
 
@@ -159,7 +155,7 @@ class _ViewProdutoState extends State<ViewProduto> {
         child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                //imagem do produto
+                //imagens do produto
                 CarouselSlider(
                   items: imageSliders,
                   options: CarouselOptions(
