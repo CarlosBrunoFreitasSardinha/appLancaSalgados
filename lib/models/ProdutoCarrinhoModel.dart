@@ -35,7 +35,9 @@ class ProdutoCarrinhoModel extends ProdutoModel {
     descricao = json['descricao'];
     idCategoria = json['idCategoria'];
     tempoPreparo = json['tempoPreparo'];
-    galeria = UtilService.coverterMapInListString(json['galeria']);
+    galeria = json['galeria'] != null
+        ? UtilService.coverterMapInListString(json['galeria'])
+        : [];
 
     quantidade = json['quantidade'] != null ? json['quantidade'] : 1;
     subtotal = json['subtotal'] != null ? json['subtotal']+0.0 : preco;
