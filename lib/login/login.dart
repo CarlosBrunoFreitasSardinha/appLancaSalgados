@@ -188,6 +188,17 @@ class _LoginState extends State<Login> {
                       },
                     ),
                   ),
+                  Center(
+                    child: GestureDetector(
+                      child: Text(
+                        "Esqueceu sua senha?",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onTap: () {
+                        Navigator.pushNamed(context, RouteGenerator.RESET);
+                      },
+                    ),
+                  ),
 
                   Padding(
                     padding: EdgeInsets.only(top: 16),

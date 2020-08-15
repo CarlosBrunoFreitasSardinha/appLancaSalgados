@@ -23,7 +23,7 @@ class RouteGenerator{
 
   static const String HOME = "/home";
   static const String LOGIN = "/login";
-  static const String RECP = "/recuperarSenha";
+  static const String RESET = "/recuperarSenha";
 
   static const String DESTAQUES = "/viewDestaques";
   static const String CARDAPIO = "/viewCardapio";
@@ -40,7 +40,6 @@ class RouteGenerator{
 
 
   static const String CONFIG = "/configuracoes";
-//  static const String MSGS = "/mensagens";
   static const String TESTE = "/testes";
 
 
@@ -55,7 +54,8 @@ class RouteGenerator{
       case HOME:
         return MaterialPageRoute(builder: (_) => ViewHome(args));
       case LOGIN: return MaterialPageRoute(builder: (_) => Login());
-      case RECP: return MaterialPageRoute(builder: (_) => ResetPasswordView());
+      case RESET:
+        return MaterialPageRoute(builder: (_) => ResetPasswordView());
 
       case DESTAQUES: return MaterialPageRoute(builder: (_) => Destaques());
       case CARDAPIO: return MaterialPageRoute(builder: (_) => Cardapio());

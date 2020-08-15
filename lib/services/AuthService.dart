@@ -14,7 +14,6 @@ import 'CarrinhoService.dart';
 
 class AuthService extends BlocBase {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
-  static final Firestore _firebase = Firestore.instance;
 
   static Future<Stream<UsuarioModel>> streamUsuario() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
@@ -91,5 +90,9 @@ class AuthService extends BlocBase {
     AppModel.to.bloc<UserBloc>().userAddition.add(UsuarioModel());
     AppModel.to.bloc<CarrinhoBloc>().cartAddition.add(CarrinhoModel());
     return;
+  }
+
+  static Future sendPasswordResetEmail(String email) async {
+    return _auth.sendPasswordResetEmail(email: email);
   }
 }
