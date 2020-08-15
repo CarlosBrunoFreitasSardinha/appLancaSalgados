@@ -8,6 +8,7 @@ import 'package:rxdart/rxdart.dart';
 class UserBloc extends BlocBase {
   UsuarioModel usuario = UsuarioModel();
   bool isLogged = false;
+  String playId = "";
 
   /// Sinks
   Sink<UsuarioModel> get userAddition => userLoggedController.sink;

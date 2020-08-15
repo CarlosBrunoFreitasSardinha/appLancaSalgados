@@ -35,27 +35,24 @@ dependencies:
   shared_preferences: ^0.5.8
   rxdart: ^0.24.1
   carousel_slider: ^2.2.1
+  onesignal_flutter: ^2.6.0
+  path_provider: ^1.6.5
+  path_provider_macos: ^0.0.1
 
 flutter_icons:
-  android: "launcher_icon"
+  android: true
   ios: true
-  image_path: "dev_assets/logo.png"
+  image_path: "dev_assets/icon-centralizado-semBorda.png"
   adaptive_icon_background: "#5c3838"
-  adaptive_icon_foreground: "dev_assets/logo.png"
+  adaptive_icon_foreground: "dev_assets/icon-centralizado-semBorda.png"
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
 
-# The following section is specific to Flutter.
 flutter:
 
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
 
   assets:

@@ -18,6 +18,7 @@ class PedidoModel {
       " _ " +
       UtilService.formatarData(DateTime.now());
   String _dataPedido = Timestamp.now().toString();
+  String _idCelularSolicitante = "";
 
   PedidoModel();
 
@@ -36,6 +37,7 @@ class PedidoModel {
     json["enderecoEntrega"] = enderecoEntrega;
     json["dataPedido"] = dataPedido;
     json["trocoPara"] = trocoPara;
+    json["idCelularSolicitante"] = idCelularSolicitante;
 
     return json;
   }
@@ -50,6 +52,7 @@ class PedidoModel {
     enderecoEntrega = json["enderecoEntrega"];
     dataPedido = json["dataPedido"];
     trocoPara = json["trocoPara"];
+    idCelularSolicitante = json["idCelularSolicitante"];
   }
 
   UsuarioModel get usuario => _usuario;
@@ -106,8 +109,14 @@ class PedidoModel {
     _trocoPara = value;
   }
 
+  String get idCelularSolicitante => _idCelularSolicitante;
+
+  set idCelularSolicitante(String value) {
+    _idCelularSolicitante = value;
+  }
+
   @override
   String toString() {
-    return 'PedidoModel{_carrinho: $_carrinho, _usuario: $_usuario, _atendido: $_atendido, _status: $_status, _formaPagamento: $_formaPagamento, _enderecoEntrega: $_enderecoEntrega, _trocoPara: $_trocoPara, _tituloPedido: $_tituloPedido, _dataPedido: $_dataPedido}';
+    return 'PedidoModel{_carrinho: $_carrinho, _usuario: $_usuario, _atendido: $_atendido, _status: $_status, _formaPagamento: $_formaPagamento, _enderecoEntrega: $_enderecoEntrega, _trocoPara: $_trocoPara, _tituloPedido: $_tituloPedido, _dataPedido: $_dataPedido, _idCelularSolicitante: $_idCelularSolicitante}';
   }
 }

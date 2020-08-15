@@ -45,8 +45,9 @@ class _ViewPedidoState extends State<ViewPedido>
   _salvarPedido() async {
       widget.pedido.carrinho.fecharPedido();
       blocCarrinho.cart.fecharPedido();
+    widget.pedido.idCelularSolicitante = blocUsuario.playId;
 
-      widget.pedido.trocoPara = _controllerTroco.text == ""
+    widget.pedido.trocoPara = _controllerTroco.text == ""
           ? 0
           : double.parse(_controllerTroco.text.replaceAll(',', '.'));
 

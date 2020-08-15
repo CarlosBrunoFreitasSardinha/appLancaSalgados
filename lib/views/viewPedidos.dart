@@ -9,6 +9,7 @@ import 'package:applancasalgados/services/UtilService.dart';
 import 'package:applancasalgados/stateLess/CustomListItemOne.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import '../RouteGenerator.dart';
 
@@ -64,6 +65,16 @@ class _ViewPedidosState extends State<ViewPedidos>
     stream.listen((dados) {
       _controller.add(dados);
     });
+  }
+
+  enviarNotificacao(String msg, String destinatario) async {
+    await OneSignal.shared.postNotification(
+      OSCreateNotification(
+        playerIds: [destinatario],
+        content: msg,
+        heading: "Nova mensagem",
+      ),
+    );
   }
 
   @override
@@ -163,13 +174,20 @@ class _ViewPedidosState extends State<ViewPedidos>
                                             _alterarDadoPedido(
                                                 json.documentID,
                                                 {"status": "Recebido"});
-                                            break;
+                                                enviarNotificacao(
+                                                    "Seu Pedido Foi Recebido",
+                                                    pedido
+                                                        .idCelularSolicitante);
+                                                break;
                                           case "Saiu para Entrega":
                                             _alterarDadoPedido(
                                                 json.documentID,
                                                 {
                                                   "status": "Saiu para Entrega"
                                                 });
+                                            enviarNotificacao(
+                                                "Seu Pedido Saiu para Entrega",
+                                                pedido.idCelularSolicitante);
                                             break;
                                           case "Entregue":
                                             _alterarDadoPedido(
