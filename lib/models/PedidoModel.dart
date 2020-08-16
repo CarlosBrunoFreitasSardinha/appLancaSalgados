@@ -14,9 +14,10 @@ class PedidoModel {
   String _formaPagamento = "";
   String _enderecoEntrega;
   double _trocoPara = 0;
-  String _tituloPedido = AppModel.to.bloc<UserBloc>().usuario.nome +
-      " _ " +
-      UtilService.formatarData(DateTime.now());
+  String _tituloPedido =
+      AppModel.to.bloc<UserBloc>().usuario.nome.substring(0, 9) +
+          "..._" +
+          UtilService.formatarData(DateTime.now());
   String _dataPedido = Timestamp.now().toString();
   String _idCelularSolicitante = "";
 
@@ -55,62 +56,82 @@ class PedidoModel {
     idCelularSolicitante = json["idCelularSolicitante"];
   }
 
+  // ignore: unnecessary_getters_setters
   UsuarioModel get usuario => _usuario;
 
+  // ignore: unnecessary_getters_setters
   set usuario(UsuarioModel value) {
     _usuario = value;
   }
 
+  // ignore: unnecessary_getters_setters
   CarrinhoModel get carrinho => _carrinho;
 
+  // ignore: unnecessary_getters_setters
   set carrinho(CarrinhoModel value) {
     _carrinho = value;
   }
 
+  // ignore: unnecessary_getters_setters
   bool get atendido => _atendido;
 
+  // ignore: unnecessary_getters_setters
   set atendido(bool value) {
     _atendido = value;
   }
 
+  // ignore: unnecessary_getters_setters
   String get status => _status;
 
+  // ignore: unnecessary_getters_setters
   set status(String value) {
     _status = value;
   }
 
+  // ignore: unnecessary_getters_setters
   String get formaPagamento => _formaPagamento;
 
+  // ignore: unnecessary_getters_setters
   set formaPagamento(String value) {
     _formaPagamento = value;
   }
 
+  // ignore: unnecessary_getters_setters
   String get tituloPedido => _tituloPedido;
 
+  // ignore: unnecessary_getters_setters
   set tituloPedido(String value) {
     _tituloPedido = value;
   }
 
+  // ignore: unnecessary_getters_setters
   String get enderecoEntrega => _enderecoEntrega;
 
+  // ignore: unnecessary_getters_setters
   set enderecoEntrega(String value) {
     _enderecoEntrega = value;
   }
 
+  // ignore: unnecessary_getters_setters
   String get dataPedido => _dataPedido;
 
+  // ignore: unnecessary_getters_setters
   set dataPedido(String value) {
     _dataPedido = value;
   }
 
+  // ignore: unnecessary_getters_setters
   double get trocoPara => _trocoPara;
 
+  // ignore: unnecessary_getters_setters
   set trocoPara(double value) {
     _trocoPara = value;
   }
 
+  // ignore: unnecessary_getters_setters
   String get idCelularSolicitante => _idCelularSolicitante;
 
+  // ignore: unnecessary_getters_setters
   set idCelularSolicitante(String value) {
     _idCelularSolicitante = value;
   }

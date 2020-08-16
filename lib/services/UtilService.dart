@@ -11,16 +11,17 @@ class UtilService {
     }
 
     return menorQueDez(date.day) +
-        ' - ' + menorQueDez(date.month) +
-        ' - ' + menorQueDez(date.year) +
-        ' ' + menorQueDez(date.hour) +
+        '/' +
+        menorQueDez(date.month) +
+        '/' +
+        date.year.toString() +
+        '_' +
+        menorQueDez(date.hour) +
         ':' + menorQueDez(date.minute);
   }
 
   static String formatarNumberFone(String n) {
-    if (n.length < 11)
-      return n;
-    else if (n.length == 11) {
+    if (n.length == 11) {
       return "(" +
           n.substring(0, 2) +
           ") " +
@@ -28,6 +29,7 @@ class UtilService {
           "-" +
           n.substring(7, 11);
     }
+    return n;
   }
 
   static bool stringIsNull(String str) {

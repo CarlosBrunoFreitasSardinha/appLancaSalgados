@@ -24,7 +24,7 @@ class _ViewHomeState extends State<ViewHome>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
   List<String> _itensMenu = ["Login"];
-  final UsuarioLogado = AppModel.to.bloc<UserBloc>();
+  final blocUser = AppModel.to.bloc<UserBloc>();
 
   _escolhaMenuItem(String itemEscolhido) {
     switch (itemEscolhido) {
@@ -113,7 +113,7 @@ class _ViewHomeState extends State<ViewHome>
                 ),
                 actions: <Widget>[
                   StreamBuilder<UsuarioModel>(
-                    stream: UsuarioLogado.userLogged,
+                    stream: blocUser.userLogged,
                     builder: (BuildContext context, snapshot) {
                       if (snapshot.hasData) {
                         if (UtilService.stringNotIsNull(

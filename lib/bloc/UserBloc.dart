@@ -15,8 +15,8 @@ class UserBloc extends BlocBase {
   final userLoggedController = StreamController<UsuarioModel>();
 
   /// Streams
-  Stream<UsuarioModel> get userLogged => _User$.stream;
-  final _User$ = BehaviorSubject<UsuarioModel>();
+  Stream<UsuarioModel> get userLogged => _user$.stream;
+  final _user$ = BehaviorSubject<UsuarioModel>();
 
   UserBloc() {
     userLoggedController.stream.listen(recUser);
@@ -25,7 +25,7 @@ class UserBloc extends BlocBase {
   /// Logic for product removed from shopping cart.
   void recUser(UsuarioModel thisUser) {
     usuario = thisUser;
-    _User$.add(usuario);
+    _user$.add(usuario);
     CarrinhoService.futureCarrinho();
     return;
   }

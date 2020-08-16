@@ -26,7 +26,7 @@ class CarrinhoService {
   }
 
   static Future updateCart({CarrinhoModel cart}) async {
-    if (cart?.fechado) {
+    if (cart.fechado) {
       await Firestore.instance
           .collection('carrinho')
           .document(AppModel.to

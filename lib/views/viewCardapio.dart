@@ -21,12 +21,12 @@ class Cardapio extends StatefulWidget {
 class _CardapioState extends State<Cardapio>
     with SingleTickerProviderStateMixin {
   Firestore bd = Firestore.instance;
-  final UsuarioLogado = AppModel.to.bloc<UserBloc>();
+  final blocUser = AppModel.to.bloc<UserBloc>();
   List<String> _itensMenu = [];
   List<ProdutoModel> listaDeProdutos = [];
 
   Future<List<ProdutoModel>> _adicionarListenerProdutos() async {
-    QuerySnapshot querySnapshot = UsuarioLogado.usuario.isAdm
+    QuerySnapshot querySnapshot = blocUser.usuario.isAdm
         ? await bd
             .collection("produtos")
             .orderBy("idCategoria", descending: false)
@@ -102,7 +102,7 @@ class _CardapioState extends State<Cardapio>
                     color: produtoModel.isOcult ? Colors.black26 : Colors.white,
                     radius: 5,
                     icone: StreamBuilder<UsuarioModel>(
-                      stream: UsuarioLogado.userLogged,
+                      stream: blocUser.userLogged,
                       builder: (BuildContext context, snapshot) {
                         if (snapshot.hasData) {
                           if (UtilService.stringNotIsNull(

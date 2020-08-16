@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-AlertDialogEndereco(BuildContext context) {
+alertDialogEndereco(BuildContext context) {
   TextEditingController _controllerEndereco;
   return showDialog(
       context: context,
@@ -21,7 +21,7 @@ AlertDialogEndereco(BuildContext context) {
       });
 }
 
-AlertDialogFormaPagamento(BuildContext context) {
+alertDialogFormaPagamento(BuildContext context) {
   return showDialog<void>(
       context: context,
       builder: (BuildContext context) {

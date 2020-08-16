@@ -49,7 +49,10 @@ class CarrinhoModel {
     fechado = true;
   }
 
+  // ignore: unnecessary_getters_setters
   bool get fechado => _fechado;
+
+  // ignore: unnecessary_getters_setters
   set fechado(bool value) {
     _fechado = value;
   }

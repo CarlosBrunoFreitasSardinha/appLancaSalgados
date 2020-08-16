@@ -94,7 +94,6 @@ class _ViewPerfilState extends State<ViewPerfil> {
 
   _recuperaDadosUsuario() async {
     _verificarUsuarioLogado();
-    print("Url IMG perfil " + blocUsuarioLogado.usuario.urlPerfil);
 
     setState(() {
       _controllerNome.text = blocUsuarioLogado.usuario.nome;

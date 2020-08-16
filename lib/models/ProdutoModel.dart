@@ -105,20 +105,26 @@ class ProdutoModel {
     _idCategoria = value;
   }
 
+  // ignore: unnecessary_getters_setters
   bool get isOcult => _isOcult;
 
+  // ignore: unnecessary_getters_setters
   set isOcult(bool value) {
     _isOcult = value;
   }
 
+  // ignore: unnecessary_getters_setters
   bool get isPromo => _isPromo;
 
+  // ignore: unnecessary_getters_setters
   set isPromo(bool value) {
     _isPromo = value;
   }
 
+  // ignore: unnecessary_getters_setters
   List<String> get galeria => _galeria;
 
+  // ignore: unnecessary_getters_setters
   set galeria(List<String> value) {
     _galeria = value;
   }

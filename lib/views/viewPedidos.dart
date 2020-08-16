@@ -21,8 +21,7 @@ class ViewPedidos extends StatefulWidget {
 class _ViewPedidosState extends State<ViewPedidos>
     with SingleTickerProviderStateMixin {
   Firestore bd = Firestore.instance;
-  final UsuarioLogado = AppModel.to.bloc<UserBloc>();
-
+  final blocUser = AppModel.to.bloc<UserBloc>();
 
   final _controller = StreamController<QuerySnapshot>.broadcast();
 
@@ -148,7 +147,7 @@ class _ViewPedidosState extends State<ViewPedidos>
                                 color: Colors.white,
                                 radius: 5,
                                 icone: StreamBuilder<UsuarioModel>(
-                                  stream: UsuarioLogado.userLogged,
+                                  stream: blocUser.userLogged,
                                   builder:
                                       (BuildContext context, snapshot) {
                                     if (snapshot.hasData) {
