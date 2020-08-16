@@ -372,8 +372,9 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                                 return progress == null
                                     ? child
                                     : Center(
-                                  child: LinearProgressIndicator(),
-                                );
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            );
                               },
                               fit: BoxFit.cover,
                             ),

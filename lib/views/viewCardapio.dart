@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/CategoriaProdutoModel.dart';
 import 'package:applancasalgados/models/ProdutoModel.dart';
@@ -11,7 +12,6 @@ import 'package:applancasalgados/stateLess/CustomListItemOne.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../RouteGenerator.dart';
 
 class Cardapio extends StatefulWidget {
   @override
@@ -55,14 +55,6 @@ class _CardapioState extends State<Cardapio>
       options.add(CategoriaProdutoModel.fromJson(snap.data));
     }
     return options;
-  }
-
-  Future<QuerySnapshot> futureProdutos(String categoria) async {
-    QuerySnapshot querySnapshot = await bd
-        .collection("produtos")
-        .where("idCategoria", isEqualTo: categoria)
-        .getDocuments();
-    return querySnapshot;
   }
 
   List<Widget> listaItens(String categoria) {
@@ -195,27 +187,28 @@ class _CardapioState extends State<Cardapio>
                         return subLista.length == 0
                             ? SizedBox()
                             : Padding(
-                          padding: EdgeInsets.only(bottom: 5, top: 5),
-                          child: Card(
-                            child: ExpansionTile(
-                              backgroundColor: Colors.grey[100],
-                              title: Padding(
-                                padding: EdgeInsets.fromLTRB(8, 16, 16, 16),
-                                child: Text(
-                                  snapshot.data[indice].descricao,
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      color: Theme
-                                          .of(context)
-                                          .accentColor,
-                                      fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.left,
+                                padding: EdgeInsets.only(bottom: 5, top: 5),
+                                child: Card(
+                                  child: ExpansionTile(
+                                    backgroundColor: Colors.grey[100],
+                                    title: Padding(
+                                      padding:
+                                          EdgeInsets.fromLTRB(8, 16, 16, 16),
+                                      child: Text(
+                                        snapshot.data[indice].descricao,
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            color:
+                                                Theme.of(context).accentColor,
+                                            fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    children: listaItens(
+                                        snapshot.data[indice].descricao),
+                                  ),
                                 ),
-                              ),
-                              children: listaItens(
-                                  snapshot.data[indice].descricao),),
-                          ),
-                        );
+                              );
                       }),
                 );
               }

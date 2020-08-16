@@ -67,11 +67,8 @@ class _ViewPerfilState extends State<ViewPerfil> {
     Map<String, dynamic> json = Map<String, dynamic>();
 
     json["nome"] = _controllerNome.text;
-    json["foneContato1"] = _controllerNumber.text
-        .replaceAll("(", "")
-        .replaceAll(")", "")
-        .replaceAll("-", "")
-        .replaceAll(" ", "");
+    json["foneContato1"] =
+        UtilService.formatSimpleNumber(_controllerNumber.text);
     json["endereco"] = _controllerEndereco.text;
     json["urlPerfil"] = blocUsuarioLogado.usuario.urlPerfil;
 

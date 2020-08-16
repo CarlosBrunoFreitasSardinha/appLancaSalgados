@@ -79,9 +79,7 @@ class _ViewProdutoState extends State<ViewProduto> {
         .toList();
   }
 
-
-
-  Future _adicionarAoCarrinho() {
+  _adicionarAoCarrinho() async {
     if (AppModel.to.bloc<UserBloc>().isLogged) {
       streamCarrinho.addition.add(produtoCarrinho);
       Navigator.pop(context);
@@ -109,21 +107,6 @@ class _ViewProdutoState extends State<ViewProduto> {
     }
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _initilizer();
-    timeDilation = 2;
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    timeDilation = 1;
-  }
-
   _acrescenta() {
     if (produtoCarrinho.quantidade < 200) {
       setState(() {
@@ -140,6 +123,21 @@ class _ViewProdutoState extends State<ViewProduto> {
         produtoCarrinho.subtotal -= produtoCarrinho.preco;
       });
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _initilizer();
+    timeDilation = 2;
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    timeDilation = 1;
   }
 
   @override

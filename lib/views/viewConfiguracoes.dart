@@ -43,11 +43,11 @@ class _ConfiguracoesState extends State<Configuracoes> {
                   Padding(
                     padding: EdgeInsets.only(bottom: 32),
                     child: Image.asset(
-                      "imagens/logo.png",
-                  width: 250,
+                  "imagens/logo.png",
+                  width: 200,
                   height: 200,
                 ),
-                  ),
+              ),
 
                   Padding(
                     padding: EdgeInsets.only(top: 10),

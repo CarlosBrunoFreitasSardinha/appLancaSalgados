@@ -48,7 +48,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                         child: Image.asset("imagens/logo.png"),
                       ),
                       SizedBox(
-                        height: 15,
+                        height: 10,
                       ),
                       Text(
                         "Esqueceu sua senha?",

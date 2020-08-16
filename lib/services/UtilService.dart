@@ -32,6 +32,14 @@ class UtilService {
     return n;
   }
 
+  static String formatSimpleNumber(String n) {
+    return n
+        .replaceAll("(", "")
+        .replaceAll(")", "")
+        .replaceAll("-", "")
+        .replaceAll(" ", "");
+  }
+
   static bool stringIsNull(String str) {
     if (str == null || str.replaceAll(' ', '') == '') return true;
     return false;

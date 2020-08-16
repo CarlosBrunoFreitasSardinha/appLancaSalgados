@@ -4,6 +4,7 @@ import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/models/usuarioModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
 import 'package:applancasalgados/services/NumberFormatService.dart';
+import 'package:applancasalgados/services/UtilService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,11 +34,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
     String nome = _controllerNome.text;
     String email = _controllerEmail.text;
     String senha = _controllerSenha.text;
-    String fone = _controllerFone.text
-        .replaceAll("(", "")
-        .replaceAll(")", "")
-        .replaceAll(" ", "")
-        .replaceAll("-", "");
+    String fone = UtilService.formatSimpleNumber(_controllerFone.text);
     String endereco = _controllerEndereco.text;
 
     if (nome.length >= 3) {

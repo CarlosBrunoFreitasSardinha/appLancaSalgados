@@ -37,9 +37,10 @@ class _ViewPedidoState extends State<ViewPedido>
 
   _initilizer() {
     _controllerEndereco.text = widget.pedido.enderecoEntrega;
-    _controllerTroco.text = widget.pedido.trocoPara.toString();
-    if (widget.pedido.formaPagamento != "")
+    if (widget.pedido.formaPagamento != "") {
+      _controllerTroco.text = widget.pedido.trocoPara.toString();
       selectedItem = widget.pedido.formaPagamento;
+    }
   }
 
   _salvarPedido() async {
@@ -275,12 +276,12 @@ class _ViewPedidoState extends State<ViewPedido>
                       child: TextField(
                         enabled: !widget.pedido.carrinho.fechado,
                         controller: _controllerTroco,
-                        keyboardType: TextInputType.text,
-                        style: TextStyle(fontSize: 18),
+                          keyboardType: TextInputType.number,
+                          style: TextStyle(fontSize: 18),
                         decoration: InputDecoration(
                             contentPadding:
                             EdgeInsets.fromLTRB(24, 16, 32, 16),
-                            hintText: "Troco Para: ",
+                            hintText: "Troco Para ",
                             prefix: Text("R\$ "),
                             filled: true,
                             fillColor: Colors.white,

@@ -20,11 +20,9 @@ class _DestaquesState extends State<Destaques>
   List<ProdutoModel> listaProdutos = [];
   int _current = 0;
 
-  Stream<QuerySnapshot> _listarListenerProdutos({String tag = 'promo'}) {
+  Stream<QuerySnapshot> _listarListenerProdutos() {
     final stream = bd
-        .collection("produtos")
-        .orderBy("idCategoria", descending: false)
-        .snapshots();
+        .collection("produtos").where("isPromo", isEqualTo: true).snapshots();
 
     stream.listen((dados) {
       _controller.add(dados);
