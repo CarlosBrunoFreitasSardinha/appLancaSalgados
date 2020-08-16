@@ -22,23 +22,27 @@ class _ViewPerfilState extends State<ViewPerfil> {
   TextEditingController _controllerNome = TextEditingController();
   TextEditingController _controllerNumber = TextEditingController();
   TextEditingController _controllerEndereco = TextEditingController();
-  String urlImagemRecuperada = "";
-  String colection = "usuarios";
-  String document = AppModel.to.bloc<UserBloc>().usuario.uidUser;
-  bool _upload = false;
-  File _image;
+
   final picker = ImagePicker();
   final blocUsuarioLogado = AppModel.to.bloc<UserBloc>();
   final _mobileFormatter = NumberTextInputFormatterService();
 
+  String document = AppModel.to.bloc<UserBloc>().usuario.uidUser;
+  bool _upload = false;
+
   Future getImage(bool i) async {
-    final pickedFile = await picker.getImage(source: i ? ImageSource.camera: ImageSource.gallery);
+    final pickedFile = await picker.getImage(
+        source: i ? ImageSource.camera : ImageSource.gallery);
+
+    File _image;
+    _image = File(pickedFile.path);
 
     setState(() {
-      _image = File(pickedFile.path);
       _upload = true;
     });
+
     if (_image != null) {
+      String urlImagemRecuperada;
       urlImagemRecuperada = await ImageService.insertImage(
           File(pickedFile.path), "perfil", blocUsuarioLogado.usuario.uidUser);
       _atualizarUrlImagemFirestore(urlImagemRecuperada);
@@ -47,28 +51,38 @@ class _ViewPerfilState extends State<ViewPerfil> {
 
   Future _atualizarUrlImagemFirestore(String url) async {
     Map<String, dynamic> json = Map<String, dynamic>();
-    json["urlPerfil"] = url;
-    BdService.alterarDados(colection, document, json);
-    blocUsuarioLogado.usuario.urlPerfil = url;
+
+    json["urlPerfil"] = url != null ? url : "";
+
+    ImageService.deleteImage(blocUsuarioLogado.usuario.urlPerfil);
+    BdService.alterarDados("usuarios", document, json);
+
     setState(() {
-      blocUsuarioLogado.usuario;
+      blocUsuarioLogado.usuario.urlPerfil = url;
       _upload = false;
     });
   }
 
   Future<void> _atualizarDadosFirestore() async {
     Map<String, dynamic> json = Map<String, dynamic>();
+
     json["nome"] = _controllerNome.text;
-    json["foneContato1"] = _controllerNumber.text;
+    json["foneContato1"] = _controllerNumber.text
+        .replaceAll("(", "")
+        .replaceAll(")", "")
+        .replaceAll("-", "")
+        .replaceAll(" ", "");
     json["endereco"] = _controllerEndereco.text;
-    json["urlPerfil"] = urlImagemRecuperada;
-    BdService.alterarDados(colection, document, json);
+    json["urlPerfil"] = blocUsuarioLogado.usuario.urlPerfil;
+
+    BdService.alterarDados("usuarios", document, json);
     UserService.recuperaDadosUsuarioLogado();
+
     return;
   }
 
   Future _recuperarImagem(String urlImg) async {
-    switch(urlImg){
+    switch (urlImg) {
       case "camera":
         getImage(true);
         break;
@@ -78,8 +92,9 @@ class _ViewPerfilState extends State<ViewPerfil> {
     }
   }
 
-  _recuperaDadosUsuario() async{
+  _recuperaDadosUsuario() async {
     _verificarUsuarioLogado();
+    print("Url IMG perfil " + blocUsuarioLogado.usuario.urlPerfil);
 
     setState(() {
       _controllerNome.text = blocUsuarioLogado.usuario.nome;
@@ -104,8 +119,9 @@ class _ViewPerfilState extends State<ViewPerfil> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Perfil"),),
-
+      appBar: AppBar(
+        title: Text("Perfil"),
+      ),
       body: Container(
         padding: EdgeInsets.all(16),
         child: Center(
@@ -117,8 +133,8 @@ class _ViewPerfilState extends State<ViewPerfil> {
                       : CircleAvatar(
                     radius: 100,
                     backgroundColor: Colors.grey,
-                    backgroundImage:
-                    blocUsuarioLogado.usuario.urlPerfil != null
+                    backgroundImage: blocUsuarioLogado.usuario.urlPerfil !=
+                        null
                         ? NetworkImage(blocUsuarioLogado.usuario.urlPerfil)
                         : null,
                   ),
@@ -126,13 +142,14 @@ class _ViewPerfilState extends State<ViewPerfil> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Icon(Icons.camera_alt),
-                      FlatButton(onPressed: (){
+                      FlatButton(
+                          onPressed: () {
                         _recuperarImagem("camera");
                       },
                           child: Text("Câmera")),
-
                       Icon(Icons.photo_library),
-                      FlatButton(onPressed: (){
+                      FlatButton(
+                          onPressed: () {
                         _recuperarImagem("galeria");
                       },
                           child: Text("Galeria")),
@@ -233,8 +250,7 @@ class _ViewPerfilState extends State<ViewPerfil> {
                         }),
                   ),
                 ],
-              )
-          ),
+              )),
         ),
       ),
     );
