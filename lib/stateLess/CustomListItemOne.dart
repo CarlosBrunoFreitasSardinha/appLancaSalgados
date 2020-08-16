@@ -30,14 +30,16 @@ class _ArticleDescription extends StatelessWidget {
                 '$title',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xffd19c3c)),
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                    color: Color(0xffd19c3c)),
               ),
               Padding(padding: EdgeInsets.only(top: 3.0, left: 4), child: Text(
                 '$subtitle',
                 maxLines: 2,
                 style: const TextStyle(
-                    fontSize: 16.0,
+                    fontSize: 15.0,
                     color: Colors.black54,
                     fontWeight: FontWeight.bold
                 ),
@@ -54,7 +56,7 @@ class _ArticleDescription extends StatelessWidget {
             children: <Widget>[
               Text( '$preco',
                 style: const TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 16.0,
                     color: Color(0xff006400),
                     fontWeight: FontWeight.bold
                 ),
@@ -101,7 +103,7 @@ class CustomListItemOne extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0),
         child: SizedBox(
-          height: thumbnail != null ? 100 : 90,
+          height: 80,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
@@ -111,11 +113,10 @@ class CustomListItemOne extends StatelessWidget {
                       aspectRatio: 1.0,
                 child: thumbnail,
               )
-                  : Center()
-              ,
+                  : Center(),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20.0, 0.0, 2.0, 0.0),
+                  padding: const EdgeInsets.fromLTRB(10.0, 0.0, 2.0, 0.0),
                   child: _ArticleDescription(
                     title: title,
                     subtitle: subtitle,

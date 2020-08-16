@@ -109,7 +109,7 @@ class _ViewPedidoState extends State<ViewPedido>
           child: Text(
             snap.data["descricao"],
             style: TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Color(0xffd19c3c)),
           ),
@@ -204,8 +204,8 @@ class _ViewPedidoState extends State<ViewPedido>
                         maxLines: 3,
                         maxLength: 60,
                         keyboardType: TextInputType.text,
-                        style: TextStyle(fontSize: 20),
-                        decoration: InputDecoration(
+                    style: TextStyle(fontSize: 18),
+                    decoration: InputDecoration(
                             contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                             prefixIcon: Padding(
                                 padding: EdgeInsets.only(left: 12, right: 25),
@@ -230,7 +230,7 @@ class _ViewPedidoState extends State<ViewPedido>
                             borderRadius: BorderRadius.all(Radius.circular(5))),
                         child:
                         !widget.pedido.carrinho.fechado
-                            ? Padding(padding: EdgeInsets.fromLTRB(24, 4, 8, 4),
+                            ? Padding(padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
                           child: DropdownButton(
                               underline: SizedBox(),
                               items: currencyItems,
@@ -248,7 +248,7 @@ class _ViewPedidoState extends State<ViewPedido>
                                 child: Text(
                                   "Selecione a Forma de Pagamento!",
                                   style: TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Color(0xffd19c3c)),
                                 ),
@@ -259,7 +259,7 @@ class _ViewPedidoState extends State<ViewPedido>
                           child: Text(
                             selectedItem,
                             style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 color: Theme
                                     .of(context)
                                     .accentColor,
@@ -276,7 +276,7 @@ class _ViewPedidoState extends State<ViewPedido>
                         enabled: !widget.pedido.carrinho.fechado,
                         controller: _controllerTroco,
                         keyboardType: TextInputType.text,
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(fontSize: 18),
                         decoration: InputDecoration(
                             contentPadding:
                             EdgeInsets.fromLTRB(24, 16, 32, 16),
@@ -301,7 +301,7 @@ class _ViewPedidoState extends State<ViewPedido>
                               child: Text(
                                 "Produtos",
                                 style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 18,
                                     color: Theme
                                         .of(context)
                                         .accentColor,
@@ -331,7 +331,7 @@ class _ViewPedidoState extends State<ViewPedido>
                                         width: 1, color: Colors.grey),
                                     color: Color(0xffd19c3c)),
                                 child: Padding(
-                                  padding: EdgeInsets.only(right: 8),
+                                  padding: EdgeInsets.only(right: 16, left: 6),
                                   child: Row(
                                     children: <Widget>[
                                       IconButton(
@@ -361,7 +361,7 @@ class _ViewPedidoState extends State<ViewPedido>
                                       widget.pedido.carrinho.total),
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 20.0,
+                                fontSize: 18.0,
                                 color: Colors.black,
                               ),
                             ),

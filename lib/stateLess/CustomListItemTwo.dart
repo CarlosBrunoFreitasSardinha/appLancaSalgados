@@ -28,20 +28,20 @@ class _ArticleDescription extends StatelessWidget {
             children: <Widget>[
               Text(
                 '$title',
-                maxLines: 1,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 18,
+                    fontSize: 16,
                     color: Color(0xffd19c3c)),
               ),
               Padding(
                 padding: EdgeInsets.only(top: 3.0, left: 4),
                 child: Text(
                   '$subtitle',
-                  maxLines: 2,
+                  maxLines: 3,
                   style: const TextStyle(
-                      fontSize: 16.0,
+                      fontSize: 13.0,
                       color: Colors.black54,
                       fontWeight: FontWeight.bold),
                 ),
@@ -58,21 +58,21 @@ class _ArticleDescription extends StatelessWidget {
               Text(
                 '$preco',
                 style: const TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 14.0,
                     color: Color(0xff006400),
                     fontWeight: FontWeight.bold),
               ),
               Text(
                 'x $quantidade',
                 style: const TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 14.0,
                     color: Color(0xff006400),
                     fontWeight: FontWeight.bold),
               ),
               Text(
                 ' = $subTotal',
                 style: const TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 14.0,
                     color: Color(0xff006400),
                     fontWeight: FontWeight.bold),
               ),
@@ -118,7 +118,7 @@ class CustomListItemTwo extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0),
         child: SizedBox(
-          height: 100,
+          height: 110,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,

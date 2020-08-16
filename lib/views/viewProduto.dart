@@ -125,10 +125,12 @@ class _ViewProdutoState extends State<ViewProduto> {
   }
 
   _acrescenta() {
-    setState(() {
-      produtoCarrinho.quantidade += 1;
-      produtoCarrinho.subtotal += produtoCarrinho.preco;
-    });
+    if (produtoCarrinho.quantidade < 200) {
+      setState(() {
+        produtoCarrinho.quantidade += 1;
+        produtoCarrinho.subtotal += produtoCarrinho.preco;
+      });
+    }
   }
 
   _reduzir() {
@@ -250,8 +252,10 @@ class _ViewProdutoState extends State<ViewProduto> {
                                       ),
                                       IconButton(
                                         icon: Icon(Icons.add_circle),
-                                        color: Colors.green,
-                                        onPressed: () => _acrescenta(),
+                                color: produtoCarrinho.quantidade > 199
+                                    ? Colors.grey
+                                    : Colors.green,
+                                onPressed: () => _acrescenta(),
                                       )
                                     ],
                                   ),
@@ -275,19 +279,20 @@ class _ViewProdutoState extends State<ViewProduto> {
                                           child: Row(
                                             children: <Widget>[
                                               IconButton(
+                                                padding: EdgeInsets.all(0),
                                                 icon: Icon(
                                                     Icons.add_shopping_cart),
                                                 color: Colors.white,
                                                 onPressed: () {},
                                               ),
                                               Text(
-                                                  'Adicionar ${UtilService
+                                                  '${UtilService
                                                       .moeda(produtoCarrinho
                                                       .subtotal)}',
                                                   style: TextStyle(
                                                       fontWeight: FontWeight
                                                           .w500,
-                                                      fontSize: 20.0,
+                                                      fontSize: 18.0,
                                                       color: Colors.white)),
                                             ],
                                           ),

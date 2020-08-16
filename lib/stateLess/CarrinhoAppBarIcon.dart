@@ -29,7 +29,7 @@ class CarrinhoAppBarIcon extends StatelessWidget {
               padding: EdgeInsets.only(left: 24),
               child: CircleAvatar(
                 radius: 10,
-                backgroundColor: Colors.blueAccent,
+                backgroundColor: Theme.of(context).accentColor,
                 child: Text(
                   count.toString(),
                   style: TextStyle(

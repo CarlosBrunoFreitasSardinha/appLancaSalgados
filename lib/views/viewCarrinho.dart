@@ -211,16 +211,17 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
                                       width: 1, color: Colors.grey),
                                   color: Color(0xffd19c3c)),
                               child: Padding(
-                                padding: EdgeInsets.only(right: 8),
-                                child: Row(
+                                      padding:
+                                          EdgeInsets.only(right: 16, left: 6),
+                                      child: Row(
                                   children: <Widget>[
                                     IconButton(
                                       icon: Icon(Icons.restaurant),
                                       color: Colors.white,
                                       onPressed: () {},
                                     ),
-                                          Text('Fechar',
-                                              style: TextStyle(
+                                    Text('Fechar',
+                                        style: TextStyle(
                                             fontWeight: FontWeight.w500,
                                             fontSize: 19.0,
                                             color: Colors.white)),
