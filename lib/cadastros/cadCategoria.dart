@@ -88,6 +88,21 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
         colection, ident, {"descricao": _controllerTitulo.text});
   }
 
+  _excluirCategoria() {
+    if (selectedItem != null) {
+      options.forEach((element) {
+        if (element.descricao == selectedItem) {
+          selectedItem = null;
+          BdService.removerDados(colection, element.idCategoria.toString());
+        }
+      });
+      setState(() {
+        selectedItem = null;
+      });
+      _controllerTitulo.clear();
+    }
+  }
+
   _adicionarListenerConversas() {
     final stream = bd
         .collection(colection)
@@ -165,14 +180,6 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
                   underline: SizedBox(),
                   items: currencyItems,
                   onChanged: (currencyValue) {
-                    final snackBar = SnackBar(
-                      content: Text(
-                        'Categoria $currencyValue, foi selecionada!',
-                        style:
-                        TextStyle(color: Color(0xffd19c3c)),
-                      ),
-                    );
-                    Scaffold.of(context).showSnackBar(snackBar);
                     setState(() {
                       selectedItem = currencyValue;
                       _controllerTitulo.text = currencyValue;
@@ -255,6 +262,25 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
                           validarCampos();
                         }),
                   ),
+
+                  //botao Excluir
+                  selectedItem != null
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                              top: 4, bottom: 10, left: 8, right: 8),
+                          child: RaisedButton(
+                              child: Text(
+                                "Excluir",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
+                              ),
+                              color: Color(0xffd19c3c),
+                              padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              onPressed: () => _excluirCategoria()),
+                        )
+                      : SizedBox(),
 
                   //msg error
                   Center(

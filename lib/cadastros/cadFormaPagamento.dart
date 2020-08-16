@@ -56,12 +56,12 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
 
   _salvar() {
     if (selectedItem == null)
-      _cadastrarCategoria();
+      _cadastrarFormaPagamento();
     else {
       options.forEach((element) {
         if (element.descricao == selectedItem) {
           selectedItem = null;
-          _alterarCategoria(element.id.toString());
+          _alterarFormaPagamento(element.id.toString());
         }
       });
     }
@@ -70,16 +70,31 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
     });
   }
 
-  _cadastrarCategoria() async {
+  _cadastrarFormaPagamento() async {
     BdService.cadastrarDados(colection, id.toString(),
         {"id": id, "descricao": _controllerTitulo.text});
     BdService.alterarDados(
         "indices", colection, {"id": (id + 1).toString()});
   }
 
-  _alterarCategoria(String ident) {
+  _alterarFormaPagamento(String ident) {
     BdService.alterarDados(
         colection, ident, {"descricao": _controllerTitulo.text});
+  }
+
+  _excluirFormaPagamento() {
+    if (selectedItem != null) {
+      options.forEach((element) {
+        if (element.descricao == selectedItem) {
+          selectedItem = null;
+          BdService.removerDados(colection, element.id.toString());
+        }
+      });
+      setState(() {
+        selectedItem = null;
+      });
+      _controllerTitulo.clear();
+    }
   }
 
   _adicionarListenerFormaPagamento() {
@@ -116,70 +131,6 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
 
   @override
   Widget build(BuildContext context) {
-    var streamCategoria = StreamBuilder<QuerySnapshot>(
-        stream: _controller.stream,
-        // ignore: missing_return
-        builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            const Text("Carregando...");
-          else {
-            List<DropdownMenuItem> currencyItems = [];
-            for (int i = 0; i < snapshot.data.documents.length; i++) {
-              DocumentSnapshot snap = snapshot.data.documents[i];
-              options.add(FormaPagamentoModel.fromJson(snap.data));
-
-              currencyItems.add(
-                DropdownMenuItem(
-                  child: Text(
-                    snap.data["descricao"],
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xffd19c3c)),
-                  ),
-                  value: "${snap.data["descricao"]}",
-                ),
-              );
-            }
-            return Padding(
-              padding: EdgeInsets.all(8),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                child: Padding(
-                padding: EdgeInsets.fromLTRB(24, 4, 8, 4),
-                child: DropdownButton(
-                  underline: SizedBox(),
-                  items: currencyItems,
-                  onChanged: (currencyValue) {
-                    final snackBar = SnackBar(
-                      content: Text(
-                        'Forma de Pagamento $currencyValue, foi selecionada!',
-                        style: TextStyle(color: Color(0xffd19c3c)),
-                      ),
-                    );
-                    Scaffold.of(context).showSnackBar(snackBar);
-                    setState(() {
-                      selectedItem = currencyValue;
-                      _controllerTitulo.text = currencyValue;
-                    });
-                  },
-                  value: selectedItem,
-                  isExpanded: true,
-                  hint: new Text(
-                    "Nova Forma de Pagamento!",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xffd19c3c)),
-                  ),
-                ),
-              ),
-            ),);
-          }
-        });
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Cadastro de Forma de Pagamento"),
@@ -205,7 +156,68 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
                     ),
                   ),
 
-                  streamCategoria,
+                  //Stream forma de pagamento
+                  StreamBuilder<QuerySnapshot>(
+                      stream: _controller.stream,
+                      // ignore: missing_return
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData)
+                          const Text("Carregando...");
+                        else {
+                          List<DropdownMenuItem> currencyItems = [];
+                          for (int i = 0;
+                              i < snapshot.data.documents.length;
+                              i++) {
+                            DocumentSnapshot snap = snapshot.data.documents[i];
+                            options
+                                .add(FormaPagamentoModel.fromJson(snap.data));
+
+                            currencyItems.add(
+                              DropdownMenuItem(
+                                child: Text(
+                                  snap.data["descricao"],
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xffd19c3c)),
+                                ),
+                                value: "${snap.data["descricao"]}",
+                              ),
+                            );
+                          }
+                          return Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10))),
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(24, 4, 8, 4),
+                                child: DropdownButton(
+                                  underline: SizedBox(),
+                                  items: currencyItems,
+                                  onChanged: (currencyValue) {
+                                    setState(() {
+                                      selectedItem = currencyValue;
+                                      _controllerTitulo.text = currencyValue;
+                                    });
+                                  },
+                                  value: selectedItem,
+                                  isExpanded: true,
+                                  hint: new Text(
+                                    "Nova Forma de Pagamento!",
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xffd19c3c)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                      }),
 
                   Padding(
                     padding: EdgeInsets.fromLTRB(8, 0, 8, 4),
@@ -241,6 +253,24 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
                           validarCampos();
                         }),
                   ),
+
+                  //botao Excluir
+                  selectedItem != null
+                      ? Padding(
+                    padding: EdgeInsets.only(
+                        top: 4, bottom: 10, left: 8, right: 8),
+                    child: RaisedButton(
+                        child: Text(
+                          "Excluir",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                        color: Color(0xffd19c3c),
+                        padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        onPressed: () => _excluirFormaPagamento()),
+                  )
+                      : SizedBox(),
 
                   //msg error
                   Center(
