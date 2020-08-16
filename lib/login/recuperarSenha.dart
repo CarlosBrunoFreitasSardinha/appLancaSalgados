@@ -101,7 +101,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                         height: 60,
                         alignment: Alignment.centerLeft,
                         decoration: BoxDecoration(
-                          color: Color(0xFFF58524),
+                          color: Theme.of(context).accentColor,
                           borderRadius: BorderRadius.all(
                             Radius.circular(5),
                           ),
