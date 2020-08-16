@@ -70,7 +70,7 @@ class _ViewProdutoState extends State<ViewProduto> {
                         return progress == null
                             ? child
                             : Center(
-                                child: LinearProgressIndicator(),
+                                child: CircularProgressIndicator(),
                               );
                       },
                     )),

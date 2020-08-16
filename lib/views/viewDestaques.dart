@@ -93,8 +93,8 @@ class _DestaquesState extends State<Destaques>
                                     return progress == null
                                         ? child
                                         : Center(
-                                      child: LinearProgressIndicator(),
-                                    );
+                                            child: CircularProgressIndicator(),
+                                          );
                                   },
                                 )),
                           ),
