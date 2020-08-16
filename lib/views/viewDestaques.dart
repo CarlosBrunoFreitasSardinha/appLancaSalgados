@@ -20,7 +20,7 @@ class _DestaquesState extends State<Destaques>
   List<ProdutoModel> listaProdutos = [];
   int _current = 0;
 
-  Stream<QuerySnapshot> _listarListenerProdutos() {
+  _listarListenerProdutos() {
     final stream = bd
         .collection("produtos").where("isPromo", isEqualTo: true).snapshots();
 

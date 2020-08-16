@@ -82,7 +82,7 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
         colection, ident, {"descricao": _controllerTitulo.text});
   }
 
-  Stream<QuerySnapshot> _adicionarListenerConversas() {
+  _adicionarListenerFormaPagamento() {
     final stream =
         bd.collection(colection).orderBy("id", descending: false).snapshots();
 
@@ -104,7 +104,7 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
     super.initState();
     _verificarUsuarioLogado();
     _obterIndice();
-    _adicionarListenerConversas();
+    _adicionarListenerFormaPagamento();
   }
 
   @override

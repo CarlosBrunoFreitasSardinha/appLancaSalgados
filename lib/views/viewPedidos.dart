@@ -29,9 +29,7 @@ class _ViewPedidosState extends State<ViewPedidos>
 
   _alterarDadoPedido(String documentRef, Map<String, dynamic> json) async {
     BdService.alterarItemColecaoGenerica(
-        "pedidos", blocUser.usuario.uidUser, "pedidos",
-        documentRef,
-        json);
+        "pedidos", blocUser.usuario.uidUser, "pedidos", documentRef, json);
   }
 
   Widget listaPedidosVazia() {
@@ -47,13 +45,10 @@ class _ViewPedidosState extends State<ViewPedidos>
     );
   }
 
-  Stream<QuerySnapshot> _adicionarListenerProdutos() {
+  _adicionarListenerProdutos() {
     final stream = bd
         .collection("pedidos")
-        .document(AppModel.to
-        .bloc<UserBloc>()
-        .usuario
-        .uidUser)
+        .document(blocUser.usuario.uidUser)
         .collection("pedidos")
         .where("atendido", isEqualTo: false)
         .orderBy("dataPedido", descending: false)
@@ -112,65 +107,64 @@ class _ViewPedidosState extends State<ViewPedidos>
 
             if (snapshot.hasError) {
               return Expanded(child: Text("Erro ao carregar os dados!"));
-            }
-            else {
+            } else {
               return Expanded(
                 child: produtos.length != 0
                     ? ListView.builder(
-                    itemCount: querySnapshot.documents.length,
-                    itemBuilder: (context, indice) {
-                      DocumentSnapshot json = produtos[indice];
-                      PedidoModel pedido = PedidoModel.fromJson(json.data);
-                      String subtitle = "Pagamento via " +
-                          pedido.formaPagamento +
-                          "\nTotal: " +
-                          UtilService.moeda(pedido.carrinho.total);
-                      if (pedido.trocoPara != 0) {
-                        subtitle += " Troco para " +
-                            UtilService.moeda(pedido.trocoPara);
-                      }
+                        itemCount: querySnapshot.documents.length,
+                        itemBuilder: (context, indice) {
+                          DocumentSnapshot json = produtos[indice];
+                          PedidoModel pedido = PedidoModel.fromJson(json.data);
+                          String subtitle = "Pagamento via " +
+                              pedido.formaPagamento +
+                              "\nTotal: " +
+                              UtilService.moeda(pedido.carrinho.total);
+                          if (pedido.trocoPara != 0) {
+                            subtitle += " Troco para " +
+                                UtilService.moeda(pedido.trocoPara);
+                          }
 
-                      return Padding(
-                          padding: EdgeInsets.all(3),
-                          child: GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                    context, RouteGenerator.PEDIDO,
-                                    arguments: pedido);
-                              },
-                              child: CustomListItemOne(
-                                title: pedido.tituloPedido,
-                                subtitle: subtitle,
-                                preco: pedido.status,
-                                color: Colors.white,
-                                radius: 5,
-                                icone: StreamBuilder<UsuarioModel>(
-                                  stream: blocUser.userLogged,
-                                  builder:
-                                      (BuildContext context, snapshot) {
-                                    if (snapshot.hasData) {
-                                      if (UtilService.stringNotIsNull(
-                                          snapshot.data.uidUser)) {
-                                        if (snapshot.data.isAdm) {
-                                          _itensMenu = [
-                                            "Recebido",
-                                            "Saiu para Entrega",
-                                            "Entregue"
-                                          ];
-                                        } else {
-                                          _itensMenu = [];
+                          return Padding(
+                              padding: EdgeInsets.all(3),
+                              child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, RouteGenerator.PEDIDO,
+                                        arguments: pedido);
+                                  },
+                                  child: CustomListItemOne(
+                                    title: pedido.tituloPedido,
+                                    subtitle: subtitle,
+                                    preco: pedido.status,
+                                    color: Colors.white,
+                                    radius: 5,
+                                    icone: StreamBuilder<UsuarioModel>(
+                                      stream: blocUser.userLogged,
+                                      builder:
+                                          (BuildContext context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          if (UtilService.stringNotIsNull(
+                                              snapshot.data.uidUser)) {
+                                            if (snapshot.data.isAdm) {
+                                              _itensMenu = [
+                                                "Recebido",
+                                                "Saiu para Entrega",
+                                                "Entregue"
+                                              ];
+                                            } else {
+                                              _itensMenu = [];
+                                            }
+                                          } else {
+                                            _itensMenu = [];
+                                          }
                                         }
-                                      } else {
-                                        _itensMenu = [];
-                                      }
-                                    }
-                                    return PopupMenuButton<String>(
-                                      onSelected: (item) {
-                                        switch (item) {
-                                          case "Recebido":
-                                            _alterarDadoPedido(
-                                                json.documentID,
-                                                {"status": "Recebido"});
+                                        return PopupMenuButton<String>(
+                                          onSelected: (item) {
+                                            switch (item) {
+                                              case "Recebido":
+                                                _alterarDadoPedido(
+                                                    json.documentID,
+                                                    {"status": "Recebido"});
                                                 enviarNotificacao(
                                                     "Seu Pedido Foi Recebido",
                                                     pedido
@@ -178,13 +172,13 @@ class _ViewPedidosState extends State<ViewPedidos>
                                                 break;
                                           case "Saiu para Entrega":
                                             _alterarDadoPedido(
-                                                json.documentID,
-                                                {
+                                                json.documentID, {
                                                   "status": "Saiu para Entrega"
                                                 });
                                             enviarNotificacao(
                                                 "Seu Pedido Saiu para Entrega",
-                                                pedido.idCelularSolicitante);
+                                                pedido
+                                                    .idCelularSolicitante);
                                             break;
                                           case "Entregue":
                                             _alterarDadoPedido(
@@ -217,7 +211,6 @@ class _ViewPedidosState extends State<ViewPedidos>
       },
     );
 
-
     return Scaffold(
       body: Container(
         width: MediaQuery
@@ -236,8 +229,7 @@ class _ViewPedidosState extends State<ViewPedidos>
                   stream,
                 ],
               ),
-            )
-        ),
+            )),
       ),
     );
   }

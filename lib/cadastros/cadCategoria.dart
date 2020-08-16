@@ -88,7 +88,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
         colection, ident, {"descricao": _controllerTitulo.text});
   }
 
-  Stream<QuerySnapshot> _adicionarListenerConversas() {
+  _adicionarListenerConversas() {
     final stream = bd
         .collection(colection)
         .orderBy("idCategoria", descending: false)

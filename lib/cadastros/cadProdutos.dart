@@ -30,7 +30,6 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   TextEditingController _controllerDescricao = TextEditingController();
   TextEditingController _controllerTempPreparo = TextEditingController();
 
-  final _controller = StreamController<QuerySnapshot>.broadcast();
   final blocUsuarioLogado = AppModel.to.bloc<UserBloc>();
   final picker = ImagePicker();
 
@@ -38,6 +37,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
   ProdutoModel produto;
 
+  List<DropdownMenuItem> currencyItems = [];
   List<CategoriaProdutoModel> options = [];
   List<bool> imagensUlpoding = [false, false, false];
 
@@ -81,6 +81,8 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   void getFileImageGaleria(int index, File file) async {
     String url = await ImageService.insertImage(File(file.path), "produtos",
         Timestamp.now().toString().replaceAll(" ", ""));
+
+    print("Url Recebida: $url");
     setState(() {
       produto.galeria[index] = url;
       imagensUlpoding[index] = false;
@@ -89,14 +91,13 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
       BdService.alterarDados("produtos", produto.idProduto, {"urlImg": url});
   }
 
-  Widget buildGridView() {
-    return GridView.count(
-      shrinkWrap: true,
-      crossAxisCount: 3,
-      childAspectRatio: 1,
+  Widget galeriaProdutoUploadItems() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(produto.galeria.length, (index) {
         if (produto.galeria[index].isNotEmpty) {
-          return Card(
+          return Expanded(
+              child: Card(
             clipBehavior: Clip.antiAlias,
             child: Stack(
               children: <Widget>[
@@ -104,8 +105,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                   borderRadius: BorderRadius.circular(15),
                   child: Image.network(
                     produto.galeria[index],
-                    height: 250,
-                    width: 250,
+                    height: MediaQuery.of(context).size.width * 0.8 / 3,
                     loadingBuilder: (context, child, progress) {
                       return progress == null
                           ? child
@@ -137,22 +137,29 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                 ),
               ],
             ),
-          );
+              ));
         } else {
-          return Card(
+          return Expanded(
+              child: Card(
             child: !imagensUlpoding[index]
-                ? IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: () => _onAddImageGaleriaClick(index),
+                ? SizedBox(
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .width * 0.8 / 3,
+              child: IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () => _onAddImageGaleriaClick(index),
+              ),
                   )
-                : Center(
-                    child: SizedBox(
-                      height: 25,
-                      width: 25,
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
-          );
+                : SizedBox(
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .width * 0.8 / 3,
+              child: Center(child: CircularProgressIndicator(),),
+            ),
+              ));
         }
       }),
     );
@@ -234,16 +241,34 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
     _controllerTempPreparo.clear();
   }
 
-  Stream<QuerySnapshot> _adicionarListenerCategoria() {
+  Future<List<CategoriaProdutoModel>> adicionarListenerFormaPagamento() async {
     Firestore bd = Firestore.instance;
-    final stream = bd
+    QuerySnapshot querySnapshot = await bd
         .collection("categoria")
         .orderBy("idCategoria", descending: false)
-        .snapshots();
+        .getDocuments();
 
-    stream.listen((dados) {
-      _controller.add(dados);
+    for (int i = 0; i < querySnapshot.documents.length; i++) {
+      DocumentSnapshot snap = querySnapshot.documents[i];
+      options.add(CategoriaProdutoModel.fromJson(snap.data));
+
+      currencyItems.add(
+        DropdownMenuItem(
+          child: Text(
+            snap.data["descricao"],
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xffd19c3c)),
+          ),
+          value: "${snap.data["descricao"]}",
+        ),
+      );
+    }
+    setState(() {
+      currencyItems;
     });
+    return options;
   }
 
   _verificarUsuarioLogado() {
@@ -258,13 +283,12 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
     super.initState();
     _informacoesDoProduto();
     _verificarUsuarioLogado();
-    _adicionarListenerCategoria();
+    adicionarListenerFormaPagamento();
   }
 
   @override
   void dispose() {
     super.dispose();
-    _controller.close();
     if (!salvado) {
       produto.galeria.forEach((element) {
         ImageService.deleteImage(element);
@@ -275,73 +299,6 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
   @override
   Widget build(BuildContext context) {
-    var streamCategoria = StreamBuilder<QuerySnapshot>(
-        stream: _controller.stream,
-        // ignore: missing_return
-        builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            Text("Carregando...");
-          else {
-            List<DropdownMenuItem> currencyItems = [];
-            for (int i = 0; i < snapshot.data.documents.length; i++) {
-              DocumentSnapshot snap = snapshot.data.documents[i];
-              options.add(CategoriaProdutoModel.fromJson({
-                'idCategoria': snap.data["idCategoria"],
-                'descricao': snap.data["descricao"]
-              }));
-
-              currencyItems.add(
-                DropdownMenuItem(
-                  child: Text(
-                    snap.data["descricao"],
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xffd19c3c)),
-                  ),
-                  value: "${snap.data["descricao"]}",
-                ),
-              );
-            }
-            return Padding(
-              padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(24, 4, 8, 4),
-                  child: DropdownButton(
-                    underline: SizedBox(),
-                    items: currencyItems,
-                    onChanged: (currencyValue) {
-                      final snackBar = SnackBar(
-                        content: Text(
-                          'Categoria $currencyValue, foi selecionada!',
-                          style: TextStyle(color: Color(0xffd19c3c)),
-                        ),
-                      );
-                      Scaffold.of(context).showSnackBar(snackBar);
-                      setState(() {
-                        selectedItem = currencyValue;
-                      });
-                    },
-                    value: selectedItem,
-                    isExpanded: true,
-                    hint: Text(
-                      "Nova Categoria!",
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xffd19c3c)),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }
-        });
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Cadastro Produtos"),
@@ -357,7 +314,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  //logo
+                  //imgPrincipal
                   Padding(
                     padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
                     child: _urlImagemRecuperada != ""
@@ -372,8 +329,12 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                                 return progress == null
                                     ? child
                                     : Center(
-                                              child:
-                                                  CircularProgressIndicator(),
+                                  child: SizedBox(
+                                    height: 25,
+                                    width: 25,
+                                    child:
+                                    CircularProgressIndicator(),
+                                  ),
                                             );
                               },
                               fit: BoxFit.cover,
@@ -403,8 +364,8 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                         : Card(
                       child: !isImgPrincipal
                           ? SizedBox(
-                        height: 250,
-                        width: 250,
+                        height: 200,
+                        width: 200,
                         child: IconButton(
                           icon: Icon(Icons.add),
                           onPressed: () => getImage(),
@@ -427,11 +388,41 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                   //Galeria de Imagens
                   Padding(
                     padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
-                    child: buildGridView(),
+                    child: galeriaProdutoUploadItems(),
                   ),
 
                   //categoria
-                  streamCategoria,
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(5))),
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+                        child: DropdownButton(
+                            underline: SizedBox(),
+                            items: currencyItems,
+                            onChanged: (currencyValue) {
+                              setState(() {
+                                selectedItem = currencyValue;
+                              });
+                            },
+                            value: selectedItem,
+                            isExpanded: true,
+                            hint: Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Text(
+                                "Selecione a Categoria!",
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xffd19c3c)),
+                              ),
+                            )),
+                      ),
+                    ),
+                  ),
 
                   //titulo produto
                   Padding(
@@ -527,7 +518,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                     children: <Widget>[
                       FlatButton(
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
+                              borderRadius: BorderRadius.circular(5.0),
                               side: BorderSide(
                                   color: Theme
                                       .of(context)
@@ -553,7 +544,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                           )),
                       FlatButton(
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0),
+                              borderRadius: BorderRadius.circular(5.0),
                               side: BorderSide(
                                   color: Theme
                                       .of(context)

@@ -27,6 +27,7 @@ class ImageService {
     await task.onComplete;
     print("Envio Completo");
     url = await arquivo.getDownloadURL();
+    print("Url registrada: $url");
 
     return url;
   }
