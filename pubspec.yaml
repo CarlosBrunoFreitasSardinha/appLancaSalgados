@@ -42,9 +42,9 @@ dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "dev_assets/icon-centralizado-semBorda.png"
+  image_path: "dev_assets/icon-centralizado.png"
   adaptive_icon_background: "#5c3838"
-  adaptive_icon_foreground: "dev_assets/icon-centralizado-semBorda.png"
+  adaptive_icon_foreground: "dev_assets/icon-centralizado.png"
 
 dev_dependencies:
   flutter_test:
