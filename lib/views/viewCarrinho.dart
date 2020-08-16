@@ -104,7 +104,19 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: Text("Para fechar o carrinho é necessário efetuar Login!"),
+              title: Text("Atenção!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red)),
+              content: Text(
+                  "Para fechar o carrinho é necessário efetuar Login!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent)),
               actions: <Widget>[
                 FlatButton(
                     onPressed: () => Navigator.pop(context),

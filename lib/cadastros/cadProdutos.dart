@@ -41,7 +41,6 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   List<CategoriaProdutoModel> options = [];
   List<bool> imagensUlpoding = [false, false, false];
 
-  String _mensagemErro = "";
   String _urlImagemRecuperada = "";
 
   bool isCad;
@@ -82,13 +81,30 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
     String url = await ImageService.insertImage(File(file.path), "produtos",
         Timestamp.now().toString().replaceAll(" ", ""));
 
-    print("Url Recebida: $url");
     setState(() {
       produto.galeria[index] = url;
       imagensUlpoding[index] = false;
     });
     if (!isCad)
       BdService.alterarDados("produtos", produto.idProduto, {"urlImg": url});
+  }
+
+  alert(String titulo, String msg, Color colorHead, Color colorBody) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              titulo,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 20, fontWeight: FontWeight.bold, color: colorHead),
+            ),
+            content: Text(msg,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20, color: colorBody)),
+          );
+        });
   }
 
   Widget galeriaProdutoUploadItems() {
@@ -222,18 +238,28 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
             _salvar();
           } else {
-            _mensagemErro = " Selecione uma Categoria para o Produto!";
+            alert("Atenção",
+                "Selecione uma Categoria para o Produto!",
+                Colors.red,
+                Colors.black87);
           }
         } else {
-          _mensagemErro = " Preço Inválido!";
+          alert("Atenção",
+              "Preço Inválido!",
+              Colors.red,
+              Colors.black87);
         }
       } else {
-        _mensagemErro = " Cadastre a imagem principal do Produto!";
+        alert("Atenção",
+            "Cadastre a imagem principal do Produto!",
+            Colors.red,
+            Colors.black87);
       }
     } else {
-      setState(() {
-        _mensagemErro = " Preencha o Titulo da Categoria do Produto !";
-      });
+      alert("Atenção",
+          "Preencha o Titulo da Categoria do Produto!",
+          Colors.red,
+          Colors.black87);
     }
     _controllerTitulo.clear();
     _controllerDescricao.clear();
@@ -586,14 +612,6 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                         onPressed: () {
                           validarCampos();
                         }),
-                  ),
-
-                  //msg error
-                  Center(
-                    child: Text(
-                      _mensagemErro,
-                      style: TextStyle(color: Colors.red, fontSize: 20),
-                    ),
                   ),
                 ],
               ),

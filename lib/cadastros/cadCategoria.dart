@@ -20,7 +20,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
   TextEditingController _controllerTitulo = TextEditingController();
   Firestore bd = Firestore.instance;
   final _controller = StreamController<QuerySnapshot>.broadcast();
-  String _mensagemErro = "", colection = "categoria";
+  String colection = "categoria";
   List<CategoriaProdutoModel> options = [];
   int id;
   var selectedItem;
@@ -46,12 +46,14 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
       if (!isRepeat) {
         _salvar();
       } else {
-        _mensagemErro = " Já existe uma Categoria com este titulo!";
+        alert("Atenção", "Já existe uma Categoria com este titulo!", Colors.red,
+            Colors.black87);
       }
     } else {
-      setState(() {
-        _mensagemErro = " Preencha o Titulo da Categoria do Produto !";
-      });
+      alert("Atenção",
+          "Preencha o Titulo da Categoria do Produto!",
+          Colors.red,
+          Colors.black87);
     }
     selectedItem = null;
     _controllerTitulo.clear();
@@ -68,9 +70,10 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
         }
       });
     }
-    setState(() {
-      _mensagemErro = "";
-    });
+    alert("Sucesso",
+        "Informações salvas com sucesso!",
+        Colors.blueAccent,
+        Colors.lightBlue);
   }
 
   _cadastrarCategoria() async {
@@ -119,6 +122,28 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
           arguments: 0);
     }
+  }
+
+  alert(String titulo, String msg, Color colorHead, Color colorBody) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(titulo,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: colorHead
+              ),),
+            content: Text(msg,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 20,
+                    color: colorBody
+                )),
+          );
+        });
   }
 
   @override
@@ -281,17 +306,6 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
                               onPressed: () => _excluirCategoria()),
                         )
                       : SizedBox(),
-
-                  //msg error
-                  Center(
-                    child: Text(
-                      _mensagemErro,
-                      style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
                 ],
               ),
             ),

@@ -18,7 +18,7 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
   TextEditingController _controllerTitulo = TextEditingController();
   Firestore bd = Firestore.instance;
   final _controller = StreamController<QuerySnapshot>.broadcast();
-  String _mensagemErro = "", colection = "formaPagamento";
+  String colection = "formaPagamento";
   List<FormaPagamentoModel> options = [];
   int id;
   var selectedItem;
@@ -43,12 +43,14 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
       if (!isRepeat) {
         _salvar();
       } else {
-        _mensagemErro = " Já existe uma Forma de Pagamento com este titulo!";
+        alert("Atenção", "Já existe uma Forma de Pagamento com este titulo!",
+            Colors.red, Colors.black87);
       }
     } else {
-      setState(() {
-        _mensagemErro = " Preencha o Titulo da Forma de Pagamento!";
-      });
+      alert("Atenção",
+          "Preencha o Titulo da Forma de Pagamento!",
+          Colors.red,
+          Colors.black87);
     }
     selectedItem = null;
     _controllerTitulo.clear();
@@ -65,9 +67,10 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
         }
       });
     }
-    setState(() {
-      _mensagemErro = "";
-    });
+    alert("Sucesso",
+        "Informações salvas com sucesso!",
+        Colors.blueAccent,
+        Colors.lightBlue);
   }
 
   _cadastrarFormaPagamento() async {
@@ -111,6 +114,28 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
           arguments: 0);
     }
+  }
+
+  alert(String titulo, String msg, Color colorHead, Color colorBody) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(titulo,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: colorHead
+              ),),
+            content: Text(msg,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 20,
+                    color: colorBody
+                )),
+          );
+        });
   }
 
   @override
@@ -271,17 +296,6 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
                         onPressed: () => _excluirFormaPagamento()),
                   )
                       : SizedBox(),
-
-                  //msg error
-                  Center(
-                    child: Text(
-                      _mensagemErro,
-                      style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
                 ],
               ),
             ),

@@ -75,6 +75,7 @@ class _ViewPerfilState extends State<ViewPerfil> {
     BdService.alterarDados("usuarios", document, json);
     UserService.recuperaDadosUsuarioLogado();
 
+    alert("Informações salvas com Sucesso!", Colors.lightBlue);
     return;
   }
 
@@ -104,6 +105,21 @@ class _ViewPerfilState extends State<ViewPerfil> {
     if (!blocUsuarioLogado.isLogged) {
       Navigator.pushReplacementNamed(context, RouteGenerator.LOGIN);
     }
+  }
+
+  alert(String titulo, Color colorHead) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              titulo,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 20, fontWeight: FontWeight.bold, color: colorHead),
+            ),
+          );
+        });
   }
 
   @override
@@ -181,7 +197,7 @@ class _ViewPerfilState extends State<ViewPerfil> {
                     child: TextField(
                       controller: _controllerNumber,
                       autofocus: true,
-                      keyboardType: TextInputType.phone,
+                      keyboardType: TextInputType.number,
                       maxLength: 15,
                       style: TextStyle(fontSize: 20),
                       inputFormatters: <TextInputFormatter>[

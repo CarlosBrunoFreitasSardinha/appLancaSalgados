@@ -25,7 +25,6 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
       TextEditingController(text: "63 9 9262 0510");
   TextEditingController _controllerSenha =
       TextEditingController(text: "1234567");
-  String _mensagemErro = "";
   UsuarioModel usuario = UsuarioModel();
   bool visualizarSenha = true;
   final _mobileFormatter = NumberTextInputFormatterService();
@@ -50,30 +49,35 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
 
               _cadastrarUsuario(usuario);
             } else {
-              setState(() {
-                _mensagemErro =
-                " Endereço deve ser conter pelo menos 6 caracteres ";
-              });
+              alert(
+                  "Atenção",
+                  "Endereço deve ser conter pelo menos 6 caracteres!",
+                  Colors.red,
+                  Colors.black87);
             }
           } else {
-            setState(() {
-              _mensagemErro = " Um Numero telefonico deve ser informado ";
-            });
+            alert("Atenção",
+                "Um Número telefônico deve ser informado!",
+                Colors.red,
+                Colors.black87);
           }
         } else {
-          setState(() {
-            _mensagemErro = " Senha deve ser conter pelo menos 6 caracteres ";
-          });
+          alert("Atenção",
+              "Senha deve ser conter pelo menos 6 caracteres!",
+              Colors.red,
+              Colors.black87);
         }
       } else {
-        setState(() {
-          _mensagemErro = " Preencha o Email Utilizando @ ";
-        });
+        alert("Atenção",
+            "Um email válido deve conter @",
+            Colors.red,
+            Colors.black87);
       }
     } else {
-      setState(() {
-        _mensagemErro = " Preencha o Nome ";
-      });
+      alert("Atenção",
+          "O Nome deve ser Informado!",
+          Colors.red,
+          Colors.black87);
     }
   }
 
@@ -89,11 +93,10 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
           arguments: 0);
     }).catchError((onError) {
       print("Erro: " + onError.toString());
-
-      setState(() {
-        _mensagemErro =
-            "Erro ao cadastrar, verifique as informações e tente Novamente.";
-      });
+      alert("Atenção",
+          "Erro ao cadastrar, verifique as informações e tente Novamente.!",
+          Colors.red,
+          Colors.black87);
 
     });
   }
@@ -104,6 +107,29 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
           arguments: 0);
     }
   }
+
+  alert(String titulo, String msg, Color colorHead, Color colorBody) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(titulo,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: colorHead
+              ),),
+            content: Text(msg,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 20,
+                    color: colorBody
+                )),
+          );
+        });
+  }
+
 
   @override
   void initState() {
@@ -189,7 +215,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                     child: TextField(
                       controller: _controllerFone,
                       autofocus: true,
-                      keyboardType: TextInputType.phone,
+                      keyboardType: TextInputType.number,
                       maxLength: 15,
                       style: TextStyle(fontSize: 20),
                       inputFormatters: <TextInputFormatter>[
@@ -292,14 +318,6 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                             _controllerSenha,
                           );
                         }),
-                  ),
-
-                  //msg error
-                  Center(
-                    child: Text(
-                      _mensagemErro,
-                      style: TextStyle(color: Colors.red, fontSize: 20),
-                    ),
                   ),
                 ],
               ),

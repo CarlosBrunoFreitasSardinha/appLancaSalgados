@@ -43,6 +43,24 @@ class _ViewPedidoState extends State<ViewPedido>
     }
   }
 
+  alert(String titulo, String msg, Color colorHead, Color colorBody) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              titulo,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 20, fontWeight: FontWeight.bold, color: colorHead),
+            ),
+            content: Text(msg,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20, color: colorBody)),
+          );
+        });
+  }
+
   _salvarPedido() async {
       widget.pedido.carrinho.fecharPedido();
       blocCarrinho.cart.fecharPedido();
@@ -75,23 +93,17 @@ class _ViewPedidoState extends State<ViewPedido>
         _salvarPedido();
       }
       else {
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text("A Forma de Pagamento Não Foi Informada!"),
-              );
-            });
+        alert("Atenção",
+            "A Forma de Pagamento Não Foi Informada!",
+            Colors.red,
+            Colors.black87);
       }
     }
     else {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text("O Endereço Não Foi Informado!"),
-            );
-          });
+      alert("Atenção",
+          "O Endereço Não Foi Informado!",
+          Colors.red,
+          Colors.black87);
     }
   }
 
