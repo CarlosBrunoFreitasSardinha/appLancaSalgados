@@ -28,18 +28,20 @@ class _ArticleDescription extends StatelessWidget {
             children: <Widget>[
               Text(
                 '$title',
-                maxLines: 1,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 17,
                     color: Color(0xffd19c3c)),
               ),
-              Padding(padding: EdgeInsets.only(top: 3.0, left: 4), child: Text(
-                '$subtitle',
+              Padding(
+                padding: EdgeInsets.only(top: 4.0, left: 4),
+                child: Text(
+                  '$subtitle',
                 maxLines: 2,
                 style: const TextStyle(
-                    fontSize: 15.0,
+                    fontSize: 14.0,
                     color: Colors.black54,
                     fontWeight: FontWeight.bold
                 ),
@@ -103,7 +105,7 @@ class CustomListItemOne extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0),
         child: SizedBox(
-          height: 80,
+          height: 110,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
@@ -127,7 +129,7 @@ class CustomListItemOne extends StatelessWidget {
                 ),
               ),
               AspectRatio(
-                aspectRatio: 0.5,
+                aspectRatio: 0.4,
                 child: Align(alignment: Alignment.topCenter,
                   child: icone,),
               ),

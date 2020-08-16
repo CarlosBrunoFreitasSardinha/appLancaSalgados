@@ -275,8 +275,8 @@ class _ViewProdutoState extends State<ViewProduto> {
                                                 width: 1, color: Colors.grey),
                                             color: Color(0xff5c3838)),
                                         child: Padding(
-                                          padding: EdgeInsets.only(right: 4),
-                                          child: Row(
+                                  padding: EdgeInsets.only(left: 12, right: 25),
+                                  child: Row(
                                             children: <Widget>[
                                               IconButton(
                                                 padding: EdgeInsets.all(0),

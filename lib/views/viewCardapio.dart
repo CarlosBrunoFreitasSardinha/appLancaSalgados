@@ -86,8 +86,8 @@ class _CardapioState extends State<Cardapio>
                             borderRadius: BorderRadius.circular(15),
                             child: Image.network(
                               produtoModel.urlImg,
-                              height: 100,
-                              width: 100,
+                              height: 90,
+                              width: 90,
                               fit: BoxFit.cover,
                             )),
                       ),
