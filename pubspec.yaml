@@ -38,6 +38,7 @@ dependencies:
   onesignal_flutter: ^2.6.0
   path_provider: ^1.6.5
   path_provider_macos: ^0.0.1
+  uuid: ^2.2.0
 
 flutter_icons:
   android: true

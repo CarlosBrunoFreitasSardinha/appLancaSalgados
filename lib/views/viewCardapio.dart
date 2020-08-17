@@ -20,27 +20,31 @@ class ViewCardapio extends StatefulWidget {
 
 class _ViewCardapioState extends State<ViewCardapio>
     with SingleTickerProviderStateMixin {
-  Firestore bd = Firestore.instance;
   final blocUser = AppModel.to.bloc<UserBloc>();
-  List<String> _itensMenu = [];
-  List<ProdutoModel> listaDeProdutos = [];
+  final _controller = StreamController<List<ProdutoModel>>.broadcast();
 
-  Future<List<ProdutoModel>> _adicionarListenerProdutos() async {
+  List<String> _itensMenu = [];
+  List<CategoriaProdutoModel> listaCategoria = [];
+
+  Future <Stream<List<ProdutoModel>>> _adicionarListenerProdutos() async {
+    Firestore bd = Firestore.instance;
+    List<ProdutoModel> listaDeProdutos = [];
     QuerySnapshot querySnapshot = blocUser.usuario.isAdm
         ? await bd
-            .collection("produtos")
-            .orderBy("idCategoria", descending: false)
-            .getDocuments()
+        .collection("produtos")
+        .orderBy("idCategoria", descending: false)
+        .getDocuments()
+
         : await bd
-            .collection("produtos")
-            .where("isOcult", isEqualTo: false)
+        .collection("produtos")
+        .where("isOcult", isEqualTo: false)
         .getDocuments();
 
     for (DocumentSnapshot json in querySnapshot.documents) {
       listaDeProdutos.add(ProdutoModel.fromJson(json.data));
     }
 
-    return listaDeProdutos;
+    _controller.add(listaDeProdutos);
   }
 
   Future<List<CategoriaProdutoModel>> futureListCategoria() async {
@@ -49,15 +53,15 @@ class _ViewCardapioState extends State<ViewCardapio>
         .collection("categoria")
         .orderBy("idCategoria", descending: false)
         .getDocuments();
-    List<CategoriaProdutoModel> options = [];
     for (int i = 0; i < querySnapshot.documents.length; i++) {
       DocumentSnapshot snap = querySnapshot.documents[i];
-      options.add(CategoriaProdutoModel.fromJson(snap.data));
+      listaCategoria.add(CategoriaProdutoModel.fromJson(snap.data));
     }
-    return options;
+    return listaCategoria;
   }
 
-  List<Widget> listaItens(String categoria) {
+  List<Widget> listaItens(String categoria,
+      List<ProdutoModel> listaDeProdutos) {
     List<Widget> lista = [];
     for (ProdutoModel produtoModel in listaDeProdutos) {
       if (produtoModel.idCategoria == categoria) {
@@ -147,75 +151,80 @@ class _ViewCardapioState extends State<ViewCardapio>
   @override
   void initState() {
     super.initState();
+    futureListCategoria();
     _adicionarListenerProdutos();
   }
 
   @override
   void dispose() {
     super.dispose();
+    _controller.close();
   }
 
   @override
   Widget build(BuildContext context) {
-    var future = FutureBuilder(
-        future: futureListCategoria(),
-        initialData: CategoriaProdutoModel(),
-        // ignore: missing_return
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-              return Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[CircularProgressIndicator()],
-                ),
+    var stream = StreamBuilder<List<ProdutoModel>>(
+      stream: _controller.stream,
+      // ignore: missing_return
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+            return Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[CircularProgressIndicator()],
+              ),
+            );
+            break;
+          case ConnectionState.active:
+          case ConnectionState.done:
+            if (snapshot.hasError) {
+              return Expanded(child: Text("Erro ao carregar os dados!"));
+            }
+            else {
+              return Expanded(
+                child: ListView.builder(
+                    itemCount: listaCategoria.length,
+                    itemBuilder: (context, indice) {
+                      List<Widget> subLista = listaItens(
+                          listaCategoria[indice].descricao, snapshot.data);
+                      return subLista.length == 0
+                          ? SizedBox()
+                          : Padding(
+                        padding: EdgeInsets.only(bottom: 5, top: 5),
+                        child: Card(
+                          child: ExpansionTile(
+                            backgroundColor: Colors.grey[100],
+                            title: Padding(
+                              padding:
+                              EdgeInsets.fromLTRB(8, 16, 16, 16),
+                              child: Text(
+                                listaCategoria[indice].descricao,
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color:
+                                    Theme
+                                        .of(context)
+                                        .accentColor,
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            children: listaItens(
+                                listaCategoria[indice].descricao,
+                                snapshot.data),
+                          ),
+                        ),
+                      );
+                    }),
               );
-              break;
-            case ConnectionState.active:
-            case ConnectionState.done:
-              if (snapshot.hasError) {
-                return Expanded(child: Text("Erro ao carregar os dados!"));
-              } else {
-                return Expanded(
-                  child: ListView.builder(
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (context, indice) {
-                        List<Widget> subLista = listaItens(
-                            snapshot.data[indice].descricao);
-                        return subLista.length == 0
-                            ? SizedBox()
-                            : Padding(
-                                padding: EdgeInsets.only(bottom: 5, top: 5),
-                                child: Card(
-                                  child: ExpansionTile(
-                                    backgroundColor: Colors.grey[100],
-                                    title: Padding(
-                                      padding:
-                                          EdgeInsets.fromLTRB(8, 16, 16, 16),
-                                      child: Text(
-                                        snapshot.data[indice].descricao,
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            color:
-                                                Theme.of(context).accentColor,
-                                            fontWeight: FontWeight.bold),
-                                        textAlign: TextAlign.left,
-                                      ),
-                                    ),
-                                    children: listaItens(
-                                        snapshot.data[indice].descricao),
-                                  ),
-                                ),
-                              );
-                      }),
-                );
-              }
-              break;
-          }
-        });
-
+            }
+            break;
+        }
+      },
+    );
 
     return Scaffold(
       body: Container(
@@ -226,13 +235,13 @@ class _ViewCardapioState extends State<ViewCardapio>
                 fit: BoxFit.cover)),
         child: SafeArea(
             child: Container(
-          padding: EdgeInsets.all(8),
-          child: Column(
-            children: <Widget>[
-              future,
-            ],
-          ),
-        )),
+              padding: EdgeInsets.all(8),
+              child: Column(
+                children: <Widget>[
+                  stream,
+                ],
+              ),
+            )),
       ),
     );
   }

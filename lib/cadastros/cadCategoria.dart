@@ -110,7 +110,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
     }
   }
 
-  _adicionarListenerConversas() {
+  _adicionarListenerCategoria() {
     final stream = bd
         .collection(colection)
         .orderBy("idCategoria", descending: false)
@@ -155,7 +155,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
     super.initState();
     _verificarUsuarioLogado();
     _obterIndice();
-    _adicionarListenerConversas();
+    _adicionarListenerCategoria();
   }
 
   @override
