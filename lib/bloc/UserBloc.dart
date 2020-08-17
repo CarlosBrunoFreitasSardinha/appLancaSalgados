@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:applancasalgados/models/usuarioModel.dart';
+import 'package:applancasalgados/models/UsuarioModel.dart';
 import 'package:applancasalgados/services/CarrinhoService.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:rxdart/rxdart.dart';

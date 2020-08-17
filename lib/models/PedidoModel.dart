@@ -1,10 +1,10 @@
 import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/models/CarrinhoModel.dart';
-import 'package:applancasalgados/models/usuarioModel.dart';
+import 'package:applancasalgados/models/UsuarioModel.dart';
 import 'package:applancasalgados/services/UtilService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'appModel.dart';
+import 'AppModel.dart';
 
 class PedidoModel {
   CarrinhoModel _carrinho;

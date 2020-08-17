@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:applancasalgados/bloc/UserBloc.dart';
+import 'package:applancasalgados/models/AppModel.dart';
 import 'package:applancasalgados/models/CarrinhoModel.dart';
 import 'package:applancasalgados/models/ProdutoCarrinhoModel.dart';
-import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:rxdart/rxdart.dart';

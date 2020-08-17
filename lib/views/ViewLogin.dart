@@ -1,16 +1,16 @@
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/UserBloc.dart';
-import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/models/usuarioModel.dart';
+import 'package:applancasalgados/models/AppModel.dart';
+import 'package:applancasalgados/models/UsuarioModel.dart';
 import 'package:applancasalgados/services/AuthService.dart';
 import 'package:flutter/material.dart';
 
-class Login extends StatefulWidget {
+class ViewLogin extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  _ViewLoginState createState() => _ViewLoginState();
 }
 
-class _LoginState extends State<Login> {
+class _ViewLoginState extends State<ViewLogin> {
   TextEditingController _controllerEmail =
       TextEditingController(text: "teste@teste.com");
   TextEditingController _controllerSenha =

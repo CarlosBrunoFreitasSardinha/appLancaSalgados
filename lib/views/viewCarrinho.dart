@@ -1,10 +1,10 @@
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/CarrinhoBloc.dart';
 import 'package:applancasalgados/bloc/UserBloc.dart';
+import 'package:applancasalgados/models/AppModel.dart';
 import 'package:applancasalgados/models/CarrinhoModel.dart';
 import 'package:applancasalgados/models/PedidoModel.dart';
 import 'package:applancasalgados/models/ProdutoCarrinhoModel.dart';
-import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/services/UtilService.dart';
 import 'package:applancasalgados/stateLess/CustomListItemTwo.dart';
 import 'package:flutter/material.dart';

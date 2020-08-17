@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:applancasalgados/bloc/UserBloc.dart';
+import 'package:applancasalgados/models/AppModel.dart';
 import 'package:applancasalgados/models/PedidoModel.dart';
-import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/models/usuarioModel.dart';
+import 'package:applancasalgados/models/UsuarioModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
 import 'package:applancasalgados/services/UtilService.dart';
 import 'package:applancasalgados/stateLess/CustomListItemOne.dart';

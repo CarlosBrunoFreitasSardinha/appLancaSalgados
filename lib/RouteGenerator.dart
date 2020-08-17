@@ -2,9 +2,8 @@ import 'package:applancasalgados/cadastros/cadCategoria.dart';
 import 'package:applancasalgados/cadastros/cadFormaPagamento.dart';
 import 'package:applancasalgados/cadastros/cadProdutos.dart';
 import 'package:applancasalgados/cadastros/cadUsuario.dart';
-import 'package:applancasalgados/login/login.dart';
-import 'package:applancasalgados/login/recuperarSenha.dart';
-import 'package:applancasalgados/views/teste.dart';
+import 'package:applancasalgados/views/ViewLogin.dart';
+import 'package:applancasalgados/views/ViewRecuperarSenha.dart';
 import 'package:applancasalgados/views/viewCardapio.dart';
 import 'package:applancasalgados/views/viewCarrinho.dart';
 import 'package:applancasalgados/views/viewConfiguracoes.dart';
@@ -40,7 +39,6 @@ class RouteGenerator{
 
 
   static const String CONFIG = "/configuracoes";
-  static const String TESTE = "/testes";
 
 
   // ignore: missing_return
@@ -53,12 +51,14 @@ class RouteGenerator{
         return MaterialPageRoute(builder: (_) => ViewSplashScreen());
       case HOME:
         return MaterialPageRoute(builder: (_) => ViewHome(args));
-      case LOGIN: return MaterialPageRoute(builder: (_) => Login());
+      case LOGIN:
+        return MaterialPageRoute(builder: (_) => ViewLogin());
       case RESET:
         return MaterialPageRoute(builder: (_) => ResetPasswordView());
 
       case DESTAQUES: return MaterialPageRoute(builder: (_) => Destaques());
-      case CARDAPIO: return MaterialPageRoute(builder: (_) => Cardapio());
+      case CARDAPIO:
+        return MaterialPageRoute(builder: (_) => ViewCardapio());
       case CARRINHO: return MaterialPageRoute(builder: (_) => ViewCarrinho());
       case PERFIL: return MaterialPageRoute(builder: (_) => ViewPerfil());
       case PRODUTO: return MaterialPageRoute(builder: (_) => ViewProduto(args));
@@ -76,8 +76,6 @@ class RouteGenerator{
 
       case CONFIG: return MaterialPageRoute(builder: (_) => Configuracoes());
 
-      case TESTE:
-        return MaterialPageRoute(builder: (_) => CarouselDemo());
 
       default: _erroRota();
     }

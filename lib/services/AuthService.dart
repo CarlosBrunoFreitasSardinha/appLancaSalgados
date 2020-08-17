@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:applancasalgados/bloc/CarrinhoBloc.dart';
 import 'package:applancasalgados/bloc/UserBloc.dart';
+import 'package:applancasalgados/models/AppModel.dart';
 import 'package:applancasalgados/models/CarrinhoModel.dart';
-import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/models/usuarioModel.dart';
+import 'package:applancasalgados/models/UsuarioModel.dart';
 import 'package:applancasalgados/services/UserService.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

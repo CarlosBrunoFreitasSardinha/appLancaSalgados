@@ -1,9 +1,9 @@
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/CarrinhoBloc.dart';
 import 'package:applancasalgados/bloc/UserBloc.dart';
+import 'package:applancasalgados/models/AppModel.dart';
 import 'package:applancasalgados/models/ProdutoCarrinhoModel.dart';
 import 'package:applancasalgados/models/ProdutoModel.dart';
-import 'package:applancasalgados/models/appModel.dart';
 import 'package:applancasalgados/services/UtilService.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';

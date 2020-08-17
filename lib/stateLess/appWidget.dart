@@ -1,7 +1,7 @@
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/UserBloc.dart';
 import 'package:applancasalgados/bloc/appBloc.dart';
-import 'package:applancasalgados/models/appModel.dart';
+import 'package:applancasalgados/models/AppModel.dart';
 import 'package:applancasalgados/views/viewSplashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';

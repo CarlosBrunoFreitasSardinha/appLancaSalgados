@@ -1,7 +1,7 @@
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/bloc/UserBloc.dart';
-import 'package:applancasalgados/models/appModel.dart';
-import 'package:applancasalgados/models/usuarioModel.dart';
+import 'package:applancasalgados/models/AppModel.dart';
+import 'package:applancasalgados/models/UsuarioModel.dart';
 import 'package:applancasalgados/services/AuthService.dart';
 import 'package:applancasalgados/services/UtilService.dart';
 import 'package:applancasalgados/stateLess/CarrinhoAppBarIcon.dart';
@@ -33,9 +33,6 @@ class _ViewHomeState extends State<ViewHome>
         break;
       case "Perfil":
         Navigator.pushNamed(context, RouteGenerator.PERFIL);
-        break;
-      case "Pag. de Testes":
-        Navigator.pushNamed(context, RouteGenerator.TESTE);
         break;
       case "Login":
         if (!AppModel.to.bloc<UserBloc>().isLogged)
@@ -153,7 +150,7 @@ class _ViewHomeState extends State<ViewHome>
             controller: _tabController,
             children: [
               Destaques(),
-              Cardapio(),
+              ViewCardapio(),
               ViewCarrinho(),
               ViewPedidos(),
             ],

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:applancasalgados/bloc/UserBloc.dart';
-import 'package:applancasalgados/models/appModel.dart';
+import 'package:applancasalgados/models/AppModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
 import 'package:applancasalgados/services/ImageService.dart';
 import 'package:applancasalgados/services/NumberFormatService.dart';
