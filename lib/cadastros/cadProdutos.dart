@@ -540,7 +540,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                   ),
 
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       FlatButton(
                           shape: RoundedRectangleBorder(

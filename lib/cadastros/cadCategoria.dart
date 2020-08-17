@@ -65,10 +65,10 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
     else {
       options.forEach((element) {
         if (element.descricao == selectedItem) {
-          selectedItem = null;
           _alterarCategoria(element.idCategoria.toString());
         }
       });
+      limparFormulario();
     }
     alert("Sucesso",
         "Informações salvas com sucesso!",
@@ -91,6 +91,13 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
         colection, ident, {"descricao": _controllerTitulo.text});
   }
 
+  limparFormulario() {
+    setState(() {
+      selectedItem = null;
+    });
+    _controllerTitulo.clear();
+  }
+
   _excluirCategoria() {
     if (selectedItem != null) {
       options.forEach((element) {
@@ -99,10 +106,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
           BdService.removerDados(colection, element.idCategoria.toString());
         }
       });
-      setState(() {
-        selectedItem = null;
-      });
-      _controllerTitulo.clear();
+      limparFormulario();
     }
   }
 
@@ -148,7 +152,6 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _verificarUsuarioLogado();
     _obterIndice();
@@ -157,7 +160,6 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _controller.close();
   }
@@ -165,151 +167,173 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
   @override
   Widget build(BuildContext context) {
 
-    var streamCategoria = StreamBuilder<QuerySnapshot>(
-        stream: _controller.stream,
-        // ignore: missing_return
-        builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            const Text("Carregando.....");
-          else {
-            List<DropdownMenuItem> currencyItems = [];
-            for (int i = 0; i < snapshot.data.documents.length; i++) {
-              DocumentSnapshot snap = snapshot.data.documents[i];
-              options.add(CategoriaProdutoModel.fromJson({
-                'idCategoria': snap.data["idCategoria"],
-                'descricao': snap.data["descricao"]
-              }));
-
-              currencyItems.add(
-                DropdownMenuItem(
-                  child: Text(
-                    snap.data["descricao"],
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xffd19c3c)),
-                  ),
-                  value: "${snap.data["descricao"]}",
-                ),
-              );
-            }
-            return Padding(
-              padding: EdgeInsets.all(8),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                child: Padding(
-                padding: EdgeInsets.fromLTRB(24, 4, 8, 4),
-                child: DropdownButton(
-                  underline: SizedBox(),
-                  items: currencyItems,
-                  onChanged: (currencyValue) {
-                    setState(() {
-                      selectedItem = currencyValue;
-                      _controllerTitulo.text = currencyValue;
-                    });
-                  },
-                  value: selectedItem,
-                  isExpanded: true,
-                  hint: new Text(
-                    "Nova Categoria!",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xffd19c3c)),
-                  ),
-                ),
-              ),
-            ),);
-          }
-        });
 
     return Scaffold(
       appBar: AppBar(
         title: Text("Cadastro Categoria"),
       ),
-      body: Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('imagens/background.jpg'),
-                  fit: BoxFit.cover)),
-          padding: EdgeInsets.all(16),
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  //logo
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 32),
-                    child: Image.asset(
-                      "imagens/logo.png",
-                      width: 250,
-                      height: 200,
+      body: StreamBuilder<QuerySnapshot>(
+          stream: _controller.stream,
+          // ignore: missing_return
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              const Text("Carregando.....");
+            else {
+              List<DropdownMenuItem> currencyItems = [];
+              for (int i = 0; i < snapshot.data.documents.length; i++) {
+                DocumentSnapshot snap = snapshot.data.documents[i];
+                options.add(CategoriaProdutoModel.fromJson({
+                  'idCategoria': snap.data["idCategoria"],
+                  'descricao': snap.data["descricao"]
+                }));
+
+                currencyItems.add(
+                  DropdownMenuItem(
+                    child: Text(
+                      snap.data["descricao"],
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xffd19c3c)),
                     ),
+                    value: "${snap.data["descricao"]}",
                   ),
+                );
+              }
+              return Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage('imagens/background.jpg'),
+                          fit: BoxFit.cover)),
+                  padding: EdgeInsets.all(16),
+                  child: Center(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          //logo
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 32),
+                            child: Image.asset(
+                              "imagens/logo.png",
+                              width: 200,
+                              height: 150,
+                            ),
+                          ),
 
-                  streamCategoria,
-
-                  Padding(
-                    padding: EdgeInsets.only(left: 8, right: 8),
-                    child: TextField(
-                      controller: _controllerTitulo,
-                      keyboardType: TextInputType.text,
-                      style: TextStyle(fontSize: 20),
-                      decoration: InputDecoration(
-                          contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                          hintText: "Titulo",
-                          prefixIcon: Icon(Icons.title),
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10))),
-                    ),
-                  ),
-
-                  //botao Cadastrar Atualizar
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: 16, bottom: 10, left: 8, right: 8),
-                    child: RaisedButton(
-                        elevation: 8,
-                        child: Text(
-                          "Cadastrar/Atualizar",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
-                        ),
-                        color: Color(0xffd19c3c),
-                        padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        onPressed: () {
-                          validarCampos();
-                        }),
-                  ),
-
-                  //botao Excluir
-                  selectedItem != null
-                      ? Padding(
-                          padding: EdgeInsets.only(
-                              top: 4, bottom: 10, left: 8, right: 8),
-                          child: RaisedButton(
-                              child: Text(
-                                "Excluir",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
+                          Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10))),
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(24, 4, 8, 4),
+                                child: DropdownButton(
+                                  underline: SizedBox(),
+                                  items: currencyItems,
+                                  onChanged: (currencyValue) {
+                                    setState(() {
+                                      selectedItem = currencyValue;
+                                      _controllerTitulo.text = currencyValue;
+                                    });
+                                  },
+                                  value: selectedItem,
+                                  isExpanded: true,
+                                  hint: new Text(
+                                    "Nova Categoria!",
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xffd19c3c)),
+                                  ),
+                                ),
                               ),
-                              color: Color(0xffd19c3c),
-                              padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              onPressed: () => _excluirCategoria()),
-                        )
-                      : SizedBox(),
-                ],
-              ),
-            ),
-          )),
+                            ),
+                          ),
+
+                          Padding(
+                            padding: EdgeInsets.only(left: 8, right: 8),
+                            child: TextField(
+                              controller: _controllerTitulo,
+                              keyboardType: TextInputType.text,
+                              style: TextStyle(fontSize: 20),
+                              decoration: InputDecoration(
+                                  contentPadding:
+                                      EdgeInsets.fromLTRB(32, 16, 32, 16),
+                                  hintText: "Titulo",
+                                  prefixIcon: Icon(Icons.title),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10))),
+                            ),
+                          ),
+
+                          //botao Cadastrar Atualizar
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: 16, bottom: 10, left: 8, right: 8),
+                            child: RaisedButton(
+                                elevation: 8,
+                                child: Text(
+                                  "Cadastrar/Atualizar",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                ),
+                                color: Color(0xffd19c3c),
+                                padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                onPressed: () {
+                                  validarCampos();
+                                }),
+                          ),
+
+                          //botao Excluir
+                          selectedItem != null
+                              ? Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 4, bottom: 10, left: 8, right: 8),
+                                  child: RaisedButton(
+                                      child: Text(
+                                        "Excluir",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                      color: Color(0xffd19c3c),
+                                      padding:
+                                          EdgeInsets.fromLTRB(32, 16, 32, 16),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      onPressed: () => _excluirCategoria()),
+                                )
+                              : SizedBox(),
+
+                          //botao LimparForm
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: 4, bottom: 10, left: 8, right: 8),
+                            child: RaisedButton(
+                                child: Text(
+                                  "Limpar",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                ),
+                                color: Color(0xffd19c3c),
+                                padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                onPressed: () => limparFormulario()),
+                          )
+                        ],
+                      ),
+                    ),
+                  ));
+            }
+          }),
     );
   }
 }

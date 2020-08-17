@@ -62,10 +62,10 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
     else {
       options.forEach((element) {
         if (element.descricao == selectedItem) {
-          selectedItem = null;
           _alterarFormaPagamento(element.id.toString());
         }
       });
+      limparFormulario();
     }
     alert("Sucesso",
         "Informações salvas com sucesso!",
@@ -93,11 +93,15 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
           BdService.removerDados(colection, element.id.toString());
         }
       });
-      setState(() {
-        selectedItem = null;
-      });
-      _controllerTitulo.clear();
     }
+    limparFormulario();
+  }
+
+  limparFormulario() {
+    setState(() {
+      selectedItem = null;
+    });
+    _controllerTitulo.clear();
   }
 
   _adicionarListenerFormaPagamento() {
@@ -160,63 +164,63 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
       appBar: AppBar(
         title: Text("Cadastro de Forma de Pagamento"),
       ),
-      body: Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('imagens/background.jpg'),
-                  fit: BoxFit.cover)),
-          padding: EdgeInsets.all(16),
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  //logo
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 32),
-                    child: Image.asset(
-                      "imagens/logo.png",
-                      width: 250,
-                      height: 200,
+      body: StreamBuilder<QuerySnapshot>(
+          stream: _controller.stream,
+          // ignore: missing_return
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              const Text("Carregando...");
+            else {
+              List<DropdownMenuItem> currencyItems = [];
+              for (int i = 0;
+              i < snapshot.data.documents.length;
+              i++) {
+                DocumentSnapshot snap = snapshot.data.documents[i];
+                options
+                    .add(FormaPagamentoModel.fromJson(snap.data));
+
+                currencyItems.add(
+                  DropdownMenuItem(
+                    child: Text(
+                      snap.data["descricao"],
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xffd19c3c)),
                     ),
+                    value: "${snap.data["descricao"]}",
                   ),
+                );
+              }
+              return Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage('imagens/background.jpg'),
+                          fit: BoxFit.cover)),
+                  padding: EdgeInsets.all(16),
+                  child: Center(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          //logo
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 32, top: 10),
+                            child: Image.asset(
+                              "imagens/logo.png",
+                              width: 200,
+                              height: 150,
+                            ),
+                          ),
 
-                  //Stream forma de pagamento
-                  StreamBuilder<QuerySnapshot>(
-                      stream: _controller.stream,
-                      // ignore: missing_return
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData)
-                          const Text("Carregando...");
-                        else {
-                          List<DropdownMenuItem> currencyItems = [];
-                          for (int i = 0;
-                              i < snapshot.data.documents.length;
-                              i++) {
-                            DocumentSnapshot snap = snapshot.data.documents[i];
-                            options
-                                .add(FormaPagamentoModel.fromJson(snap.data));
-
-                            currencyItems.add(
-                              DropdownMenuItem(
-                                child: Text(
-                                  snap.data["descricao"],
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xffd19c3c)),
-                                ),
-                                value: "${snap.data["descricao"]}",
-                              ),
-                            );
-                          }
-                          return Padding(
+                          //Stream forma de pagamento
+                          Padding(
                             padding: EdgeInsets.all(8),
                             child: Container(
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
+                                  BorderRadius.all(Radius.circular(10))),
                               child: Padding(
                                 padding: EdgeInsets.fromLTRB(24, 4, 8, 4),
                                 child: DropdownButton(
@@ -240,66 +244,86 @@ class _CadastroFormaPagamentoState extends State<CadastroFormaPagamento> {
                                 ),
                               ),
                             ),
-                          );
-                        }
-                      }),
+                          ),
 
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(8, 0, 8, 4),
-                    child: TextField(
-                      controller: _controllerTitulo,
-                      keyboardType: TextInputType.text,
-                      style: TextStyle(fontSize: 20),
-                      decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.title),
-                          contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                          hintText: "Titulo",
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10))),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(8, 0, 8, 4),
+                            child: TextField(
+                              controller: _controllerTitulo,
+                              keyboardType: TextInputType.text,
+                              style: TextStyle(fontSize: 20),
+                              decoration: InputDecoration(
+                                  prefixIcon: Icon(Icons.title),
+                                  contentPadding: EdgeInsets.fromLTRB(
+                                      32, 16, 32, 16),
+                                  hintText: "Titulo",
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10))),
+                            ),
+                          ),
+
+                          //botao Cadastrar Atualizar
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: 16, bottom: 10, left: 8, right: 8),
+                            child: RaisedButton(
+                                child: Text(
+                                  "Cadastrar/Atualizar",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                ),
+                                color: Color(0xffd19c3c),
+                                padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                onPressed: () {
+                                  validarCampos();
+                                }),
+                          ),
+
+                          //botao Excluir
+                          selectedItem != null
+                              ? Padding(
+                            padding: EdgeInsets.only(
+                                top: 4, bottom: 10, left: 8, right: 8),
+                            child: RaisedButton(
+                                child: Text(
+                                  "Excluir",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                ),
+                                color: Color(0xffd19c3c),
+                                padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                onPressed: () => _excluirFormaPagamento()),
+                          )
+                              : SizedBox(),
+
+                          //botao LimparForm
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: 4, bottom: 10, left: 8, right: 8),
+                            child: RaisedButton(
+                                child: Text(
+                                  "Limpar",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                ),
+                                color: Color(0xffd19c3c),
+                                padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                onPressed: () => limparFormulario()),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-
-                  //botao Cadastrar Atualizar
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: 16, bottom: 10, left: 8, right: 8),
-                    child: RaisedButton(
-                        child: Text(
-                          "Cadastrar/Atualizar",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
-                        ),
-                        color: Color(0xffd19c3c),
-                        padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        onPressed: () {
-                          validarCampos();
-                        }),
-                  ),
-
-                  //botao Excluir
-                  selectedItem != null
-                      ? Padding(
-                    padding: EdgeInsets.only(
-                        top: 4, bottom: 10, left: 8, right: 8),
-                    child: RaisedButton(
-                        child: Text(
-                          "Excluir",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
-                        ),
-                        color: Color(0xffd19c3c),
-                        padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        onPressed: () => _excluirFormaPagamento()),
-                  )
-                      : SizedBox(),
-                ],
-              ),
-            ),
-          )),
+                  ));
+            }
+          }),
     );
   }
 }
