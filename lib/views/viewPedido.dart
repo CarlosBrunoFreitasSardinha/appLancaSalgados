@@ -260,8 +260,9 @@ class _ViewPedidoState extends State<ViewPedido>
                                 padding: EdgeInsets.all(8),
                                 child: Text(
                                   "Selecione a Forma de Pagamento!",
-                                  style: TextStyle(
-                                      fontSize: 18,
+                                    maxLines: 2,
+                                    style: TextStyle(
+                                      fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: Color(0xffd19c3c)),
                                 ),
@@ -271,6 +272,7 @@ class _ViewPedidoState extends State<ViewPedido>
                           padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
                           child: Text(
                             selectedItem,
+                            maxLines: 2,
                             style: TextStyle(
                                 fontSize: 18,
                                 color: Theme

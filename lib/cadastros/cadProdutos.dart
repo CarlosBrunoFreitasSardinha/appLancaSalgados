@@ -261,10 +261,19 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
           Colors.red,
           Colors.black87);
     }
+    limparForm();
+  }
+
+  limparForm() {
+    selectedItem = null;
     _controllerTitulo.clear();
     _controllerDescricao.clear();
     _controllerPreco.clear();
     _controllerTempPreparo.clear();
+    produto.galeria.forEach((element) {
+      ImageService.deleteImage(element);
+    });
+    ImageService.deleteImage(produto.urlImg);
   }
 
   Future<List<CategoriaProdutoModel>> adicionarListenerFormaPagamento() async {
@@ -390,14 +399,14 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                         : Card(
                       child: !isImgPrincipal
                           ? SizedBox(
-                        height: 200,
-                        width: 200,
-                        child: IconButton(
-                          icon: Icon(Icons.add),
-                          onPressed: () => getImage(),
-                        ),
-                      )
-                          : SizedBox(
+                                    height: 200,
+                                    width: 200,
+                                    child: IconButton(
+                                      icon: Icon(Icons.add),
+                                      onPressed: () => getImage(),
+                                    ),
+                                  )
+                                : SizedBox(
                         height: 250,
                         width: 250,
                         child: Center(
@@ -597,7 +606,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                     ],
                   ),
 
-                  //botao
+                  //botao Cadastrar/Atualizar
                   Padding(
                     padding: EdgeInsets.only(top: 16, bottom: 10),
                     child: RaisedButton(
@@ -611,6 +620,23 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                             borderRadius: BorderRadius.circular(10)),
                         onPressed: () {
                           validarCampos();
+                        }),
+                  ),
+
+                  //botao Limpar
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: RaisedButton(
+                        child: Text(
+                          "Limpar",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                        color: Color(0xffd19c3c),
+                        padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        onPressed: () {
+                          limparForm();
                         }),
                   ),
                 ],

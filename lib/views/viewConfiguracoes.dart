@@ -45,7 +45,7 @@ class _ConfiguracoesState extends State<Configuracoes> {
                     child: Image.asset(
                   "imagens/logo.png",
                   width: 200,
-                  height: 200,
+                  height: 150,
                 ),
               ),
 

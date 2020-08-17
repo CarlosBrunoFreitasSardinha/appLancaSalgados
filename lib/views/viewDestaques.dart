@@ -83,17 +83,55 @@ class _DestaquesState extends State<Destaques>
                                     arguments: listaProdutos[fullGaleria
                                         .indexOf(item)]),
                             child: ClipRRect(
-                                borderRadius: BorderRadius.circular(15),
-                                child: Image.network(
-                                  item,
-                                  fit: BoxFit.cover,
-                                  loadingBuilder: (context, child, progress) {
-                                    return progress == null
-                                        ? child
-                                        : Center(
-                                            child: CircularProgressIndicator(),
-                                          );
-                                  },
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15.0)),
+                                child: Stack(
+                                  children: <Widget>[
+                                    Image.network(
+                                      item,
+                                      fit: BoxFit.cover,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.9,
+                                      loadingBuilder:
+                                          (context, child, progress) {
+                                        return progress == null
+                                            ? child
+                                            : Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                      },
+                                    ),
+                                    Positioned(
+                                      bottom: 0.0,
+                                      left: 0.0,
+                                      right: 0.0,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              Color.fromARGB(200, 0, 0, 0),
+                                              Color.fromARGB(0, 0, 0, 0)
+                                            ],
+                                            begin: Alignment.bottomCenter,
+                                            end: Alignment.topCenter,
+                                          ),
+                                        ),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 10.0, horizontal: 20.0),
+                                        child: Text(
+                                          '${listaProdutos[fullGaleria.indexOf(item)].titulo}',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 )),
                           ),
                         ),
