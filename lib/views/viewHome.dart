@@ -119,7 +119,6 @@ class _ViewHomeState extends State<ViewHome>
                             _itensMenu = [
                               "Configurações",
                               "Perfil",
-                              "Pag. de Testes",
                               "Sair"
                             ];
                           } else {
