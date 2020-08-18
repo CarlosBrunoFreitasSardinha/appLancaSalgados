@@ -97,7 +97,22 @@ class _ConfiguracoesState extends State<Configuracoes> {
                               context, RouteGenerator.CAD_FORMAPAGAMENTO);
                         }),
                   ),
-                ],
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: RaisedButton(
+                    child: Text(
+                      "Cadastrar Aparelho",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    color: Color(0xffd19c3c),
+                    padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    onPressed: () {
+                      Navigator.pushNamed(context, RouteGenerator.CAD_APARELHO);
+                    }),
+              ),
+            ],
               )
           ),
         ),

@@ -12,6 +12,7 @@ import 'package:applancasalgados/services/UtilService.dart';
 import 'package:applancasalgados/stateLess/CustomListItemOne.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class ViewPedido extends StatefulWidget {
   final PedidoModel pedido;
@@ -61,9 +62,28 @@ class _ViewPedidoState extends State<ViewPedido>
         });
   }
 
+  _obterIndice() async {
+    QuerySnapshot json = await BdService.recuperarListaItensSubColection(
+        "indices", "oneSignal", "oneSignal");
+    json.documents.forEach((element) {
+      enviarNotificacao("Um novo pedido em aberto!", element["aparelho"]);
+    });
+  }
+
+  enviarNotificacao(String msg, String destinatario) async {
+    await OneSignal.shared.postNotification(
+      OSCreateNotification(
+        playerIds: [destinatario],
+        content: msg,
+        heading: "Nova mensagem",
+      ),
+    );
+  }
+
   _salvarPedido() async {
-      widget.pedido.carrinho.fecharPedido();
-      blocCarrinho.cart.fecharPedido();
+    _obterIndice();
+    widget.pedido.carrinho.fecharPedido();
+    blocCarrinho.cart.fecharPedido();
     widget.pedido.idCelularSolicitante = blocUsuario.playId;
 
     widget.pedido.trocoPara = _controllerTroco.text == ""

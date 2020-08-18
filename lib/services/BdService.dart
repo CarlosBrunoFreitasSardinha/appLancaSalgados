@@ -85,4 +85,32 @@ class BdService {
         .get();
     return snapshot;
   }
+
+  static Future<Map<String, dynamic>> recuperarUmDocumentoColecaoGenerica(
+      String coletionPai,
+      String documentPai,
+      String subColection,
+      String subDocument) async {
+    DocumentSnapshot snapshot = await BdService.bd
+        .collection(coletionPai)
+        .document(documentPai)
+        .collection(subColection)
+        .document(subDocument)
+        .get();
+    var dados = snapshot.data;
+    return dados;
+  }
+
+  static Future<QuerySnapshot> recuperarListaItensSubColection(
+      String coletionPai,
+      String documentPai,
+      String subColection) async {
+    QuerySnapshot querySnapshot = await BdService.bd
+        .collection(coletionPai)
+        .document(documentPai)
+        .collection(subColection)
+        .getDocuments();
+
+    return querySnapshot;
+  }
 }
