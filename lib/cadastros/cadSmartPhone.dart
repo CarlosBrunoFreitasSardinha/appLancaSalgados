@@ -20,9 +20,8 @@ class _CadastroOneSignalSmartPhoneState
   String termo = "Habilitar";
 
   _obterIndice() async {
-    Map<String, dynamic> json =
-        await BdService.recuperarUmDocumentoColecaoGenerica(
-            "indices", colection, colection, blocUser.usuario.uidUser);
+    Map<String, dynamic> json = await BdService.getMapDocumentInSubColection(
+        "indices", colection, colection, blocUser.usuario.uidUser);
     setState(() {
       id = json["aparelho"];
       termo = UtilService.stringIsNull(id) ? "habilitar" : "desabilitar";
@@ -30,7 +29,7 @@ class _CadastroOneSignalSmartPhoneState
   }
 
   _cadastrarCategoria() async {
-    BdService.criarItemComIdColecaoGenerica(
+    BdService.insertWithIdDocumentInSubColection(
         "indices",
         colection,
         colection,
@@ -40,7 +39,7 @@ class _CadastroOneSignalSmartPhoneState
   }
 
   _excluirCategoria() {
-    BdService.removerItemColecaoGenerica(
+    BdService.removeDocumentInSubColection(
         "indices", colection, colection, blocUser.usuario.uidUser);
     Navigator.pop(context);
   }

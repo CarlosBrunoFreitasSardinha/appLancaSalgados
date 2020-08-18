@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:applancasalgados/bloc/UserBloc.dart';
+import 'package:applancasalgados/models/AppModel.dart';
 import 'package:applancasalgados/models/CategoriaProdutoModel.dart';
 import 'package:applancasalgados/models/ProdutoModel.dart';
-import 'package:applancasalgados/models/AppModel.dart';
 import 'package:applancasalgados/services/BdService.dart';
 import 'package:applancasalgados/services/ImageService.dart';
 import 'package:applancasalgados/services/UtilService.dart';
@@ -72,7 +72,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
       });
       getFileImageGaleria(index, imageFile);
       if (!isCad)
-        BdService.alterarDados("produtos", produto.idProduto,
+        BdService.updateDocumentInColection("produtos", produto.idProduto,
             {"galeria": UtilService.coverterListStringInMap(produto.galeria)});
     }
   }
@@ -86,7 +86,8 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
       imagensUlpoding[index] = false;
     });
     if (!isCad)
-      BdService.alterarDados("produtos", produto.idProduto, {"urlImg": url});
+      BdService.updateDocumentInColection(
+          "produtos", produto.idProduto, {"urlImg": url});
   }
 
   alert(String titulo, String msg, Color colorHead, Color colorBody) {
@@ -186,7 +187,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
     if (isCad) {
       produto = ProdutoModel();
       Map<String, dynamic> id =
-          await BdService.recuperarUmObjeto("indices", "produtos");
+          await BdService.getDocumentInColection("indices", "produtos");
       setState(() {
         produto.idProduto = id["id"];
       });
@@ -212,10 +213,13 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   _cadastrarProduto() async {
     int indice = int.parse(produto.idProduto) + 1;
     if (isCad) {
-      BdService.cadastrarDados("produtos", produto.idProduto, produto.toJson());
-      BdService.alterarDados("indices", "produtos", {"id": indice.toString()});
+      BdService.insertDocumentInColection(
+          "produtos", produto.idProduto, produto.toJson());
+      BdService.updateDocumentInColection(
+          "indices", "produtos", {"id": indice.toString()});
     } else {
-      BdService.alterarDados("produtos", produto.idProduto, produto.toJson());
+      BdService.updateDocumentInColection(
+          "produtos", produto.idProduto, produto.toJson());
     }
   }
 

@@ -63,8 +63,8 @@ class _ViewPedidoState extends State<ViewPedido>
   }
 
   _obterIndice() async {
-    QuerySnapshot json = await BdService.recuperarListaItensSubColection(
-        "indices", "oneSignal", "oneSignal");
+    QuerySnapshot json =
+        await BdService.getSubColection("indices", "oneSignal", "oneSignal");
     json.documents.forEach((element) {
       enviarNotificacao("Um novo pedido em aberto!", element["aparelho"]);
     });
@@ -90,7 +90,7 @@ class _ViewPedidoState extends State<ViewPedido>
           ? 0
           : double.parse(_controllerTroco.text.replaceAll(',', '.'));
 
-      BdService.criarItemAutoIdColecaoGenerica(
+    BdService.insertAutoIdDocumentInSubColection(
           "pedidos", blocUsuario.usuario.uidUser, "pedidos",
           widget.pedido.toJson());
 
@@ -98,7 +98,7 @@ class _ViewPedidoState extends State<ViewPedido>
       blocCarrinho.cart.limpar();
 
 
-      BdService.criarItemComIdColecaoGenerica(
+    BdService.insertWithIdDocumentInSubColection(
           "carrinho", blocUsuario.usuario.uidUser,
           "carrinho", "ativo", widget.pedido.carrinho.toJson());
 

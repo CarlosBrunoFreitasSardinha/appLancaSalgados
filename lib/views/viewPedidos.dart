@@ -28,7 +28,7 @@ class _ViewPedidosState extends State<ViewPedidos>
   List<String> _itensMenu = [];
 
   _alterarDadoPedido(String documentRef, Map<String, dynamic> json) async {
-    BdService.alterarItemColecaoGenerica(
+    BdService.updateDocumentInSubColection(
         "pedidos", blocUser.usuario.uidUser, "pedidos", documentRef, json);
   }
 

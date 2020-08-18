@@ -8,7 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class CarrinhoService {
   static Future<void> futureCarrinho() async {
     final streamCarrinho = AppModel.to.bloc<CarrinhoBloc>();
-    DocumentSnapshot snapshot = await BdService.recuperarItemsColecaoGenerica(
+    DocumentSnapshot snapshot = await BdService.getDocumentInSubColection(
         "carrinho",
         AppModel.to.bloc<UserBloc>().usuario.uidUser,
         "carrinho",

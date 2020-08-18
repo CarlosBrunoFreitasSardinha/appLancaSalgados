@@ -19,7 +19,7 @@ class UserService {
     FirebaseUser usuarioLogado = await auth.currentUser();
     if (usuarioLogado != null) {
       Map<String, dynamic> json =
-          await BdService.recuperarUmObjeto("usuarios", usuarioLogado.uid);
+          await BdService.getDocumentInColection("usuarios", usuarioLogado.uid);
       AppModel.to
           .bloc<UserBloc>()
           .userAddition

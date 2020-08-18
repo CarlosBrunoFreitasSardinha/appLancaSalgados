@@ -87,7 +87,8 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
         .createUserWithEmailAndPassword(email: user.email, password: user.senha)
         .then((firebaseUser) async {
           usuario.uidUser = firebaseUser.user.uid;
-      BdService.cadastrarDados("usuarios", usuario.uidUser, usuario.toJson());
+      BdService.insertDocumentInColection(
+          "usuarios", usuario.uidUser, usuario.toJson());
       AppModel.to.bloc<UserBloc>().usuario = usuario;
       Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
           arguments: 0);

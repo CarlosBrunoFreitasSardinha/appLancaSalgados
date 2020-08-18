@@ -55,7 +55,7 @@ class _ViewPerfilState extends State<ViewPerfil> {
     json["urlPerfil"] = url != null ? url : "";
 
     ImageService.deleteImage(blocUsuarioLogado.usuario.urlPerfil);
-    BdService.alterarDados("usuarios", document, json);
+    BdService.updateDocumentInColection("usuarios", document, json);
 
     setState(() {
       blocUsuarioLogado.usuario.urlPerfil = url;
@@ -72,7 +72,7 @@ class _ViewPerfilState extends State<ViewPerfil> {
     json["endereco"] = _controllerEndereco.text;
     json["urlPerfil"] = blocUsuarioLogado.usuario.urlPerfil;
 
-    BdService.alterarDados("usuarios", document, json);
+    BdService.updateDocumentInColection("usuarios", document, json);
     UserService.recuperaDadosUsuarioLogado();
 
     alert("Informações salvas com Sucesso!", Colors.lightBlue);

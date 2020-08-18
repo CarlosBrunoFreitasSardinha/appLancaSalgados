@@ -124,7 +124,7 @@ class _ViewCardapioState extends State<ViewCardapio>
                                     arguments: produtoModel);
                                 break;
                               case "Deletar":
-                                BdService.removerDados(
+                                BdService.removeDocumentInColection(
                                     "produtos", produtoModel.idProduto);
                                 listaDeProdutos.remove(produtoModel);
                                 break;

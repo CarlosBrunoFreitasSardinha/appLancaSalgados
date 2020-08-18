@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class BdService {
   static Firestore bd = Firestore.instance;
 
-  static cadastrarDados(
+  static insertDocumentInColection(
       String colection, String document, Map<String, dynamic> map) {
     if (document != "") {
       BdService.bd.collection(colection).document(document).setData(map);
@@ -14,25 +14,25 @@ class BdService {
     }
   }
 
-  static Future<void> alterarDados(
+  static Future<void> updateDocumentInColection(
       String colection, String document, Map<String, dynamic> map) async {
     BdService.bd.collection(colection).document(document).updateData(map);
     return;
   }
 
-  static removerDados(String colection, String document) {
+  static removeDocumentInColection(String colection, String document) {
     BdService.bd.collection(colection).document(document).delete();
   }
 
-  static Future<Map<String, dynamic>> recuperarUmObjeto(String colection,
-      String document) async {
+  static Future<Map<String, dynamic>> getDocumentInColection(
+      String colection, String document) async {
     DocumentSnapshot snapshot =
         await BdService.bd.collection(colection).document(document).get();
     var dados = snapshot.data;
     return dados;
   }
 
-  static removerItemColecaoGenerica(String colecaoPai, String documentPai,
+  static removeDocumentInSubColection(String colecaoPai, String documentPai,
       String subColection, String subDocument) {
     BdService.bd
         .collection(colecaoPai)
@@ -42,7 +42,7 @@ class BdService {
         .delete();
   }
 
-  static alterarItemColecaoGenerica(String coletionPai, String documentPai,
+  static updateDocumentInSubColection(String coletionPai, String documentPai,
       String subColection, String subDocument, Map<String, dynamic> json) {
     BdService.bd
         .collection(coletionPai)
@@ -52,7 +52,7 @@ class BdService {
         .updateData(json);
   }
 
-  static Future<void> criarItemComIdColecaoGenerica(String coletionPai,
+  static Future<void> insertWithIdDocumentInSubColection(String coletionPai,
       String documentPai, String subColection,
       String subDocument, Map<String, dynamic> json) async {
     await BdService.bd
@@ -63,7 +63,8 @@ class BdService {
         .setData(json);
   }
 
-  static criarItemAutoIdColecaoGenerica(String coletionPai, String documentPai,
+  static insertAutoIdDocumentInSubColection(String coletionPai,
+      String documentPai,
       String subColection, Map<String, dynamic> json) {
     BdService.bd
         .collection(coletionPai)
@@ -72,7 +73,7 @@ class BdService {
         .add(json);
   }
 
-  static Future<DocumentSnapshot> recuperarItemsColecaoGenerica(
+  static Future<DocumentSnapshot> getDocumentInSubColection(
       String coletionPai,
       String documentPai,
       String subColection,
@@ -86,7 +87,7 @@ class BdService {
     return snapshot;
   }
 
-  static Future<Map<String, dynamic>> recuperarUmDocumentoColecaoGenerica(
+  static Future<Map<String, dynamic>> getMapDocumentInSubColection(
       String coletionPai,
       String documentPai,
       String subColection,
@@ -101,7 +102,7 @@ class BdService {
     return dados;
   }
 
-  static Future<QuerySnapshot> recuperarListaItensSubColection(
+  static Future<QuerySnapshot> getSubColection(
       String coletionPai,
       String documentPai,
       String subColection) async {

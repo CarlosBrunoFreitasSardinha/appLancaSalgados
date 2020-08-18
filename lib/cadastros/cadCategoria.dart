@@ -28,7 +28,7 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
 
   _obterIndice() async {
     Map<String, dynamic> json =
-        await BdService.recuperarUmObjeto("indices", colection);
+        await BdService.getDocumentInColection("indices", colection);
     setState(() {
       id = int.parse(json["id"]);
     });
@@ -77,17 +77,17 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
   }
 
   _cadastrarCategoria() async {
-    BdService.cadastrarDados(colection, id.toString(),
+    BdService.insertDocumentInColection(colection, id.toString(),
         {
           "idCategoria": id.toString(),
           "descricao": _controllerTitulo.text
         });
-    BdService.alterarDados(
+    BdService.updateDocumentInColection(
         "indices", colection, {"id": (id + 1).toString()});
   }
 
   _alterarCategoria(String ident) {
-    BdService.alterarDados(
+    BdService.updateDocumentInColection(
         colection, ident, {"descricao": _controllerTitulo.text});
   }
 
@@ -103,7 +103,8 @@ class _CadastroCategoriaProdutosState extends State<CadastroCategoriaProdutos> {
       options.forEach((element) {
         if (element.descricao == selectedItem) {
           selectedItem = null;
-          BdService.removerDados(colection, element.idCategoria.toString());
+          BdService.removeDocumentInColection(
+              colection, element.idCategoria.toString());
         }
       });
       limparFormulario();

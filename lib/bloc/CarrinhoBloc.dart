@@ -63,7 +63,7 @@ class CarrinhoBloc extends BlocBase {
     cart.limpar();
   }
 
-  alterarCarrinho() => BdService.criarItemComIdColecaoGenerica(
+  alterarCarrinho() => BdService.insertWithIdDocumentInSubColection(
       "carrinho",
       AppModel.to.bloc<UserBloc>().usuario.uidUser,
       "carrinho",
