@@ -24,7 +24,7 @@ class _CadastroOneSignalSmartPhoneState
         "indices", colection, colection, blocUser.usuario.uidUser);
     setState(() {
       id = json["aparelho"];
-      termo = UtilService.stringIsNull(id) ? "habilitar" : "desabilitar";
+      termo = UtilService.stringIsNull(id) ? "Habilitar" : "Desabilitar";
     });
   }
 
@@ -85,7 +85,7 @@ class _CadastroOneSignalSmartPhoneState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cadastro Categoria"),
+        title: Text("Cadastro Aparelho"),
       ),
       body: Container(
           decoration: BoxDecoration(
@@ -111,7 +111,7 @@ class _CadastroOneSignalSmartPhoneState
                     height: 15,
                   ),
                   Text(
-                    "Para $termo a receber notificações dos pedidos confirme a baixo!",
+                    "Para $termo este aparelho para receber notificações dos pedidos confirme a baixo!",
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.w400,
@@ -130,7 +130,7 @@ class _CadastroOneSignalSmartPhoneState
                               top: 4, bottom: 10, left: 8, right: 8),
                           child: RaisedButton(
                               child: Text(
-                                "Excluir",
+                                termo,
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 20),
                               ),
