@@ -43,9 +43,8 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
   String _urlImagemRecuperada = "";
 
-  bool isCad;
+  bool isCad = true;
   bool isImgPrincipal = false;
-  bool salvado = false;
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
@@ -54,8 +53,14 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
       setState(() {
         isImgPrincipal = true;
       });
-      String url = await ImageService.insertImage(File(pickedFile.path),
-          "produtos", Timestamp.now().toString().replaceAll(" ", ""));
+      String url = await ImageService.insertImage(
+          File(pickedFile.path),
+          "produtos",
+          Timestamp.now()
+              .toString()
+              .replaceAll(" ", "")
+              .replaceAll("Timestamp(", "")
+              .replaceAll(")", ""));
       setState(() {
         _urlImagemRecuperada = url;
         isImgPrincipal = false;
@@ -79,7 +84,10 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
   void getFileImageGaleria(int index, File file) async {
     String url = await ImageService.insertImage(File(file.path), "produtos",
-        Timestamp.now().toString().replaceAll(" ", ""));
+        Timestamp.now().toString()
+            .replaceAll(" ", "")
+            .replaceAll("Timestamp(", "")
+            .replaceAll(")", ""));
 
     setState(() {
       produto.galeria[index] = url;
@@ -108,89 +116,14 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
         });
   }
 
-  Widget galeriaProdutoUploadItems() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: List.generate(produto.galeria.length, (index) {
-        if (produto.galeria[index].isNotEmpty) {
-          return Expanded(
-              child: Card(
-            clipBehavior: Clip.antiAlias,
-            child: Stack(
-              children: <Widget>[
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Image.network(
-                    produto.galeria[index],
-                    height: MediaQuery.of(context).size.width * 0.8 / 3,
-                    loadingBuilder: (context, child, progress) {
-                      return progress == null
-                          ? child
-                          : Center(
-                              child: CircularProgressIndicator(
-                                backgroundColor: Theme.of(context).accentColor,
-                              ),
-                            );
-                    },
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                Positioned(
-                  right: 5,
-                  top: 5,
-                  child: InkWell(
-                    child: Icon(
-                      Icons.remove_circle,
-                      size: 20,
-                      color: Colors.red,
-                    ),
-                    onTap: () {
-                      setState(() {
-                        ImageService.deleteImage(produto.galeria[index]);
-                        produto.galeria[index] = "";
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-              ));
-        } else {
-          return Expanded(
-              child: Card(
-            child: !imagensUlpoding[index]
-                ? SizedBox(
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .width * 0.8 / 3,
-              child: IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () => _onAddImageGaleriaClick(index),
-              ),
-                  )
-                : SizedBox(
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .width * 0.8 / 3,
-              child: Center(child: CircularProgressIndicator(),),
-            ),
-              ));
-        }
-      }),
-    );
-  }
-
   _informacoesDoProduto() async {
     isCad = widget.produtoModel == null;
+    print("Is Cad " + isCad.toString());
     if (isCad) {
       produto = ProdutoModel();
       Map<String, dynamic> id =
           await BdService.getDocumentInColection("indices", "produtos");
-      setState(() {
         produto.idProduto = id["id"];
-      });
     } else {
       produto = widget.produtoModel;
 
@@ -206,7 +139,6 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
 
   _salvar() {
     _cadastrarProduto();
-    salvado = true;
     Navigator.pop(context);
   }
 
@@ -224,7 +156,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   }
 
   validarCampos() {
-    double preco = double.parse(_controllerPreco.text);
+    double preco = double.parse(_controllerPreco.text.replaceAll(",", "."));
     String titulo = _controllerTitulo.text;
     String descricao = _controllerDescricao.text;
     String temp = _controllerTempPreparo.text;
@@ -261,7 +193,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
       }
     } else {
       alert("Atenção",
-          "Preencha o Titulo da Categoria do Produto!",
+          "O Titulo deve conter mais de 3 caracteres!",
           Colors.red,
           Colors.black87);
     }
@@ -274,10 +206,17 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
     _controllerDescricao.clear();
     _controllerPreco.clear();
     _controllerTempPreparo.clear();
-    produto.galeria.forEach((element) {
-      ImageService.deleteImage(element);
-    });
-    ImageService.deleteImage(produto.urlImg);
+    produto = null;
+    produto = ProdutoModel();
+  }
+
+  apagarImagens() {
+    if (isCad) {
+      produto.galeria.forEach((element) {
+        ImageService.deleteImage(element);
+      });
+      ImageService.deleteImage(produto.urlImg);
+    }
   }
 
   Future<List<CategoriaProdutoModel>> adicionarListenerFormaPagamento() async {
@@ -317,23 +256,97 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
     }
   }
 
+
+  Widget galeriaProdutoUploadItems() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: List.generate(produto.galeria.length, (index) {
+        if (produto.galeria[index].isNotEmpty) {
+          return Expanded(
+              child: Card(
+                clipBehavior: Clip.antiAlias,
+                child: Stack(
+                  children: <Widget>[
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.network(
+                        produto.galeria[index],
+                        height: MediaQuery
+                            .of(context)
+                            .size
+                            .width * 0.8 / 3,
+                        loadingBuilder: (context, child, progress) {
+                          return progress == null
+                              ? child
+                              : Center(
+                            child: CircularProgressIndicator(
+                              backgroundColor: Theme
+                                  .of(context)
+                                  .accentColor,
+                            ),
+                          );
+                        },
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    Positioned(
+                      right: 5,
+                      top: 5,
+                      child: InkWell(
+                        child: Icon(
+                          Icons.remove_circle,
+                          size: 20,
+                          color: Colors.red,
+                        ),
+                        onTap: () {
+                          setState(() {
+                            ImageService.deleteImage(produto.galeria[index]);
+                            produto.galeria[index] = "";
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ));
+        } else {
+          return Expanded(
+              child: Card(
+                child: !imagensUlpoding[index]
+                    ? SizedBox(
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.8 / 3,
+                  child: IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () => _onAddImageGaleriaClick(index),
+                  ),
+                )
+                    : SizedBox(
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.8 / 3,
+                  child: Center(child: CircularProgressIndicator(),),
+                ),
+              ));
+        }
+      }),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    _informacoesDoProduto();
     _verificarUsuarioLogado();
+    _informacoesDoProduto();
     adicionarListenerFormaPagamento();
   }
 
   @override
   void dispose() {
     super.dispose();
-    if (!salvado) {
-      produto.galeria.forEach((element) {
-        ImageService.deleteImage(element);
-      });
-      ImageService.deleteImage(produto.urlImg);
-    }
   }
 
   @override
@@ -632,7 +645,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                     padding: EdgeInsets.only(bottom: 10),
                     child: RaisedButton(
                         child: Text(
-                          "Limpar",
+                          "Limpar Formulário",
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                         color: Color(0xffd19c3c),
@@ -641,6 +654,23 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                             borderRadius: BorderRadius.circular(10)),
                         onPressed: () {
                           limparForm();
+                        }),
+                  ),
+
+                  //botao DeletarImagens
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: RaisedButton(
+                        child: Text(
+                          "Deletar Imagens",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                        color: Color(0xffd19c3c),
+                        padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        onPressed: () {
+                          apagarImagens();
                         }),
                   ),
                 ],

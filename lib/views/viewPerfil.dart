@@ -52,7 +52,7 @@ class _ViewPerfilState extends State<ViewPerfil> {
   Future _atualizarUrlImagemFirestore(String url) async {
     Map<String, dynamic> json = Map<String, dynamic>();
 
-    json["urlPerfil"] = url != null ? url : "";
+    json["urlPerfil"] = url;
 
     ImageService.deleteImage(blocUsuarioLogado.usuario.urlPerfil);
     BdService.updateDocumentInColection("usuarios", document, json);
