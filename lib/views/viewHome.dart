@@ -78,8 +78,8 @@ class _ViewHomeState extends State<ViewHome>
                     fit: StackFit.expand,
                     children: [
                       Image.asset(
-                        'imagens/tentativa.jpg',
-                        fit: BoxFit.cover,
+                        'imagens/temp.png',
+                        fit: BoxFit.fitWidth,
                       ),
                       const DecoratedBox(
                         decoration: BoxDecoration(
