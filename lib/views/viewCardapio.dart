@@ -80,12 +80,8 @@ class _ViewCardapioState extends State<ViewCardapio>
                         tag: produtoModel.idProduto,
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(15),
-                            child: Image.network(
-                              produtoModel.urlImg,
-                              height: 90,
-                              width: 90,
-                              fit: BoxFit.cover,
-                            )),
+                            child: UtilService.checkUrl(
+                                produtoModel.urlImg, 90, 90, BoxFit.cover)),
                       ),
                       onTap: () {
                         Navigator.pushNamed(context, RouteGenerator.PRODUTO,

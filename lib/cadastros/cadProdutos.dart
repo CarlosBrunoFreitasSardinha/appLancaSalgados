@@ -384,7 +384,11 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                             borderRadius: BorderRadius.circular(5),
                             child: Image.network(
                               _urlImagemRecuperada,
-                              loadingBuilder: (context, child, progress) {
+                                    height:
+                                        MediaQuery.of(context).size.width * 0.5,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    loadingBuilder: (context, child, progress) {
                                 return progress == null
                                     ? child
                                     : Center(
@@ -396,7 +400,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
                                   ),
                                             );
                               },
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                             ),
                           ),
                           Positioned(

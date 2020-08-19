@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:applancasalgados/RouteGenerator.dart';
 import 'package:applancasalgados/models/ProdutoModel.dart';
+import 'package:applancasalgados/services/UtilService.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -87,22 +88,12 @@ class _DestaquesState extends State<Destaques>
                                     BorderRadius.all(Radius.circular(15.0)),
                                 child: Stack(
                                   children: <Widget>[
-                                    Image.network(
-                                      item,
-                                      fit: BoxFit.cover,
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.9,
-                                      loadingBuilder:
-                                          (context, child, progress) {
-                                        return progress == null
-                                            ? child
-                                            : Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              );
-                                      },
-                                    ),
+                                    UtilService.checkUrl(
+                                        item,
+                                        MediaQuery.of(context).size.height *
+                                            0.9,
+                                        MediaQuery.of(context).size.width * 0.8,
+                                        BoxFit.cover),
                                     Positioned(
                                       bottom: 0.0,
                                       left: 0.0,

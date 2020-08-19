@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
+
 class UtilService {
   static String moeda(double valor) {
-
-    return "R\$ "+valor.toStringAsFixed(2).replaceAll(".", ",");
+    return "R\$ " + valor.toStringAsFixed(2).replaceAll(".", ",");
   }
 
   static String formatarData(DateTime date) {
@@ -17,7 +18,8 @@ class UtilService {
         date.year.toString() +
         '_' +
         menorQueDez(date.hour) +
-        ':' + menorQueDez(date.minute);
+        ':' +
+        menorQueDez(date.minute);
   }
 
   static String formatarNumberFone(String n) {
@@ -66,5 +68,26 @@ class UtilService {
       lista.add(value);
     });
     return lista;
+  }
+
+  static Widget checkUrl(
+      String url, double heigh, double width, BoxFit boxFit) {
+    try {
+      return Image.network(
+        url,
+        height: heigh,
+        width: width,
+        fit: boxFit,
+        loadingBuilder: (context, child, progress) {
+          return progress == null
+              ? child
+              : Center(
+                  child: CircularProgressIndicator(),
+                );
+        },
+      );
+    } catch (e) {
+      return Icon(Icons.image);
+    }
   }
 }

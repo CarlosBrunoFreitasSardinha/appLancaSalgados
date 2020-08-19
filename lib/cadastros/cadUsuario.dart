@@ -16,18 +16,16 @@ class CadastroUsuario extends StatefulWidget {
 
 class _CadastroUsuarioState extends State<CadastroUsuario> {
   //Controladores
-  TextEditingController _controllerNome = TextEditingController(text: "Tester");
-  TextEditingController _controllerEmail =
-      TextEditingController(text: "teste@teste.com");
-  TextEditingController _controllerEndereco =
-      TextEditingController(text: "Rua Teste, N 1, Centro, Fatima-to");
-  TextEditingController _controllerFone =
-      TextEditingController(text: "63 9 9262 0510");
-  TextEditingController _controllerSenha =
-      TextEditingController(text: "1234567");
+  TextEditingController _controllerNome = TextEditingController();
+  TextEditingController _controllerEmail = TextEditingController();
+  TextEditingController _controllerEndereco = TextEditingController();
+  TextEditingController _controllerFone = TextEditingController();
+  TextEditingController _controllerSenha = TextEditingController();
+
+  final _mobileFormatter = NumberTextInputFormatterService();
+
   UsuarioModel usuario = UsuarioModel();
   bool visualizarSenha = true;
-  final _mobileFormatter = NumberTextInputFormatterService();
 
   validarCampos(_controllerNome, _controllerEmail, _controllerSenha) {
     String nome = _controllerNome.text;

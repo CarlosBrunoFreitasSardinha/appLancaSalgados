@@ -7,17 +7,24 @@ class ImageService {
 
   static Future<String> insertImage(
       File img, String subPasta, String nomeArquivo) async {
-    nomeArquivo = nomeArquivo;
+    String url;
 
-    StorageReference arquivo =
-        storage.ref().child(subPasta).child(nomeArquivo + ".jpg");
+    try {
+      nomeArquivo = nomeArquivo;
 
-    arquivo.putFile(img);
-    StorageUploadTask task = arquivo.putFile(img);
+      StorageReference arquivo =
+      storage.ref().child(subPasta).child(nomeArquivo + ".jpg");
 
-    await task.onComplete;
-    print("Envio Completo");
-    String url = await arquivo.getDownloadURL();
+      arquivo.putFile(img);
+      StorageUploadTask task = arquivo.putFile(img);
+
+      await task.onComplete;
+      print("Envio Completo");
+      url = await arquivo.getDownloadURL() as String;
+    } catch (e) {
+      print("Error => " + e.toString());
+      return "";
+    }
 
     return url;
   }

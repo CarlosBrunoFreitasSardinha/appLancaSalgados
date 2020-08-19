@@ -26,41 +26,40 @@ class _ViewPerfilState extends State<ViewPerfil> {
   final picker = ImagePicker();
   final blocUsuarioLogado = AppModel.to.bloc<UserBloc>();
   final _mobileFormatter = NumberTextInputFormatterService();
+  final List<String> formatosAceitos = ["jpg", "jpeg", "Jpeg", "png", "gif"];
 
   String document = AppModel.to.bloc<UserBloc>().usuario.uidUser;
   bool _upload = false;
+  String _imgPerfil = AppModel.to.bloc<UserBloc>().usuario.urlPerfil;
 
   Future getImage(bool i) async {
     final pickedFile = await picker.getImage(
         source: i ? ImageSource.camera : ImageSource.gallery);
 
-    File _image;
-    _image = File(pickedFile.path);
+    File _image = File(pickedFile.path);
+    String rs = _image.path.substring(
+        (_image.path.length - 3), _image.path.length);
 
-    setState(() {
-      _upload = true;
-    });
+    if (!formatosAceitos.contains(rs)) {
+      _image = null;
+      alert("Atenção",
+          "Formato da imagem não aceito, tente formatos como: .jpg, .jpeg, .png ou .gif!",
+          Colors.red, Colors.lightBlue);
+    }
 
     if (_image != null) {
-      String urlImagemRecuperada;
-      urlImagemRecuperada = await ImageService.insertImage(
+      setState(() {
+        _upload = true;
+      });
+      _imgPerfil = await ImageService.insertImage(
           File(pickedFile.path), "perfil", blocUsuarioLogado.usuario.uidUser);
-      _atualizarUrlImagemFirestore(urlImagemRecuperada);
     }
-  }
-
-  Future _atualizarUrlImagemFirestore(String url) async {
-    Map<String, dynamic> json = Map<String, dynamic>();
-
-    json["urlPerfil"] = url;
-
-    ImageService.deleteImage(blocUsuarioLogado.usuario.urlPerfil);
-    BdService.updateDocumentInColection("usuarios", document, json);
 
     setState(() {
-      blocUsuarioLogado.usuario.urlPerfil = url;
       _upload = false;
+      _imgPerfil;
     });
+//    alert("Atenção", "Selecione outra imagem e tente novamente!", Colors.red,Colors.lightBlue);
   }
 
   Future<void> _atualizarDadosFirestore() async {
@@ -70,28 +69,24 @@ class _ViewPerfilState extends State<ViewPerfil> {
     json["foneContato1"] =
         UtilService.formatSimpleNumber(_controllerNumber.text);
     json["endereco"] = _controllerEndereco.text;
-    json["urlPerfil"] = blocUsuarioLogado.usuario.urlPerfil;
+    json["urlPerfil"] = _imgPerfil;
 
+    ImageService.deleteImage(blocUsuarioLogado.usuario.urlPerfil);
     BdService.updateDocumentInColection("usuarios", document, json);
     UserService.recuperaDadosUsuarioLogado();
 
-    alert("Informações salvas com Sucesso!", Colors.lightBlue);
+    alert("Lança Salgados", "Suas informações forma salvas com Sucesso!", Theme
+        .of(context)
+        .accentColor, Theme
+        .of(context)
+        .primaryColor);
     return;
   }
 
-  Future _recuperarImagem(String urlImg) async {
-    switch (urlImg) {
-      case "camera":
-        getImage(true);
-        break;
-      case "galeria":
-        getImage(false);
-        break;
-    }
-  }
-
   _recuperaDadosUsuario() async {
-    _verificarUsuarioLogado();
+    if (!blocUsuarioLogado.isLogged) {
+      Navigator.pushReplacementNamed(context, RouteGenerator.LOGIN);
+    }
 
     setState(() {
       _controllerNome.text = blocUsuarioLogado.usuario.nome;
@@ -101,25 +96,37 @@ class _ViewPerfilState extends State<ViewPerfil> {
     });
   }
 
-  _verificarUsuarioLogado() {
-    if (!blocUsuarioLogado.isLogged) {
-      Navigator.pushReplacementNamed(context, RouteGenerator.LOGIN);
-    }
-  }
-
-  alert(String titulo, Color colorHead) {
+  alert(String titulo, String msg, Color colorHead, Color colorBody) {
     showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text(
-              titulo,
+            title: Text(titulo,
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.bold, color: colorHead),
-            ),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: colorHead
+              ),),
+            content: Text(msg,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 20,
+                    color: colorBody
+                )),
           );
         });
+  }
+
+  verificaUrl(String url) {
+    try {
+      NetworkImage(url);
+    }
+    catch (e) {
+      print("Um Erro aqui " + e.toString());
+      return null;
+    }
+    return NetworkImage(url);
   }
 
   @override
@@ -145,25 +152,18 @@ class _ViewPerfilState extends State<ViewPerfil> {
                       : CircleAvatar(
                     radius: 100,
                     backgroundColor: Colors.grey,
-                    backgroundImage: blocUsuarioLogado.usuario.urlPerfil !=
-                        null
-                        ? NetworkImage(blocUsuarioLogado.usuario.urlPerfil)
-                        : null,
+                    backgroundImage: verificaUrl(_imgPerfil),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Icon(Icons.camera_alt),
                       FlatButton(
-                          onPressed: () {
-                        _recuperarImagem("camera");
-                      },
+                          onPressed: () => getImage(true),
                           child: Text("Câmera")),
                       Icon(Icons.photo_library),
                       FlatButton(
-                          onPressed: () {
-                        _recuperarImagem("galeria");
-                      },
+                          onPressed: () => getImage(false),
                           child: Text("Galeria")),
                     ],
                   ),

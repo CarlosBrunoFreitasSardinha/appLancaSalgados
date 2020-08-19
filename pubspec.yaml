@@ -59,11 +59,7 @@ flutter:
   assets:
     - imagens/logo.png
     - imagens/background.jpg
-    - imagens/promo.png
-    - imagens/banner.png
-    - imagens/semContato.jpg
     - imagens/tentativa.jpg
-    - imagens/reset-password-icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
