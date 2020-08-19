@@ -36,6 +36,14 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
     String fone = UtilService.formatSimpleNumber(_controllerFone.text);
     String endereco = _controllerEndereco.text;
 
+    try {
+      int.parse(fone);
+    } catch (e) {
+      alert(
+          "Atenção", "Número informado inválido!", Colors.red, Colors.black87);
+      return;
+    }
+
     if (nome.length >= 3) {
       if (email.isNotEmpty && email.contains("@")) {
         if (senha.length > 5) {

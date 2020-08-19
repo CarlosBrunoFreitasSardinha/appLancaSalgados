@@ -156,10 +156,17 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
   }
 
   validarCampos() {
-    double preco = double.parse(_controllerPreco.text.replaceAll(",", "."));
+    double preco;
     String titulo = _controllerTitulo.text;
     String descricao = _controllerDescricao.text;
     String temp = _controllerTempPreparo.text;
+
+    try {
+      preco = double.parse(_controllerPreco.text.replaceAll(",", "."));
+    } catch (e) {
+      alert("Atenção", "Preço informado inválido!", Colors.red, Colors.black87);
+      return;
+    }
 
     if (titulo.length >= 3) {
       if (_urlImagemRecuperada.isNotEmpty) {
