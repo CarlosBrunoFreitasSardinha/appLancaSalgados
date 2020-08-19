@@ -73,7 +73,7 @@ class _ViewCarrinhoState extends State<ViewCarrinho>
       child: Padding(
         padding: const EdgeInsets.only(top: 16),
         child: Text(
-          'Nenhum Produto adicionado ainda:(',
+          'Nenhum produto adicionado ainda :)',
           style: TextStyle(
               fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
         ),

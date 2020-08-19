@@ -98,7 +98,7 @@ class _ViewHomeState extends State<ViewHome>
                 ),
                 bottom: TabBar(
                   controller: _tabController,
-                  indicatorWeight: 4,
+                  indicatorWeight: 1,
                   tabs: [
                     Tab(icon: Icon(Icons.home)),
                     Tab(icon: Icon(Icons.restaurant_menu)),

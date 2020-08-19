@@ -75,8 +75,8 @@ class _ViewPerfilState extends State<ViewPerfil> {
     BdService.updateDocumentInColection("usuarios", document, json);
     UserService.recuperaDadosUsuarioLogado();
 
-    alert("Lança Salgados", "Suas informações forma salvas com Sucesso!", Theme
-        .of(context)
+    alert("Lança Salgados", "Suas informações foram salvas com Sucesso!",
+        Theme.of(context)
         .accentColor, Theme
         .of(context)
         .primaryColor);

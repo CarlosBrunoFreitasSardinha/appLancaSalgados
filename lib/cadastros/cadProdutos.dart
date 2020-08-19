@@ -223,6 +223,7 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
         ImageService.deleteImage(element);
       });
       ImageService.deleteImage(produto.urlImg);
+      setState(() {});
     }
   }
 
