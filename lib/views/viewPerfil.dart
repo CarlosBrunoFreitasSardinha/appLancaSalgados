@@ -51,8 +51,21 @@ class _ViewPerfilState extends State<ViewPerfil> {
       setState(() {
         _upload = true;
       });
-      _imgPerfil = await ImageService.insertImage(
+
+      String url = await ImageService.insertImage(
           File(pickedFile.path), "perfil", blocUsuarioLogado.usuario.uidUser);
+
+      if (await UtilService.testaUrl(url)) {
+        setState(() {
+          _imgPerfil = url;
+        });
+      } else {
+        alert(
+            "Atenção",
+            "Ocorreu uma falha no envio da imagem, Selecione a imagem e tente adicionar novamente!",
+            Colors.red,
+            Colors.black87);
+      }
     }
 
     setState(() {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class UtilService {
   static String moeda(double valor) {
@@ -89,5 +90,10 @@ class UtilService {
     } catch (e) {
       return Icon(Icons.image);
     }
+  }
+
+  static testaUrl(url) async {
+    var resp = await new http.Client().get(url);
+    return resp.contentLength != 0;
   }
 }

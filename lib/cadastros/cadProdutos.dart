@@ -61,8 +61,19 @@ class _CadastroProdutosState extends State<CadastroProdutos> {
               .replaceAll(" ", "")
               .replaceAll("Timestamp(", "")
               .replaceAll(")", ""));
+
+      if (await UtilService.testaUrl(url)) {
+        setState(() {
+          _urlImagemRecuperada = url;
+        });
+      } else {
+        alert(
+            "Atenção",
+            "Ocorreu uma falha no envio da imagem, tente adicionar novamente!",
+            Colors.red,
+            Colors.black87);
+      }
       setState(() {
-        _urlImagemRecuperada = url;
         isImgPrincipal = false;
       });
     }
