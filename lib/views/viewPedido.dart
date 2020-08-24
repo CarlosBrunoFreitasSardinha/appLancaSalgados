@@ -90,11 +90,9 @@ class _ViewPedidoState extends State<ViewPedido>
           ? 0
           : double.parse(_controllerTroco.text.replaceAll(',', '.'));
 
-    BdService.insertAutoIdDocumentInSubColection(
-          "pedidos", blocUsuario.usuario.uidUser, "pedidos",
-          widget.pedido.toJson());
+    BdService.insertDocumentInColection("pedidos", "", widget.pedido.toJson());
 
-      widget.pedido.carrinho.limpar();
+    widget.pedido.carrinho.limpar();
       blocCarrinho.cart.limpar();
 
 

@@ -28,8 +28,7 @@ class _ViewPedidosState extends State<ViewPedidos>
   List<String> _itensMenu = [];
 
   _alterarDadoPedido(String documentRef, Map<String, dynamic> json) async {
-    BdService.updateDocumentInSubColection(
-        "pedidos", blocUser.usuario.uidUser, "pedidos", documentRef, json);
+    BdService.updateDocumentInColection("pedidos", documentRef, json);
   }
 
   Widget listaPedidosVazia() {
@@ -46,11 +45,17 @@ class _ViewPedidosState extends State<ViewPedidos>
   }
 
   _adicionarListenerProdutos() {
-    final stream = bd
-        .collection("pedidos")
-        .document(blocUser.usuario.uidUser)
+    final stream = blocUser.usuario.isAdm
+        ? bd
+            .collection("pedidos")
+        .where("atendido", isEqualTo: false)
+        .orderBy("dataPedido", descending: false)
+        .snapshots()
+
+        : bd
         .collection("pedidos")
         .where("atendido", isEqualTo: false)
+        .where("uid", isEqualTo: blocUser.usuario.uidUser)
         .orderBy("dataPedido", descending: false)
         .snapshots();
 

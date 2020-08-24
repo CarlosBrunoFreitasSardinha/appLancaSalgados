@@ -20,6 +20,7 @@ class PedidoModel {
           UtilService.formatarData(DateTime.now());
   String _dataPedido = Timestamp.now().toString();
   String _idCelularSolicitante = "";
+  String _uid = AppModel.to.bloc<UserBloc>().usuario.uidUser;
 
   PedidoModel();
 
@@ -39,6 +40,7 @@ class PedidoModel {
     json["dataPedido"] = dataPedido;
     json["trocoPara"] = trocoPara;
     json["idCelularSolicitante"] = idCelularSolicitante;
+    json["uid"] = uid;
 
     return json;
   }
@@ -54,6 +56,7 @@ class PedidoModel {
     dataPedido = json["dataPedido"];
     trocoPara = json["trocoPara"];
     idCelularSolicitante = json["idCelularSolicitante"];
+    uid = json["uid"];
   }
 
   // ignore: unnecessary_getters_setters
@@ -134,6 +137,12 @@ class PedidoModel {
   // ignore: unnecessary_getters_setters
   set idCelularSolicitante(String value) {
     _idCelularSolicitante = value;
+  }
+
+  String get uid => _uid;
+
+  set uid(String value) {
+    _uid = value;
   }
 
   @override
