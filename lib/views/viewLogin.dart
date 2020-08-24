@@ -11,32 +11,47 @@ class ViewLogin extends StatefulWidget {
 }
 
 class _ViewLoginState extends State<ViewLogin> {
-  TextEditingController _controllerEmail =
-      TextEditingController(text: "teste@teste.com");
-  TextEditingController _controllerSenha =
-      TextEditingController(text: "1234567");
-  String _mensagemErro = "";
+  TextEditingController _controllerEmail = TextEditingController();
+  TextEditingController _controllerSenha = TextEditingController();
   UsuarioModel usuario = UsuarioModel();
   bool visualizarSenha = true;
+
+  alert(String titulo, String msg, Color colorHead, Color colorBody) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              titulo,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 20, fontWeight: FontWeight.bold, color: colorHead),
+            ),
+            content: Text(msg,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20, color: colorBody)),
+          );
+        });
+  }
 
   validarCampos(_controllerEmail, _controllerSenha) {
     String email = _controllerEmail.text;
     String senha = _controllerSenha.text;
 
     if (email.isNotEmpty && email.contains("@")) {
-      if (senha.length > 3) {
+      if (senha.length > 5) {
         usuario.senha = senha;
-        usuario.email = email;
+        usuario.email = email.trim();
         _logarUsuario(usuario);
       } else {
-        setState(() {
-          _mensagemErro = " Senha deve ser conter mais de 3 caracteres ";
-        });
+        alert("Atenção", "A senha deve ser conter pelo menos 6 caracteres!",
+            Colors.red, Colors.black87);
       }
     } else {
-      setState(() {
-        _mensagemErro = " Preencha o Email Utilizando @ ";
-      });
+      alert("Atenção",
+          "Preencha o campo Email com um endereço válido !",
+          Colors.red,
+          Colors.black87);
     }
   }
 
@@ -44,10 +59,10 @@ class _ViewLoginState extends State<ViewLogin> {
     if (await AuthService.logar(user)) {
       Navigator.pop(context);
     } else {
-        setState(() {
-          _mensagemErro =
-              "Erro ao efetuar Login, verifique as informações e tente Novamente";
-        });
+      alert("Atenção",
+          "Erro ao efetuar Login, verifique as informações e tente novamente!",
+          Colors.red,
+          Colors.black87);
       }
     return;
   }
@@ -202,16 +217,6 @@ class _ViewLoginState extends State<ViewLogin> {
                       },
                     ),
                   ),
-
-                  Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: Center(
-                      child: Text(
-                        _mensagemErro,
-                        style: TextStyle(color: Colors.red, fontSize: 20),
-                      ),
-                    ),
-                  )
                 ],
               ),
             ),
