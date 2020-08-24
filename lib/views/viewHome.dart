@@ -10,6 +10,7 @@ import 'package:applancasalgados/views/viewCarrinho.dart';
 import 'package:applancasalgados/views/viewDestaques.dart';
 import 'package:applancasalgados/views/viewPedidos.dart';
 import 'package:flutter/material.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class ViewHome extends StatefulWidget {
   final int opcao;
@@ -58,6 +59,12 @@ class _ViewHomeState extends State<ViewHome>
   @override
   Widget build(BuildContext context) {
     var futureCarrinho = CarrinhoAppBarIcon();
+
+    OneSignal.shared
+        .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
+      Navigator.pushReplacementNamed(context, RouteGenerator.HOME,
+          arguments: 3);
+    });
 
     return Scaffold(
       body: DefaultTabController(
